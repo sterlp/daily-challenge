@@ -1,0 +1,3 @@
+mixin Closeable {
+  void close();
+}

@@ -1,9 +1,10 @@
 import 'dart:async';
+import 'package:flutterapp/container/containerModel.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import 'dart:developer';
 
-class DbProvider {
+class DbProvider with Closeable {
   Future<Database> db;
   DbProvider() {
     db = _init(null);
@@ -49,5 +50,12 @@ class DbProvider {
       ''');
       ++oldVersion;
     }
+  }
+
+  @override
+  void close() {
+    log('DB closed', name: this.toString());
+    db.then((value) => value.close());
+    db = null;
   }
 }
