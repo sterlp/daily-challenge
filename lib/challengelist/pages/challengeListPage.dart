@@ -1,16 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:flutterapp/challengelist/dao/challengeDao.dart';
 import 'package:flutterapp/challengelist/models/challengeModel.dart';
 import 'package:flutterapp/challengelist/pages/challengePage.dart';
 import 'package:flutterapp/challengelist/services/challengeService.dart';
 import 'package:flutterapp/challengelist/views/challengeWidget.dart';
 import 'package:flutterapp/container/container.dart';
-import 'package:flutterapp/db/dbProvider.dart';
-import 'package:flutterapp/db/testData.dart';
 import 'package:flutterapp/util/date.dart';
 import 'package:intl/intl.dart';
-import 'dart:developer' as dev;
 
 class ChallengeListPage extends StatefulWidget {
   final DiContainer _container;

@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:flutter/cupertino.dart';
 
 class ObservableModel<T> {
   final StreamController<T> _controller = new StreamController<T>();

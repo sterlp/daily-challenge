@@ -1,10 +1,8 @@
 import 'dart:async';
-import 'package:flutter/cupertino.dart';
 import 'package:flutterapp/challengelist/dao/challengeDao.dart';
 import 'package:flutterapp/challengelist/models/challengeModel.dart';
 import 'dart:developer';
 
-import 'package:flutterapp/db/testData.dart';
 import 'package:flutterapp/util/date.dart';
 import 'package:flutterapp/util/model/observableModel.dart';
 

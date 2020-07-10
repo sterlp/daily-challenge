@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutterapp/challengelist/pages/challengeListPage.dart';
 import 'package:flutterapp/home/pages/challengeHomePage.dart';
 
 void main() {

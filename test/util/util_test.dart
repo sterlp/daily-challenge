@@ -6,10 +6,6 @@ enum Foo {
 }
 
 void main() {
-  void add<T>(Map<dynamic, dynamic> m, T v) {
-    m[T] = v;
-  }
-
   test('ParserUtil value of enum', () {
     expect(ParserUtil.valueOfEnum(Foo.one), 'one');
     expect(ParserUtil.valueOfEnum(null), null);
