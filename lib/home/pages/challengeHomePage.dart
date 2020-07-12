@@ -3,6 +3,7 @@ import 'package:flutterapp/challengelist/dao/challengeDao.dart';
 import 'package:flutterapp/challengelist/models/challengeModel.dart';
 import 'package:flutterapp/challengelist/pages/challengeListPage.dart';
 import 'package:flutterapp/challengelist/pages/challengePage.dart';
+import 'package:flutterapp/challengelist/pages/challenge_month_overview_page.dart';
 import 'package:flutterapp/challengelist/services/challengeService.dart';
 import 'package:flutterapp/container/container.dart';
 import 'package:flutterapp/db/dbProvider.dart';
@@ -24,7 +25,9 @@ class ChallengeHomePage extends StatefulWidget {
 }
 
 class _ChallengeHomePageState extends State<ChallengeHomePage> {
+  int _page = 0;
   final PageController _pagesController = PageController(initialPage: 0);
+
   final DiContainer _container;
   final ChallengeService _challengeService;
 
@@ -46,8 +49,10 @@ class _ChallengeHomePageState extends State<ChallengeHomePage> {
     return Scaffold(
       body: PageView(
         controller: _pagesController,
+        scrollDirection: Axis.horizontal,
         children: [
-          ChallengeListPage(_container)
+          ChallengeListPage(_container),
+          ChallengeMonthOverviewPage()
         ],
         physics: NeverScrollableScrollPhysics(), // Comment this if you need to use Swipe.
       ),
@@ -76,8 +81,11 @@ class _ChallengeHomePageState extends State<ChallengeHomePage> {
             IconButton(
               iconSize: 30.0,
               // padding: EdgeInsets.only(left: 28.0),
-              icon: Icon(Icons.calendar_today, color: Colors.blue),
-              onPressed: () {},
+              icon: Icon(Icons.calendar_today, color: _page == 0 ? Colors.blue : null),
+              onPressed: () {
+                _pagesController.animateToPage(0, duration: Duration(milliseconds: 300), curve: Curves.ease);
+                setState(() => _page = 0);
+              }
             ),
             Padding(
                 padding: const EdgeInsets.fromLTRB(2, 32, 2, 12),
@@ -86,8 +94,11 @@ class _ChallengeHomePageState extends State<ChallengeHomePage> {
             IconButton(
               iconSize: 30.0,
               // padding: EdgeInsets.only(left: 28.0),
-              icon: Icon(Icons.view_week),
-              onPressed: () {},
+              icon: Icon(Icons.view_week, color: _page == 1 ? Colors.blue : null),
+              onPressed: () {
+                _pagesController.animateToPage(1, duration: Duration(milliseconds: 300), curve: Curves.ease);
+                setState(() => _page = 1);
+              }
             ),
           ],
         ),

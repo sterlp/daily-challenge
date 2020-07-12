@@ -67,7 +67,7 @@ class ChallengePageState extends State<ChallengePage> {
           children: <Widget>[
             new ListTile(
               leading: Icon(Icons.thumb_up),
-              title: new TextFormField(
+              title: TextFormField(
                 controller: _nameController,
                 validator: (String v) => v.isNullOrEmpty ? 'Enter a challenge name' : null,
                 decoration: new InputDecoration(
@@ -78,7 +78,7 @@ class ChallengePageState extends State<ChallengePage> {
             ),
             new ListTile(
               leading: const Icon(Icons.star),
-              title: new TextFormField(
+              title: TextFormField(
                 controller: _rewardController,
                 validator: (String v) => v.isNullOrEmpty ? 'Enter reward points' : null,
                 inputFormatters: [WhitelistingTextInputFormatter.digitsOnly],
@@ -107,7 +107,7 @@ class ChallengePageState extends State<ChallengePage> {
                 });
               },
             ),
-            new ListTile(
+            ListTile(
               leading: Icon(Icons.today),
               title: Text('Latest until'),
               subtitle: Text(Challenge.dueFormat.format(c.latestAt)),
