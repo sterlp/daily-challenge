@@ -38,7 +38,10 @@ class _ChallengeWidgetState extends State<ChallengeWidget> {
 
   _onChallengeChecked(bool value, BuildContext context) async {
     if (widget.challenge.isFailed) {
-      Scaffold.of(context).showSnackBar(SnackBar(content: Text('Challenge ${widget.challenge.name} already failed.')));
+      Scaffold.of(context).showSnackBar(
+          SnackBar(
+            behavior: SnackBarBehavior.floating,
+            content: Text('Challenge ${widget.challenge.name} already failed.')));
     } else {
       final _challengeService = AppStateWidget.of(context).get<ChallengeService>();
       if (value) {

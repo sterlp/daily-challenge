@@ -3,6 +3,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutterapp/challengelist/models/challenge_model.dart';
 import 'package:flutterapp/challengelist/services/challenge_service.dart';
 import 'package:flutterapp/challengelist/widgets/challenge_widget.dart';
+import 'package:flutterapp/db/test_data.dart';
 import 'package:flutterapp/home/state/app_state_widget.dart';
 import 'package:flutterapp/log/logger.dart';
 import 'package:flutterapp/util/date.dart';
@@ -17,7 +18,6 @@ class ChallengeListPageState extends State<ChallengeListPage> {
   static final DateFormat doneFormat = DateFormat("LLLL dd.MM");
   static final Logger _log = LoggerFactory.get<ChallengeListPageState>();
 
-  final GlobalKey<ScaffoldState> _scaffold = new GlobalKey();
   ChallengeService _challengeService;
   DateTime _selectedDay = DateTime.now();
   final List<Challenge> _challenges = [];
@@ -32,13 +32,12 @@ class ChallengeListPageState extends State<ChallengeListPage> {
     });
   }
 
-  _reload() async {
+  _reload([bool force = false]) async {
     final isToday = DateTimeUtil.clearTime(_selectedDay).millisecondsSinceEpoch == DateTimeUtil.clearTime(DateTime.now()).millisecondsSinceEpoch;
     _log.debug('_reload, ${isToday ? "today" : "not today"}  ');
-    _challengeService.getTotal();
+    _challengeService.calcTotal();
     var current = await _challengeService.loadByDate(_selectedDay);
     var overDue = <Challenge>[];
-    // if ( (await _challengeService.load()).length == 0 ) await this._container.get<TestData>().generateTestData();
 
 
     if (isToday) {
@@ -57,7 +56,7 @@ class ChallengeListPageState extends State<ChallengeListPage> {
     } else {
       _challenges.addAll(current);
     }
-    if (wasEmpty && _challenges.isEmpty) {
+    if (!force && (wasEmpty && _challenges.isEmpty)) {
       // nothing needs to be done, empty to empty
     } else {
       setState(() {});
@@ -83,19 +82,23 @@ class ChallengeListPageState extends State<ChallengeListPage> {
     setState(() {
       _challenges.remove(c);
     });
-    _scaffold.currentState.showSnackBar(SnackBar(content: Text("${c.name} deleted.")));
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
+    Scaffold.of(context).showSnackBar(
+      SnackBar(
+        behavior: SnackBarBehavior.floating,
+        content: Text("'${c.name}' was deleted."),
+        action: SnackBarAction(label: 'Undo', onPressed: () async {
+          _log.info('Undo delete of $c');
+          await _challengeService.insert(c);
+          _reload(true);
+        }),
+      )
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     _log.debug('build...');
     return Scaffold(
-      key: _scaffold,
       appBar: AppBar(
         title: Text('Kick your butt today'),
         actions: <Widget>[
@@ -110,16 +113,16 @@ class ChallengeListPageState extends State<ChallengeListPage> {
             },
             icon: Icon(Icons.arrow_drop_down), label: Text(doneFormat.format(_selectedDay))
           ),
-          /*
+
           FlatButton.icon(
               onPressed: () async {
                 _challengeService.deleteAll();
-                await AppStateWidget.of(context).get<TestData>().generateData(10, daysPast: 5, daysFuture: 50);
-                _reload();
+                await AppStateWidget.of(context).get<TestData>().generateData(10, daysPast: 8, daysFuture: 50);
+                _reload(true);
               },
               icon: Icon(Icons.add), label: Text("Generate Test Data")
           )
-          */
+
         ]
       ),
 

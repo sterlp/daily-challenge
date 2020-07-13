@@ -111,4 +111,8 @@ class ChallengeService {
   Future<void> deleteAll() {
     return _challengeDao.deleteAll();
   }
+
+  Future<Challenge> insert(Challenge challenge) {
+    return _challengeDao.insert(challenge);
+  }
 }

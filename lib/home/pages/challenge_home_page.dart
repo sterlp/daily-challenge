@@ -19,6 +19,13 @@ class _ChallengeHomePageState extends State<ChallengeHomePage> {
   int _page = 0;
   final PageController _pagesController = PageController(initialPage: 0);
 
+  _showPage(int index) {
+    if (_page != index) {
+      _pagesController.animateToPage(index, duration: Duration(milliseconds: 300), curve: Curves.ease);
+      setState(() => _page = index);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final _container = AppStateWidget.of(context);
@@ -60,10 +67,7 @@ class _ChallengeHomePageState extends State<ChallengeHomePage> {
               iconSize: 30.0,
               // padding: EdgeInsets.only(left: 28.0),
               icon: Icon(Icons.calendar_today, color: _page == 0 ? Colors.blue : null),
-              onPressed: () {
-                _pagesController.animateToPage(0, duration: Duration(milliseconds: 300), curve: Curves.ease);
-                setState(() => _page = 0);
-              }
+              onPressed: () => _showPage(0)
             ),
             Padding(
                 padding: const EdgeInsets.fromLTRB(2, 32, 2, 12),
@@ -73,10 +77,7 @@ class _ChallengeHomePageState extends State<ChallengeHomePage> {
               iconSize: 30.0,
               // padding: EdgeInsets.only(left: 28.0),
               icon: Icon(Icons.view_week, color: _page == 1 ? Colors.blue : null),
-              onPressed: () {
-                _pagesController.animateToPage(1, duration: Duration(milliseconds: 300), curve: Curves.ease);
-                setState(() => _page = 1);
-              }
+              onPressed: () =>  _showPage(1)
             ),
           ],
         ),

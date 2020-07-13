@@ -101,8 +101,17 @@ abstract class AbstractDao<T extends AbstractEntity> {
     assert(entity.id != null);
 
     final Database db = await dbExecutor;
-    db.update(tableName, toMap(entity), where: "id = ?", whereArgs: [entity.id]);
+    await db.update(tableName, toMap(entity), where: "id = ?", whereArgs: [entity.id]);
+    // if (count == 0) _log.warn('Record not found anymore to update $entity');
     return entity;
+  }
+
+  Future<int> countAll() async {
+    final Database db = await dbExecutor;
+
+    final r = await db.rawQuery("SELECT SUM(1) as result FROM $tableName");
+    if (r == null || r.length == 0) return 0;
+    else return r[0]['result'] ?? 0;
   }
 
   T fromMap(Map<String, dynamic> values);

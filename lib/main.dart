@@ -4,7 +4,7 @@ import 'package:flutterapp/challengelist/services/challenge_service.dart';
 import 'package:flutterapp/container/app_context.dart';
 import 'package:flutterapp/db/db_provider.dart';
 import 'package:flutterapp/db/test_data.dart';
-import 'package:flutterapp/home/pages/challengeHomePage.dart';
+import 'package:flutterapp/home/pages/challenge_home_page.dart';
 import 'package:flutterapp/home/state/app_state_widget.dart';
 
 void main() {

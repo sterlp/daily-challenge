@@ -19,16 +19,13 @@ class ChallengeDao extends AbstractDao<Challenge> {
 
   /// Sets the given challenges to fail and returns their total reward.
   Future<int> fail(List<Challenge> values) async {
-    final Database db = await dbExecutor;
-    return db.transaction((trx) async {
-      int result = 0;
-      for(Challenge c in values) {
-        c.status = ChallengeStatus.failed;
-        result += c.reward;
-        await update(c);
-      }
-      return result;
-    });
+    int result = 0;
+    for(Challenge c in values) {
+      c.status = ChallengeStatus.failed;
+      result += c.reward;
+      await update(c);
+    }
+    return result;
   }
   Future<List<Challenge>> loadOverDue() async {
     var now = DateTimeUtil.clearTime(DateTime.now());

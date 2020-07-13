@@ -148,6 +148,18 @@ void main() {
     count = await subject.delete(c.id);
     expect(count, 0);
   });
+
+  test('Save again after delete', () async {
+    await subject.deleteAll();
+    final Challenge c = await subject.save(Challenge.withName('Foo'));
+    expect(await subject.countAll(), 1);
+
+    subject.delete(c.id);
+    expect(await subject.countAll(), 0);
+
+    subject.insert(c);
+    expect(await subject.countAll(), 1);
+  });
 }
 
 
