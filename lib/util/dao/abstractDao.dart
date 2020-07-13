@@ -57,11 +57,24 @@ abstract class AbstractDao<T extends AbstractEntity> {
     return results.map((e) => fromMap(e)).toList();
   }
 
+  Future<int> deleteAll() async {
+    final Database db = await dbExecutor;
+    return db.delete(tableName);
+  }
+
   Future<int> delete(int id) async {
     if (id == null) return 0;
 
     final Database db = await dbExecutor;
     return db.delete(tableName, where: "id = ?", whereArgs: [id]);
+  }
+
+  Future<List<T>> saveAll(List<T> entities) async {
+    assert(entities != null);
+
+    for(T e in entities) await save(e);
+
+    return entities;
   }
   ///
   /// Checks if the id is set of the entity and either calls insert or update

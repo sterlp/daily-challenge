@@ -1,12 +1,12 @@
-import 'dart:developer';
-
 import 'package:flutterapp/challengelist/models/challengeModel.dart';
+import 'package:flutterapp/log/logger.dart';
 import 'package:flutterapp/util/dao/abstractDao.dart';
 import 'package:flutterapp/util/data.dart';
 import 'package:flutterapp/util/date.dart';
 import 'package:sqflite_common/sqlite_api.dart';
 
 class ChallengeDao extends AbstractDao<Challenge> {
+  static Logger _log = LoggerFactory.get<ChallengeDao>();
   ChallengeDao(Future<Database> db) : super(db, 'CHALLENGE');
 
   Future<int> sumByStatus(ChallengeStatus status) async {
@@ -37,7 +37,7 @@ class ChallengeDao extends AbstractDao<Challenge> {
         whereArgs: [now.millisecondsSinceEpoch],
         orderBy: 'dueAt ASC, createdAt DESC');
 
-    log('loadOverDue ${results.length}');
+    _log.debug('loadOverDue ${results.length}');
     return results;
   }
   Future<List<Challenge>> loadByDate(DateTime dateTime) async {
@@ -48,7 +48,7 @@ class ChallengeDao extends AbstractDao<Challenge> {
         where: "dueAt >= ? AND dueAt <= ?",
         whereArgs: [from.millisecondsSinceEpoch, to.millisecondsSinceEpoch],
         orderBy: 'dueAt ASC, createdAt DESC');
-    log('loadByDate from $from to $to results ${results.length}');
+    _log.debug('loadByDate from $from to $to results ${results.length}');
     return results;
   }
 

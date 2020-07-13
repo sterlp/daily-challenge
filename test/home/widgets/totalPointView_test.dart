@@ -2,7 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutterapp/home/views/totalPointView.dart';
+import 'package:flutterapp/home/widgets/total_points_widget.dart';
+
 
 import '../../testHelper.dart';
 
@@ -10,7 +11,7 @@ void main() {
   testWidgets('Show simple challenge', (WidgetTester tester) async {
     final StreamController<int> _controller = StreamController<int>();
 
-    await pumpTestApp(tester, TotalPointView(_controller.stream));
+    await pumpTestApp(tester, TotalPointsWidget(_controller.stream));
     await tester.pump();
 
     // loading should be shown

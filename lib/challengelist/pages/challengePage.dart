@@ -2,15 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutterapp/challengelist/models/challengeModel.dart';
 import 'package:flutterapp/challengelist/services/challengeService.dart';
+import 'package:flutterapp/home/state/app_state_widget.dart';
 import 'package:flutterapp/util/date.dart';
 import 'package:flutterapp/util/strings.dart';
 
 class ChallengePage extends StatefulWidget {
-  final ChallengeService challengeService;
   final Challenge challenge;
 
-  ChallengePage({Key key, this.challengeService, this.challenge})
-      : super(key: key);
+  ChallengePage({Key key, @required this.challenge}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => ChallengePageState();
@@ -42,7 +41,7 @@ class ChallengePageState extends State<ChallengePage> {
   @override
   Widget build(BuildContext context) {
     var c = widget.challenge;
-
+    final challengeService = AppStateWidget.of(context).get<ChallengeService>();
     if (c.dueAt == null) c.dueAt = DateTimeUtil.clearTime(DateTime.now());
     if (c.latestAt == null) c.latestAt = c.dueAt.add(Challenge.defaultChallengeWaitTime);
 
@@ -54,8 +53,9 @@ class ChallengePageState extends State<ChallengePage> {
         actions: <Widget>[
           IconButton(icon: Icon(Icons.save), onPressed: () async {
             if (_formKey.currentState.validate()) {
+
               _valueChanged();
-              c = await widget.challengeService.save(c);
+              c = await challengeService.save(c);
               Navigator.pop(context, c);
             }
           })

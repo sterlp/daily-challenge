@@ -1,57 +1,35 @@
 import 'package:flutter/material.dart';
-import 'package:flutterapp/challengelist/dao/challengeDao.dart';
 import 'package:flutterapp/challengelist/models/challengeModel.dart';
 import 'package:flutterapp/challengelist/pages/challengeListPage.dart';
 import 'package:flutterapp/challengelist/pages/challengePage.dart';
 import 'package:flutterapp/challengelist/pages/challenge_month_overview_page.dart';
 import 'package:flutterapp/challengelist/services/challengeService.dart';
-import 'package:flutterapp/container/container.dart';
-import 'package:flutterapp/db/dbProvider.dart';
-import 'package:flutterapp/db/testData.dart';
-import 'package:flutterapp/home/views/totalPointView.dart';
+import 'package:flutterapp/home/state/app_state_widget.dart';
+import 'package:flutterapp/home/widgets/total_points_widget.dart';
 
 class ChallengeHomePage extends StatefulWidget {
-
-  final DiContainer _container = new DiContainer()
-    ..add(DbProvider())
-    ..addFactory((rattlinger) => ChallengeDao(rattlinger.get<DbProvider>().db))
-    ..addFactory((rattlinger) => ChallengeService(rattlinger.get<ChallengeDao>()))
-    ..addFactory((rattlinger) => TestData(rattlinger.get<ChallengeService>()));
 
   ChallengeHomePage({Key key}) : super(key: key);
 
   @override
-  _ChallengeHomePageState createState() => _ChallengeHomePageState(_container);
+  _ChallengeHomePageState createState() => _ChallengeHomePageState();
 }
 
 class _ChallengeHomePageState extends State<ChallengeHomePage> {
   int _page = 0;
   final PageController _pagesController = PageController(initialPage: 0);
 
-  final DiContainer _container;
-  final ChallengeService _challengeService;
-
-  _ChallengeHomePageState._(this._container, this._challengeService);
-  factory _ChallengeHomePageState(DiContainer container) {
-    var c = container.get<ChallengeService>();
-    c.getTotal(); // load the total
-    return new _ChallengeHomePageState._(container, c);
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    _container.close();
-  }
-
   @override
   Widget build(BuildContext context) {
+    final _container = AppStateWidget.of(context);
+    final _challengeService = _container.get<ChallengeService>();
+
     return Scaffold(
       body: PageView(
         controller: _pagesController,
         scrollDirection: Axis.horizontal,
         children: [
-          ChallengeListPage(_container),
+          ChallengeListPage(),
           ChallengeMonthOverviewPage()
         ],
         physics: NeverScrollableScrollPhysics(), // Comment this if you need to use Swipe.
@@ -59,11 +37,11 @@ class _ChallengeHomePageState extends State<ChallengeHomePage> {
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () async {
           Navigator.push(
-              context,
-              MaterialPageRoute<Challenge>(
-                  builder: (BuildContext context) =>
-                      ChallengePage(challenge: Challenge(), challengeService: _challengeService)
-              )
+            context,
+            MaterialPageRoute<Challenge>(
+              builder: (BuildContext context) =>
+                ChallengePage(challenge: Challenge())
+            )
           );
         },
         icon: Icon(Icons.add),
@@ -89,7 +67,7 @@ class _ChallengeHomePageState extends State<ChallengeHomePage> {
             ),
             Padding(
                 padding: const EdgeInsets.fromLTRB(2, 32, 2, 12),
-                child: TotalPointView(_challengeService.totalPointsStream),
+                child: TotalPointsWidget(_challengeService.totalPointsStream),
             ),
             IconButton(
               iconSize: 30.0,

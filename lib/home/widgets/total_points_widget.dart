@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 
 /// Show the total earned points
-class TotalPointView extends StatefulWidget {
+class TotalPointsWidget extends StatefulWidget {
   final Stream<int> points;
 
-  TotalPointView(this.points, {Key key}) : super(key: key);
+  TotalPointsWidget(this.points, {Key key}) : super(key: key);
 
   @override
-  _TotalPointViewState createState() => _TotalPointViewState();
+  _TotalPointsWidgetState createState() => _TotalPointsWidgetState();
 }
 
-class _TotalPointViewState extends State<TotalPointView> {
-  _TotalPointViewState();
+class _TotalPointsWidgetState extends State<TotalPointsWidget> {
+  _TotalPointsWidgetState();
 
   @override
   Widget build(BuildContext context) {

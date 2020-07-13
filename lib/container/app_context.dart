@@ -1,10 +1,10 @@
 import 'package:flutter/widgets.dart';
-import 'package:flutterapp/container/containerModel.dart';
+import 'package:flutterapp/container/app_context_model.dart';
 import 'dart:developer' as developer;
 
-typedef BeanFactory<T> = T Function(DiContainer container);
+typedef BeanFactory<T> = T Function(AppContext container);
 
-class DiContainer with Closeable {
+class AppContext with Closeable {
   /// stores all [BeanFactory]s that get registered by Type
   final _rattlingerFactory = Map<Type, BeanFactory>();
   final _rattlinger = Map<Type, dynamic>();
@@ -29,11 +29,11 @@ class DiContainer with Closeable {
     return result;
   }
 
-  DiContainer add<T>(T bean) {
+  AppContext add<T>(T bean) {
     _rattlinger[T] = bean;
     return this;
   }
-  DiContainer addFactory<T>(BeanFactory<T> beanFactory) {
+  AppContext addFactory<T>(BeanFactory<T> beanFactory) {
     _rattlingerFactory[T] = beanFactory;
     return this;
   }

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutterapp/challengelist/dao/challengeDao.dart';
 import 'package:flutterapp/challengelist/models/challengeModel.dart';
+import 'package:flutterapp/log/logger.dart';
 import 'dart:developer';
 
 import 'package:flutterapp/util/date.dart';
@@ -10,13 +11,13 @@ import 'package:flutterapp/util/model/observableModel.dart';
 /// https://www.sqlite.org/datatype3.html
 ///
 class ChallengeService {
+  static final Logger _log = LoggerFactory.get<ChallengeService>();
+
   final ChallengeDao _challengeDao;
   final _totalPoints = ObservableModel<int>();
-  final _challengeChanged = ObservableModel<List<Challenge>>();
 
   get totalPoints {return _totalPoints.value; }
   Stream<int> get totalPointsStream {return _totalPoints.stream; }
-  Stream<List<Challenge>> get challengeChangedStream {return _challengeChanged.stream; }
 
   ChallengeService(this._challengeDao);
 
@@ -39,16 +40,19 @@ class ChallengeService {
     return _challengeDao.getById(id);
   }
 
+  Future<List<Challenge>> saveAll(List<Challenge> challenges) async {
+    var results = await _challengeDao.saveAll(challenges);
+    return results;
+  }
+
   Future<Challenge> save(Challenge c) async {
     var result = await _challengeDao.save(c);
-    _challengeChanged.value = [result];
     return result;
   }
 
   Future<int> delete(Challenge c) async {
     var deleted = await _challengeDao.delete(c.id);
     log('Deleted ${c.name}');
-    _challengeChanged.value = [c];
     if (deleted > 0) return calcTotal();
     else return _totalPoints.value;
   }
@@ -70,7 +74,7 @@ class ChallengeService {
     int failed = await _challengeDao.fail(values);
     var result = total - failed;
     _totalPoints.value = result;
-    _challengeChanged.value = values;
+    _log.info('Failed ${values.length} challenges with $failed points.');
     return result;
   }
 
@@ -83,9 +87,6 @@ class ChallengeService {
         changed.add(await _challengeDao.save(challenge));
       }
     }
-    if (changed.length > 0) {
-      _challengeChanged.value = changed;
-    }
     return calcTotal();
   }
   Future<int> incomplete(List<Challenge> values) async {
@@ -97,9 +98,6 @@ class ChallengeService {
         changed.add(await _challengeDao.save(challenge));
       }
     }
-    if (changed.length > 0) {
-      _challengeChanged.value = changed;
-    }
     return calcTotal();
   }
 
@@ -108,5 +106,9 @@ class ChallengeService {
   }
   Future<List<Challenge>> loadByDate(DateTime dateTime) async {
     return _challengeDao.loadByDate(dateTime);
+  }
+
+  Future<void> deleteAll() {
+    return _challengeDao.deleteAll();
   }
 }

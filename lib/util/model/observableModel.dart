@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:flutterapp/container/containerModel.dart';
+import 'package:flutterapp/container/app_context_model.dart';
 
 class ObservableModel<T> with Closeable {
   final StreamController<T> _controller = new StreamController<T>();
@@ -16,8 +16,10 @@ class ObservableModel<T> with Closeable {
   get value => _value;
 
   set value(T newVal) {
-    _value = newVal;
-    _controller.sink.add(newVal);
+    if (_value != newVal) {
+      _value = newVal;
+      _controller.sink.add(newVal);
+    }
   }
 
   @override

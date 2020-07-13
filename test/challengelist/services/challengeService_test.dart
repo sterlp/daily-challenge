@@ -25,7 +25,7 @@ void main() {
   });
 
   test("Test generateTestData", () async {
-    await TestData(challengeService).generateTestData();
+    await TestData(challengeService).generatePresentationData();
     expect(3, (await challengeService.load()).length);
   });
 
