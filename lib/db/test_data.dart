@@ -1,5 +1,5 @@
-import 'package:flutterapp/challengelist/models/challengeModel.dart';
-import 'package:flutterapp/challengelist/services/challengeService.dart';
+import 'package:flutterapp/challengelist/models/challenge_model.dart';
+import 'package:flutterapp/challengelist/services/challenge_service.dart';
 import 'package:flutterapp/util/random_util.dart';
 
 class TestData {

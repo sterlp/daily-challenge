@@ -1,6 +1,6 @@
-import 'package:flutterapp/challengelist/models/challengeModel.dart';
+import 'package:flutterapp/challengelist/models/challenge_model.dart';
 import 'package:flutterapp/log/logger.dart';
-import 'package:flutterapp/util/dao/abstractDao.dart';
+import 'package:flutterapp/util/dao/abstract_dao.dart';
 import 'package:flutterapp/util/data.dart';
 import 'package:flutterapp/util/date.dart';
 import 'package:sqflite_common/sqlite_api.dart';

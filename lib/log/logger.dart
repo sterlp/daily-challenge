@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+
 class LoggerFactory {
   static Logger get<T>() {
     return getWithName(T.toString());
@@ -16,9 +18,9 @@ class Logger {
     print('[WARN]  $_name: $message');
   }
   info(String message) {
-    print('[INFO]  $_name: $message');
+    if (kDebugMode) print('[INFO]  $_name: $message');
   }
   debug(String message) {
-    print('[DEBUG] $_name: $message');
+    if (kDebugMode) print('[DEBUG] $_name: $message');
   }
 }

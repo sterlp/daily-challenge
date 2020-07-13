@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:flutterapp/challengelist/models/challengeModel.dart';
-import 'package:flutterapp/challengelist/services/challengeService.dart';
-import 'package:flutterapp/challengelist/views/challengeWidget.dart';
-import 'package:flutterapp/db/testData.dart';
+import 'package:flutterapp/challengelist/models/challenge_model.dart';
+import 'package:flutterapp/challengelist/services/challenge_service.dart';
+import 'package:flutterapp/challengelist/widgets/challenge_widget.dart';
 import 'package:flutterapp/home/state/app_state_widget.dart';
 import 'package:flutterapp/log/logger.dart';
 import 'package:flutterapp/util/date.dart';
@@ -101,15 +100,17 @@ class ChallengeListPageState extends State<ChallengeListPage> {
         title: Text('Kick your butt today'),
         actions: <Widget>[
           FlatButton.icon(onPressed: () async {
-            var newDate = await showDatePicker(context: context, initialDate: _selectedDay,
-                firstDate: _selectedDay.add(Duration(days: -60)), lastDate: _selectedDay.add(Duration(days: 60)));
-            if (newDate != null && newDate.millisecondsSinceEpoch != _selectedDay.millisecondsSinceEpoch) {
-              _log.debug('date $newDate selected.');
-              _selectedDay = newDate;
-              _reload();
-            }
-          },
-          icon: Icon(Icons.arrow_drop_down), label: Text(doneFormat.format(_selectedDay))),
+              var newDate = await showDatePicker(context: context, initialDate: _selectedDay,
+                  firstDate: _selectedDay.add(Duration(days: -60)), lastDate: _selectedDay.add(Duration(days: 60)));
+              if (newDate != null && newDate.millisecondsSinceEpoch != _selectedDay.millisecondsSinceEpoch) {
+                _log.debug('date $newDate selected.');
+                _selectedDay = newDate;
+                _reload();
+              }
+            },
+            icon: Icon(Icons.arrow_drop_down), label: Text(doneFormat.format(_selectedDay))
+          ),
+          /*
           FlatButton.icon(
               onPressed: () async {
                 _challengeService.deleteAll();
@@ -118,6 +119,7 @@ class ChallengeListPageState extends State<ChallengeListPage> {
               },
               icon: Icon(Icons.add), label: Text("Generate Test Data")
           )
+          */
         ]
       ),
 

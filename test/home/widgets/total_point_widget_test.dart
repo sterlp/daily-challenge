@@ -5,7 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:flutterapp/home/widgets/total_points_widget.dart';
 
 
-import '../../testHelper.dart';
+import '../../test_helper.dart';
 
 void main() {
   testWidgets('Show simple challenge', (WidgetTester tester) async {

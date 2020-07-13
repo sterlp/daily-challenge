@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutterapp/challengelist/models/challengeModel.dart';
-import 'package:flutterapp/challengelist/pages/challengeListPage.dart';
-import 'package:flutterapp/challengelist/pages/challengePage.dart';
+import 'package:flutterapp/challengelist/models/challenge_model.dart';
+import 'package:flutterapp/challengelist/pages/challenge_list_page.dart';
+import 'package:flutterapp/challengelist/pages/challenge_page.dart';
 import 'package:flutterapp/challengelist/pages/challenge_month_overview_page.dart';
-import 'package:flutterapp/challengelist/services/challengeService.dart';
+import 'package:flutterapp/challengelist/services/challenge_service.dart';
 import 'package:flutterapp/home/state/app_state_widget.dart';
 import 'package:flutterapp/home/widgets/total_points_widget.dart';
 

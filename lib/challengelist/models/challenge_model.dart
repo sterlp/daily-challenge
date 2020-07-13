@@ -1,4 +1,4 @@
-import 'package:flutterapp/util/dao/abstractDao.dart';
+import 'package:flutterapp/util/dao/abstract_dao.dart';
 import 'package:flutterapp/util/date.dart';
 import 'package:intl/intl.dart';
 

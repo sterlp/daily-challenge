@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutterapp/util/model/observableModel.dart';
+import 'package:flutterapp/util/model/observable_model.dart';
 
 void main() {
 

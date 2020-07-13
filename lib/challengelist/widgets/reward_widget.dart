@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutterapp/challengelist/models/challengeModel.dart';
+import 'package:flutterapp/challengelist/models/challenge_model.dart';
 
 class RewardWidget extends StatelessWidget {
   final int reward;

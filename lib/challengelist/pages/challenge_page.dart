@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutterapp/challengelist/models/challengeModel.dart';
-import 'package:flutterapp/challengelist/services/challengeService.dart';
+import 'package:flutterapp/challengelist/models/challenge_model.dart';
+import 'package:flutterapp/challengelist/services/challenge_service.dart';
 import 'package:flutterapp/home/state/app_state_widget.dart';
 import 'package:flutterapp/util/date.dart';
 import 'package:flutterapp/util/strings.dart';
