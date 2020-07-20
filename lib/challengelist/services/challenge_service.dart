@@ -14,25 +14,24 @@ class ChallengeService {
   static final Logger _log = LoggerFactory.get<ChallengeService>();
 
   final ChallengeDao _challengeDao;
-  final _totalPoints = ObservableModel<int>();
+  final totalPoints = ObservableModel<int>();
 
-  get totalPoints {return _totalPoints.value; }
-  Stream<int> get totalPointsStream {return _totalPoints.stream; }
+  Stream<int> get totalPointsStream {return totalPoints.stream; }
 
   ChallengeService(this._challengeDao);
 
   Future<int> getTotal() async {
-    if (_totalPoints.value == null) {
+    if (totalPoints.value == null) {
       return calcTotal();
     }
-    return _totalPoints.value;
+    return totalPoints.value;
   }
 
   Future<int> calcTotal() async {
     var done = await _challengeDao.sumByStatus(ChallengeStatus.done);
     var failed = await  _challengeDao.sumByStatus(ChallengeStatus.failed);
     var newTotal = done - failed;
-    _totalPoints.value = newTotal;
+    totalPoints.value = newTotal;
     return newTotal;
   }
 
@@ -54,7 +53,7 @@ class ChallengeService {
     var deleted = await _challengeDao.delete(c.id);
     log('Deleted ${c.name}');
     if (deleted > 0) return calcTotal();
-    else return _totalPoints.value;
+    else return totalPoints.value;
   }
   
   Future<List<Challenge>> load() async {
@@ -73,7 +72,7 @@ class ChallengeService {
     int total = await getTotal();
     int failed = await _challengeDao.fail(values);
     var result = total - failed;
-    _totalPoints.value = result;
+    totalPoints.value = result;
     _log.info('Failed ${values.length} challenges with $failed points.');
     return result;
   }

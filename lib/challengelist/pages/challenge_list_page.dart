@@ -5,6 +5,7 @@ import 'package:flutterapp/challengelist/pages/challenge_page.dart';
 import 'package:flutterapp/challengelist/services/challenge_service.dart';
 import 'package:flutterapp/challengelist/widgets/challenge_widget.dart';
 import 'package:flutterapp/home/state/app_state_widget.dart';
+import 'package:flutterapp/home/widgets/total_points_widget.dart';
 import 'package:flutterapp/log/logger.dart';
 import 'package:flutterapp/util/date.dart';
 import 'package:intl/intl.dart';
@@ -15,7 +16,7 @@ class ChallengeListPage extends StatefulWidget {
 }
 
 class ChallengeListPageState extends State<ChallengeListPage> {
-  static final DateFormat doneFormat = DateFormat("LLLL dd.MM");
+  static final DateFormat doneFormat = DateFormat("EEEE, dd.MM");
   static final Logger _log = LoggerFactory.get<ChallengeListPageState>();
 
   ChallengeService _challengeService;
@@ -98,11 +99,14 @@ class ChallengeListPageState extends State<ChallengeListPage> {
   @override
   Widget build(BuildContext context) {
     _log.debug('build...');
+    if (_challengeService == null) _challengeService = AppStateWidget.of(context).get<ChallengeService>();
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Kick your butt today'),
-        actions: <Widget>[
-          FlatButton.icon(onPressed: () async {
+        bottomNavigationBar: BottomAppBar(
+        shape: CircularNotchedRectangle(),
+        clipBehavior: Clip.antiAlias,
+        child: Row(
+          children: <Widget>[
+            FlatButton.icon(onPressed: () async {
               var newDate = await showDatePicker(context: context, initialDate: _selectedDay,
                   firstDate: _selectedDay.add(Duration(days: -60)), lastDate: _selectedDay.add(Duration(days: 60)));
               if (newDate != null && newDate.millisecondsSinceEpoch != _selectedDay.millisecondsSinceEpoch) {
@@ -111,22 +115,18 @@ class ChallengeListPageState extends State<ChallengeListPage> {
                 _reload();
               }
             },
-            icon: Icon(Icons.arrow_drop_down, color: Colors.white),
-            label: Text(doneFormat.format(_selectedDay), style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600))
-          ),
-          /*
-          FlatButton.icon(
-              onPressed: () async {
-                _challengeService.deleteAll();
-                await AppStateWidget.of(context).get<TestData>().generateData(10, daysPast: 8, daysFuture: 50);
-                _reload(true);
-              },
-              icon: Icon(Icons.add), label: Text("Generate Test Data")
-          )
-          */
-        ]
-      ),
+                icon: Icon(Icons.arrow_drop_down),
+                label: Text(doneFormat.format(_selectedDay), style: TextStyle(fontWeight: FontWeight.w600))
+            ),
+            Spacer(),
+            Padding(
+              padding: EdgeInsets.fromLTRB(0, 0, 16, 0),
+              child: TotalPointsWidget(_challengeService.totalPoints),
+            )
 
+          ],
+        )
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
           var result = await Navigator.push(
@@ -140,7 +140,7 @@ class ChallengeListPageState extends State<ChallengeListPage> {
         },
         child: Icon(Icons.add)
       ),
-
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       body: _buildChallenges(),
     );
   }

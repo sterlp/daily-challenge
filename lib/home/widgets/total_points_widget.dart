@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutterapp/util/model/observable_model.dart';
 
 /// Show the total earned points
 class TotalPointsWidget extends StatefulWidget {
-  final Stream<int> points;
+  final ObservableModel<int> points;
 
   TotalPointsWidget(this.points, {Key key}) : super(key: key);
 
@@ -16,7 +17,8 @@ class _TotalPointsWidgetState extends State<TotalPointsWidget> {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<int>(
-        stream: widget.points,
+        stream: widget.points.stream,
+        initialData: widget.points.value,
         builder: (context, snapshot) {
           Widget result;
           if (snapshot.hasData) {

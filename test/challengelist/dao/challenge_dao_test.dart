@@ -2,6 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:flutterapp/challengelist/dao/challenge_dao.dart';
 import 'package:flutterapp/challengelist/models/challenge_model.dart';
 import 'package:flutterapp/db/db_provider.dart';
+import 'package:flutterapp/util/random_util.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
@@ -159,6 +160,16 @@ void main() {
 
     subject.insert(c);
     expect(await subject.countAll(), 1);
+  });
+
+  test('Save long name', () async {
+    await subject.deleteAll();
+    final _name = RandomUtil.randomString(100);
+    Challenge c = await subject.save(Challenge.withName(_name));
+    expect(await subject.countAll(), 1);
+
+    c = await subject.getById(c.id);
+    expect(c.name, _name);
   });
 }
 

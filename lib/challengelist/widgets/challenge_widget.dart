@@ -87,21 +87,21 @@ class _ChallengeWidgetState extends State<ChallengeWidget> {
     );
 
     return Slidable(
-          actionPane: SlidableDrawerActionPane(),
-          actionExtentRatio: 0.25,
-          child: Card(
-              child: CheckboxListTile(
-                  onChanged: (v) => _onChallengeChecked(v, context),
-                  value: done,
-                  secondary: RewardWidget(reward: widget.challenge.reward, status: widget.challenge.status),
-                  subtitle: done
-                      ? Text('Done ' + DateTimeUtil.format(challenge.doneAt, Challenge.doneFormat))
-                      : failed ?
-                  Text('Failed since ' + DateTimeUtil.format(challenge.latestAt, Challenge.dueFormat), style: challenge.isOverdue ? _overDueStyle : null)
-                      : Text('Due until ' + DateTimeUtil.format(challenge.dueAt, Challenge.dueFormat), style: challenge.isOverdue ? _overDueStyle : null),
-                  title: Text(challenge.name, style: done || failed ? _notOpenTextStyle : null))
-          ),
-          secondaryActions: actions
-      );
+        actionPane: SlidableDrawerActionPane(),
+        actionExtentRatio: 0.25,
+        child: Card(
+          child: CheckboxListTile(
+            onChanged: (v) => _onChallengeChecked(v, context),
+            value: done,
+            secondary: RewardWidget(reward: widget.challenge.reward, status: widget.challenge.status),
+            subtitle: done
+                ? Text('Done ' + DateTimeUtil.format(challenge.doneAt, Challenge.doneFormat))
+                : failed ?
+            Text('Failed since ' + DateTimeUtil.format(challenge.latestAt, Challenge.dueFormat), style: challenge.isOverdue ? _overDueStyle : null)
+                : Text('Due until ' + DateTimeUtil.format(challenge.dueAt, Challenge.dueFormat), style: challenge.isOverdue ? _overDueStyle : null),
+            title: Text(challenge.name, style: done || failed ? _notOpenTextStyle : null))
+      ),
+      secondaryActions: actions
+    );
   }
 }
