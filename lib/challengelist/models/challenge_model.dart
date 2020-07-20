@@ -9,6 +9,8 @@ enum ChallengeStatus {
 }
 
 class Challenge extends AbstractEntity {
+  static const NAME_LENGTH = 100;
+
   static final DateFormat doneFormat = DateFormat("EEEEE, LLLL dd");
   static final DateFormat dueFormat = DateFormat("EEEEE, LLLL dd");
   static final Duration defaultChallengeWaitTime = Duration(days: 7);

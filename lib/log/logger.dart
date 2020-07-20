@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/foundation.dart';
 
 class LoggerFactory {
@@ -14,6 +16,9 @@ class Logger {
 
   Logger(this._name);
 
+  num _syncTime;
+  String _syncString;
+
   warn(String message) {
     print('[WARN]  $_name: $message');
   }
@@ -22,5 +27,27 @@ class Logger {
   }
   debug(String message) {
     if (kDebugMode) print('[DEBUG] $_name: $message');
+  }
+
+  startSync(String name) {
+    if (kDebugMode) {
+      Timeline.startSync(name);
+      _syncTime = DateTime.now().millisecondsSinceEpoch;
+      _syncString = name;
+    }
+  }
+
+  finishSync() {
+    if (kDebugMode) {
+      if (_syncString == null || _syncTime == null) {
+        warn('finishSync without startSync!');
+      } else {
+        _syncTime = DateTime.now().millisecondsSinceEpoch - _syncTime;
+        debug('$_syncString executed in ${_syncTime}ms.');
+      }
+      Timeline.finishSync();
+      _syncString = null;
+      _syncTime = null;
+    }
   }
 }

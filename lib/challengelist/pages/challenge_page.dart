@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:flutterapp/challengelist/models/challenge_model.dart';
 import 'package:flutterapp/challengelist/services/challenge_service.dart';
@@ -18,12 +19,17 @@ class ChallengePageState extends State<ChallengePage> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _rewardController = TextEditingController();
+  ChallengeService _challengeService;
 
   @override
   void initState() {
     super.initState();
     _nameController.addListener(_valueChanged);
     _rewardController.addListener(_valueChanged);
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      _challengeService = AppStateWidget.of(context).get<ChallengeService>();
+    });
+
   }
 
   void _valueChanged() {
@@ -31,6 +37,13 @@ class ChallengePageState extends State<ChallengePage> {
     c.name = _nameController.text;
     if (_rewardController.text != "") c.reward = int.parse(_rewardController.text);
     // dev.log('_valueChanged $c');
+  }
+  _save() async {
+    if (_formKey.currentState.validate()) {
+      _valueChanged();
+      var c = await _challengeService.save(widget.challenge);
+      Navigator.pop(context, c);
+    }
   }
   @override
   void dispose() {
@@ -41,7 +54,8 @@ class ChallengePageState extends State<ChallengePage> {
   @override
   Widget build(BuildContext context) {
     var c = widget.challenge;
-    final challengeService = AppStateWidget.of(context).get<ChallengeService>();
+    if (_challengeService == null) _challengeService = AppStateWidget.of(context).get<ChallengeService>();
+
     if (c.dueAt == null) c.dueAt = DateTimeUtil.clearTime(DateTime.now());
     if (c.latestAt == null) c.latestAt = c.dueAt.add(Challenge.defaultChallengeWaitTime);
 
@@ -51,15 +65,12 @@ class ChallengePageState extends State<ChallengePage> {
       appBar: AppBar(
         title: Text(c.id != null ? 'Edit ${c.name}' : 'Create a new challenge'),
         actions: <Widget>[
-          IconButton(icon: Icon(Icons.save), onPressed: () async {
-            if (_formKey.currentState.validate()) {
-
-              _valueChanged();
-              c = await challengeService.save(c);
-              Navigator.pop(context, c);
-            }
-          })
+          IconButton(icon: Icon(Icons.save), onPressed: _save)
         ]
+      ),
+      floatingActionButton: FloatingActionButton(
+          onPressed: _save,
+          child: Icon(Icons.save)
       ),
       // https://medium.com/flutterpub/create-beautiful-forms-with-flutter-47075cfe712
       body: Form(key: _formKey, child:
@@ -68,6 +79,7 @@ class ChallengePageState extends State<ChallengePage> {
             new ListTile(
               leading: Icon(Icons.thumb_up),
               title: TextFormField(
+                inputFormatters: [LengthLimitingTextInputFormatter(Challenge.NAME_LENGTH)],
                 controller: _nameController,
                 validator: (String v) => v.isNullOrEmpty ? 'Enter a challenge name' : null,
                 decoration: new InputDecoration(

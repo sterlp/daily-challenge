@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutterapp/challengelist/models/challenge_model.dart';
+import 'package:flutterapp/challengelist/pages/challenge_page.dart';
 import 'package:flutterapp/challengelist/services/challenge_service.dart';
 import 'package:flutterapp/challengelist/widgets/challenge_widget.dart';
-import 'package:flutterapp/db/test_data.dart';
 import 'package:flutterapp/home/state/app_state_widget.dart';
 import 'package:flutterapp/log/logger.dart';
 import 'package:flutterapp/util/date.dart';
@@ -34,15 +34,14 @@ class ChallengeListPageState extends State<ChallengeListPage> {
 
   _reload([bool force = false]) async {
     final isToday = DateTimeUtil.clearTime(_selectedDay).millisecondsSinceEpoch == DateTimeUtil.clearTime(DateTime.now()).millisecondsSinceEpoch;
-    _log.debug('_reload, ${isToday ? "today" : "not today"}  ');
+    _log.startSync('ChallengeListPage._reload, ${isToday ? "today" : "not today"}.');
     _challengeService.calcTotal();
     var current = await _challengeService.loadByDate(_selectedDay);
     var overDue = <Challenge>[];
 
-
+    // TODO just for now, business logic in view
     if (isToday) {
       overDue = await _challengeService.loadOverDue();
-      // TODO just for now, business logic in view
       await _challengeService.failOverDue(overDue);
     }
 
@@ -61,6 +60,7 @@ class ChallengeListPageState extends State<ChallengeListPage> {
     } else {
       setState(() {});
     }
+    _log.finishSync();
   }
 
   Widget _buildChallenges() {
@@ -89,7 +89,7 @@ class ChallengeListPageState extends State<ChallengeListPage> {
         action: SnackBarAction(label: 'Undo', onPressed: () async {
           _log.info('Undo delete of $c');
           await _challengeService.insert(c);
-          _reload(true);
+          _reload();
         }),
       )
     );
@@ -111,9 +111,10 @@ class ChallengeListPageState extends State<ChallengeListPage> {
                 _reload();
               }
             },
-            icon: Icon(Icons.arrow_drop_down), label: Text(doneFormat.format(_selectedDay))
+            icon: Icon(Icons.arrow_drop_down, color: Colors.white),
+            label: Text(doneFormat.format(_selectedDay), style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600))
           ),
-
+          /*
           FlatButton.icon(
               onPressed: () async {
                 _challengeService.deleteAll();
@@ -122,8 +123,22 @@ class ChallengeListPageState extends State<ChallengeListPage> {
               },
               icon: Icon(Icons.add), label: Text("Generate Test Data")
           )
-
+          */
         ]
+      ),
+
+      floatingActionButton: FloatingActionButton(
+        onPressed: () async {
+          var result = await Navigator.push(
+              context,
+              MaterialPageRoute<Challenge>(
+                  builder: (BuildContext context) =>
+                      ChallengePage(challenge: Challenge())
+              )
+          );
+          if (result != null) _reload();
+        },
+        child: Icon(Icons.add)
       ),
 
       body: _buildChallenges(),
