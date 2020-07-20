@@ -1,11 +1,11 @@
 import 'dart:async';
+import 'package:flutter/cupertino.dart';
 import 'package:flutterapp/challengelist/dao/challenge_dao.dart';
 import 'package:flutterapp/challengelist/models/challenge_model.dart';
 import 'package:flutterapp/log/logger.dart';
 import 'dart:developer';
 
 import 'package:flutterapp/util/date.dart';
-import 'package:flutterapp/util/model/observable_model.dart';
 
 ///
 /// https://www.sqlite.org/datatype3.html
@@ -14,9 +14,7 @@ class ChallengeService {
   static final Logger _log = LoggerFactory.get<ChallengeService>();
 
   final ChallengeDao _challengeDao;
-  final totalPoints = ObservableModel<int>();
-
-  Stream<int> get totalPointsStream {return totalPoints.stream; }
+  final totalPoints = ValueNotifier<int>(null);
 
   ChallengeService(this._challengeDao);
 

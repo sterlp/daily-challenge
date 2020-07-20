@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutterapp/util/model/observable_model.dart';
 
 /// Show the total earned points
 class TotalPointsWidget extends StatefulWidget {
-  final ObservableModel<int> points;
+  final ValueNotifier<int> points;
 
   TotalPointsWidget(this.points, {Key key}) : super(key: key);
 
@@ -16,13 +15,11 @@ class _TotalPointsWidgetState extends State<TotalPointsWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<int>(
-        stream: widget.points.stream,
-        initialData: widget.points.value,
-        builder: (context, snapshot) {
+    return ValueListenableBuilder<int>(
+        valueListenable: widget.points,
+        builder: (context, total, _) {
           Widget result;
-          if (snapshot.hasData) {
-            final total = snapshot.data;
+          if (total != null) {
             TextStyle style;
             if (total < 0) style = TextStyle(color: Colors.redAccent, fontWeight: FontWeight.w600);
             else if (total > 0) style = TextStyle(color: Colors.green, fontWeight: FontWeight.w600);
