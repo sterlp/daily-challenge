@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutterapp/home/widgets/total_points_widget.dart';
+import 'package:flutterapp/home/widget/total_points_widget.dart';
 
 import '../../test_helper.dart';
 

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutterapp/challengelist/pages/challenge_list_page.dart';
+import 'package:flutterapp/challengelist/page/challenge_list_page.dart';
 import 'package:flutterapp/reward/page/reward_shop_page.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 

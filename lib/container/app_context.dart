@@ -1,10 +1,11 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutterapp/container/app_context_model.dart';
-import 'dart:developer' as developer;
+import 'package:flutterapp/log/logger.dart';
 
 typedef BeanFactory<T> = T Function(AppContext container);
 
 class AppContext with Closeable {
+  static final Logger _log = LoggerFactory.get<AppContext>();
   /// stores all [BeanFactory]s that get registered by Type
   final _rattlingerFactory = Map<Type, BeanFactory>();
   final _rattlinger = Map<Type, dynamic>();
@@ -40,12 +41,13 @@ class AppContext with Closeable {
 
   @override
   void close() {
+    _log.info('app context is shutting down.');
     _rattlingerFactory.clear();
     _rattlinger.forEach((key, value) {
       try {
         if(value is Closeable) value.close();
       } catch(e) {
-        developer.log('failed to close service', name: value.toString(), error: e);
+        _log.warn('failed to close service name: ${value.toString()}, error: $e');
       }
     });
     _rattlinger.clear();

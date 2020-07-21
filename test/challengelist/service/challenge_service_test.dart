@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutterapp/challengelist/dao/challenge_dao.dart';
-import 'package:flutterapp/challengelist/models/challenge_model.dart';
-import 'package:flutterapp/challengelist/services/challenge_service.dart';
+import 'package:flutterapp/challengelist/model/challenge_model.dart';
+import 'package:flutterapp/challengelist/service/challenge_service.dart';
 import 'package:flutterapp/db/db_provider.dart';
 import 'package:flutterapp/db/test_data.dart';
 import 'package:sqflite/sqflite.dart';

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
-import 'package:flutterapp/challengelist/models/challenge_model.dart';
-import 'package:flutterapp/challengelist/services/challenge_service.dart';
+import 'package:flutterapp/challengelist/model/challenge_model.dart';
+import 'package:flutterapp/challengelist/service/challenge_service.dart';
 import 'package:flutterapp/home/state/app_state_widget.dart';
 import 'package:flutterapp/util/date.dart';
 import 'package:flutterapp/util/strings.dart';

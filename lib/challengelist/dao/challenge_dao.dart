@@ -1,4 +1,4 @@
-import 'package:flutterapp/challengelist/models/challenge_model.dart';
+import 'package:flutterapp/challengelist/model/challenge_model.dart';
 import 'package:flutterapp/log/logger.dart';
 import 'package:flutterapp/util/dao/abstract_dao.dart';
 import 'package:flutterapp/util/data.dart';

@@ -1,10 +1,8 @@
-import 'package:flutterapp/challengelist/models/challenge_model.dart';
-import 'package:flutterapp/challengelist/services/challenge_service.dart';
+import 'package:flutterapp/challengelist/model/challenge_model.dart';
+import 'package:flutterapp/challengelist/service/challenge_service.dart';
 import 'package:flutterapp/util/random_util.dart';
 
 class TestData {
-
-
   final ChallengeService _challengeService;
 
   TestData(this._challengeService);

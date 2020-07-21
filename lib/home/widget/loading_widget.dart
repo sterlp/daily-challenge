@@ -8,7 +8,7 @@ class LoadingWidget extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               CircularProgressIndicator(),
-              Padding(child: Text('Loading ...'), padding: EdgeInsets.all(16)),
+              Padding(child: Text('Loading ...', style: Theme.of(context).textTheme.headline4,), padding: EdgeInsets.all(16)),
             ]
         )
     );

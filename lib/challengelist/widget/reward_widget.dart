@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutterapp/challengelist/models/challenge_model.dart';
+import 'package:flutterapp/challengelist/model/challenge_model.dart';
 
 class RewardWidget extends StatelessWidget {
   final int reward;
@@ -25,14 +25,12 @@ class RewardWidget extends StatelessWidget {
       child: ClipOval(
         child: Material(
           color: color, // button color
-          child: InkWell(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Icon(icon), // icon
-                Text(reward.toString()), // text
-              ],
-            ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Icon(icon), // icon
+              Text(reward.toString()), // text
+            ],
           ),
         ),
       ),

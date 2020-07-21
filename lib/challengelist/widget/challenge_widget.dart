@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:flutterapp/challengelist/models/challenge_model.dart';
-import 'package:flutterapp/challengelist/pages/challenge_page.dart';
-import 'package:flutterapp/challengelist/services/challenge_service.dart';
-import 'package:flutterapp/challengelist/widgets/reward_widget.dart';
+import 'package:flutterapp/challengelist/model/challenge_model.dart';
+import 'package:flutterapp/challengelist/page/challenge_page.dart';
+import 'package:flutterapp/challengelist/service/challenge_service.dart';
+import 'package:flutterapp/challengelist/widget/reward_widget.dart';
 import 'package:flutterapp/home/state/app_state_widget.dart';
 import 'package:flutterapp/util/date.dart';
 

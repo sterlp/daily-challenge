@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutterapp/challengelist/models/challenge_model.dart';
-import 'package:flutterapp/challengelist/widgets/challenge_widget.dart';
+import 'package:flutterapp/challengelist/model/challenge_model.dart';
+import 'package:flutterapp/challengelist/widget/challenge_widget.dart';
 
 void main() {
   testWidgets('Show simple challenge', (WidgetTester tester) async {

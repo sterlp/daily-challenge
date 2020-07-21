@@ -9,6 +9,8 @@ class ParserUtil {
     DateTime result;
     if (v == null) {
       result = null;
+    } else if (v is DateTime) {
+      result = v;
     } else {
       result = DateTime.fromMillisecondsSinceEpoch(v);
     }

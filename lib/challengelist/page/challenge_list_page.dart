@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:flutterapp/challengelist/models/challenge_model.dart';
-import 'package:flutterapp/challengelist/pages/challenge_page.dart';
-import 'package:flutterapp/challengelist/services/challenge_service.dart';
-import 'package:flutterapp/challengelist/widgets/challenge_widget.dart';
+import 'package:flutterapp/challengelist/model/challenge_model.dart';
+import 'package:flutterapp/challengelist/page/challenge_page.dart';
+import 'package:flutterapp/challengelist/service/challenge_service.dart';
+import 'package:flutterapp/challengelist/widget/challenge_widget.dart';
 import 'package:flutterapp/home/state/app_state_widget.dart';
-import 'package:flutterapp/home/widgets/total_points_widget.dart';
+import 'package:flutterapp/home/widget/total_points_widget.dart';
 import 'package:flutterapp/log/logger.dart';
 import 'package:flutterapp/util/date.dart';
 import 'package:intl/intl.dart';
@@ -36,7 +36,9 @@ class ChallengeListPageState extends State<ChallengeListPage> {
   _reload([bool force = false]) async {
     final isToday = DateTimeUtil.clearTime(_selectedDay).millisecondsSinceEpoch == DateTimeUtil.clearTime(DateTime.now()).millisecondsSinceEpoch;
     _log.startSync('ChallengeListPage._reload, ${isToday ? "today" : "not today"}.');
-    _challengeService.calcTotal();
+    if (force) _challengeService.calcTotal();
+    else _challengeService.getTotal();
+
     var current = await _challengeService.loadByDate(_selectedDay);
     var overDue = <Challenge>[];
 
@@ -74,7 +76,10 @@ class ChallengeListPageState extends State<ChallengeListPage> {
           onDelete: _onDeleteChallenge
         )
       );
-      return ListView(children: tiles.toList());
+      return Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: ListView(children: tiles.toList())
+      );
     }
   }
 
@@ -101,7 +106,7 @@ class ChallengeListPageState extends State<ChallengeListPage> {
     _log.debug('build...');
     if (_challengeService == null) _challengeService = AppStateWidget.of(context).get<ChallengeService>();
     return Scaffold(
-        bottomNavigationBar: BottomAppBar(
+      bottomNavigationBar: BottomAppBar(
         shape: CircularNotchedRectangle(),
         clipBehavior: Clip.antiAlias,
         child: Row(
@@ -120,10 +125,9 @@ class ChallengeListPageState extends State<ChallengeListPage> {
             ),
             Spacer(),
             Padding(
-              padding: EdgeInsets.fromLTRB(0, 0, 16, 0),
+              padding: EdgeInsets.fromLTRB(16, 8, 16, 8),
               child: TotalPointsWidget(_challengeService.totalPoints),
             )
-
           ],
         )
       ),
@@ -131,10 +135,7 @@ class ChallengeListPageState extends State<ChallengeListPage> {
         onPressed: () async {
           var result = await Navigator.push(
               context,
-              MaterialPageRoute<Challenge>(
-                  builder: (BuildContext context) =>
-                      ChallengePage(challenge: Challenge())
-              )
+              MaterialPageRoute<Challenge>(builder: (BuildContext context) => ChallengePage(challenge: Challenge()))
           );
           if (result != null) _reload();
         },

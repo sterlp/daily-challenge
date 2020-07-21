@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutterapp/challengelist/dao/challenge_dao.dart';
-import 'package:flutterapp/challengelist/models/challenge_model.dart';
+import 'package:flutterapp/challengelist/model/challenge_model.dart';
 import 'package:flutterapp/log/logger.dart';
 import 'dart:developer';
 
