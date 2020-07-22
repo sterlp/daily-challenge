@@ -37,11 +37,13 @@ class Logger {
     }
   }
 
-  finishSync() {
+  /// Finishes and logs the time, override the message with [message] if needed.
+  finishSync([String message]) {
     if (kDebugMode) {
       if (_syncString == null || _syncTime == null) {
         warn('finishSync without startSync!');
       } else {
+        if (message != null) _syncString = message;
         _syncTime = DateTime.now().millisecondsSinceEpoch - _syncTime;
         debug('$_syncString executed in ${_syncTime}ms.');
       }

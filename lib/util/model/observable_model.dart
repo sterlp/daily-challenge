@@ -23,7 +23,7 @@ class ObservableModel<T> with Closeable {
   }
 
   @override
-  close() {
-    _controller.close();
+  Future close() {
+    return _controller.close();
   }
 }

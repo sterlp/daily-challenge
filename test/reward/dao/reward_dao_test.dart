@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutterapp/container/app_context.dart';
+import 'package:flutterapp/db/db_provider.dart';
 import 'package:flutterapp/reward/dao/reward_dao.dart';
 import 'package:flutterapp/reward/model/reward_model.dart';
 
@@ -9,8 +10,9 @@ void main() {
   AppContext context;
   RewardDao subject;
 
-  setUp(() {
+  setUp(() async {
     context = testContainer();
+    await context.get<DbProvider>().db;
     subject = context.get<RewardDao>();
   });
   tearDown(() async {

@@ -77,7 +77,7 @@ class ChallengePageState extends State<ChallengePage> {
         ListView(
           children: <Widget>[
             new ListTile(
-              leading: Icon(Icons.thumb_up),
+              leading: _listIcon(Icon(Icons.thumb_up, color: Colors.lightGreen)),
               title: TextFormField(
                 inputFormatters: [LengthLimitingTextInputFormatter(Challenge.NAME_LENGTH)],
                 controller: _nameController,
@@ -86,10 +86,14 @@ class ChallengePageState extends State<ChallengePage> {
                   hintText: "Enter your challenge name",
                   labelText: "Challenge"
                 ),
+                textInputAction: TextInputAction.next,
+                onFieldSubmitted: (v) {
+                  FocusScope.of(context).nextFocus();
+                },
               ),
             ),
             new ListTile(
-              leading: const Icon(Icons.star),
+              leading: _listIcon(const Icon(Icons.star, color: Colors.amber)),
               title: TextFormField(
                 controller: _rewardController,
                 validator: (String v) => v.isNullOrEmpty ? 'Enter reward points' : null,
@@ -99,10 +103,14 @@ class ChallengePageState extends State<ChallengePage> {
                     hintText: "Enter the value of this challenge",
                     labelText: "Reward"
                 ),
+                textInputAction: TextInputAction.next,
+                onFieldSubmitted: (v) {
+                  FocusScope.of(context).nextFocus();
+                },
               ),
             ),
             new ListTile(
-              leading: Icon(Icons.today),
+              leading: Container(child: Icon(Icons.today), alignment: Alignment.center, height: 40, width: 20),
               title: Text('Due until'),
               subtitle: Text(Challenge.dueFormat.format(c.dueAt)),
               onTap: () {
@@ -138,5 +146,9 @@ class ChallengePageState extends State<ChallengePage> {
         ),
       )
     );
+  }
+
+  Widget _listIcon(Icon icon) {
+    return Container(child: icon, alignment: Alignment.center, height: 40, width: 20);
   }
 }

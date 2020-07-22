@@ -5,8 +5,9 @@ import 'package:flutterapp/container/app_context_model.dart';
 class CloseableBean with Closeable {
   bool closed = false;
   @override
-  void close() {
+  Future<bool> close() {
     closed = true;
+    return Future.value(closed);
   }
 }
 class SimpleBean {

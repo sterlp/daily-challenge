@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutterapp/challengelist/model/challenge_model.dart';
 
+// TODO rename me
 class RewardWidget extends StatelessWidget {
   final int reward;
   final ChallengeStatus status;

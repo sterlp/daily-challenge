@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:flutterapp/challengelist/model/challenge_model.dart';
 import 'package:flutterapp/challengelist/page/challenge_page.dart';
 import 'package:flutterapp/challengelist/service/challenge_service.dart';
 import 'package:flutterapp/challengelist/widget/challenge_widget.dart';
+import 'package:flutterapp/credit/service/credit_service.dart';
 import 'package:flutterapp/home/state/app_state_widget.dart';
+import 'package:flutterapp/home/widget/loading_widget.dart';
 import 'package:flutterapp/home/widget/total_points_widget.dart';
 import 'package:flutterapp/log/logger.dart';
 import 'package:flutterapp/util/date.dart';
@@ -19,27 +20,31 @@ class ChallengeListPageState extends State<ChallengeListPage> {
   static final DateFormat doneFormat = DateFormat("EEEE, dd.MM");
   static final Logger _log = LoggerFactory.get<ChallengeListPageState>();
 
+  CreditService _creditService;
   ChallengeService _challengeService;
+  ValueNotifier<int> _credit;
   DateTime _selectedDay = DateTime.now();
-  final List<Challenge> _challenges = [];
+
+  Future<List<Challenge>> _data;
 
   // InheritedWidget doesn't work with initState, Flutter isn't consistent here.
   @override
   void initState() {
     super.initState();
-    SchedulerBinding.instance.addPostFrameCallback((_) {
-      _challengeService = AppStateWidget.of(context).get<ChallengeService>();
-      _reload();
-    });
   }
 
-  _reload([bool force = false]) async {
-    final isToday = DateTimeUtil.clearTime(_selectedDay).millisecondsSinceEpoch == DateTimeUtil.clearTime(DateTime.now()).millisecondsSinceEpoch;
-    _log.startSync('ChallengeListPage._reload, ${isToday ? "today" : "not today"}.');
-    if (force) _challengeService.calcTotal();
-    else _challengeService.getTotal();
+  Future<List<Challenge>> _doReload() async {
+    if (_challengeService == null) _challengeService = AppStateWidget.of(context).get<ChallengeService>();
+    if (_creditService == null) _creditService = AppStateWidget.of(context).get<CreditService>();
+    if (_credit == null) _credit = _creditService.creditNotifier;
 
-    var current = await _challengeService.loadByDate(_selectedDay);
+    final isToday = DateTimeUtil.clearTime(_selectedDay).millisecondsSinceEpoch == DateTimeUtil.clearTime(DateTime.now()).millisecondsSinceEpoch;
+    List<Challenge> _challenges = [];
+    _log.startSync('ChallengeListPage._doReload, ${isToday ? "today" : "not today"}.');
+
+    await _creditService.credit;
+
+    final current = await _challengeService.loadByDate(_selectedDay);
     var overDue = <Challenge>[];
 
     // TODO just for now, business logic in view
@@ -48,7 +53,6 @@ class ChallengeListPageState extends State<ChallengeListPage> {
       await _challengeService.failOverDue(overDue);
     }
 
-    final wasEmpty = _challenges.isEmpty;
     _challenges.clear();
     _challenges.addAll(overDue);
     if (_challenges.length > 0) {
@@ -58,22 +62,20 @@ class ChallengeListPageState extends State<ChallengeListPage> {
     } else {
       _challenges.addAll(current);
     }
-    if (!force && (wasEmpty && _challenges.isEmpty)) {
-      // nothing needs to be done, empty to empty
-    } else {
-      setState(() {});
-    }
+
     _log.finishSync();
+    return _challenges;
   }
 
-  Widget _buildChallenges() {
+  Widget _buildChallenges(List<Challenge> _challenges) {
     if (_challenges.length == 0) {
       return Center(child: Text('No challenges today, ${doneFormat.format(_selectedDay)}.', textScaleFactor: 1.5));
     } else {
 
       final Iterable<Widget> tiles = _challenges.map((e) => ChallengeWidget(
           challenge: e,
-          onDelete: _onDeleteChallenge
+          onDelete: _onDeleteChallenge,
+          key: ValueKey(e),
         )
       );
       return Padding(
@@ -85,9 +87,8 @@ class ChallengeListPageState extends State<ChallengeListPage> {
 
   _onDeleteChallenge(Challenge c, BuildContext context) async {
     await _challengeService.delete(c);
-    setState(() {
-      _challenges.remove(c);
-    });
+    _data = _doReload();
+    setState(() { });
     Scaffold.of(context).showSnackBar(
       SnackBar(
         behavior: SnackBarBehavior.floating,
@@ -95,7 +96,8 @@ class ChallengeListPageState extends State<ChallengeListPage> {
         action: SnackBarAction(label: 'Undo', onPressed: () async {
           _log.info('Undo delete of $c');
           await _challengeService.insert(c);
-          _reload();
+          _data = _doReload();
+          setState(() {});
         }),
       )
     );
@@ -104,7 +106,8 @@ class ChallengeListPageState extends State<ChallengeListPage> {
   @override
   Widget build(BuildContext context) {
     _log.debug('build...');
-    if (_challengeService == null) _challengeService = AppStateWidget.of(context).get<ChallengeService>();
+    if (_data == null) _data = _doReload();
+
     return Scaffold(
       bottomNavigationBar: BottomAppBar(
         shape: CircularNotchedRectangle(),
@@ -117,7 +120,8 @@ class ChallengeListPageState extends State<ChallengeListPage> {
               if (newDate != null && newDate.millisecondsSinceEpoch != _selectedDay.millisecondsSinceEpoch) {
                 _log.debug('date $newDate selected.');
                 _selectedDay = newDate;
-                _reload();
+                _data = _doReload();
+                setState(() {});
               }
             },
                 icon: Icon(Icons.arrow_drop_down),
@@ -126,7 +130,7 @@ class ChallengeListPageState extends State<ChallengeListPage> {
             Spacer(),
             Padding(
               padding: EdgeInsets.fromLTRB(16, 8, 16, 8),
-              child: TotalPointsWidget(_challengeService.totalPoints),
+              child: TotalPointsWidget(_credit),
             )
           ],
         )
@@ -137,12 +141,21 @@ class ChallengeListPageState extends State<ChallengeListPage> {
               context,
               MaterialPageRoute<Challenge>(builder: (BuildContext context) => ChallengePage(challenge: Challenge()))
           );
-          if (result != null) _reload();
+          if (result != null) {
+            _data = _doReload();
+            setState(() {});
+          }
         },
         child: Icon(Icons.add)
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      body: _buildChallenges(),
+      body: FutureBuilder(
+        future: _data,
+        builder: (context, snapshot) {
+          if (snapshot.hasData) return _buildChallenges(snapshot.data);
+          else return LoadingWidget();
+        },
+      )
     );
   }
 }

@@ -1,23 +1,23 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutterapp/challengelist/dao/challenge_dao.dart';
 import 'package:flutterapp/challengelist/model/challenge_model.dart';
-import 'package:flutterapp/db/db_provider.dart';
+import 'package:flutterapp/container/app_context.dart';
 import 'package:flutterapp/util/random_util.dart';
-import 'package:sqflite/sqflite.dart';
-import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+import '../../test_helper.dart';
 
 void main() {
-  Future<Database> db;
+  AppContext context;
   ChallengeDao subject;
 
   setUp(() async {
-    sqfliteFfiInit();
-    db = databaseFactoryFfi.openDatabase(inMemoryDatabasePath);
-    subject = ChallengeDao(DbProvider.withDb(db).db);
+    context = testContainer();
+    subject = context.get<ChallengeDao>();
+    await subject.deleteAll();
   });
   tearDown(() async {
-    (await db).close();
-    db = null;
+    await subject.deleteAll();
+    if (context != null) await context.close();
+    context = null;
   });
 
   test('Challenge toMap', () {
@@ -69,7 +69,7 @@ void main() {
     expect(c.id != null && c.id > -1, true, reason: "Id wasn't set on $c");
 
     var newC = await subject.getById(c.id);
-    expect(newC == null, false, reason: 'Faild to find element by id ${c.id}');
+    expect(newC == null, false, reason: 'Failed to find element by id ${c.id}');
     expect(c.name, newC.name);
     expect(c.status, newC.status);
     expect(c.dueAt.millisecondsSinceEpoch, newC.dueAt.millisecondsSinceEpoch);

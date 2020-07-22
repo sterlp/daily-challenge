@@ -1,7 +1,7 @@
 import 'dart:async';
-import 'package:flutter/cupertino.dart';
 import 'package:flutterapp/challengelist/dao/challenge_dao.dart';
 import 'package:flutterapp/challengelist/model/challenge_model.dart';
+import 'package:flutterapp/credit/service/credit_service.dart';
 import 'package:flutterapp/log/logger.dart';
 import 'dart:developer';
 
@@ -14,24 +14,9 @@ class ChallengeService {
   static final Logger _log = LoggerFactory.get<ChallengeService>();
 
   final ChallengeDao _challengeDao;
-  final totalPoints = ValueNotifier<int>(null);
+  final CreditService _creditService;
 
-  ChallengeService(this._challengeDao);
-
-  Future<int> getTotal() async {
-    if (totalPoints.value == null) {
-      return calcTotal();
-    }
-    return totalPoints.value;
-  }
-
-  Future<int> calcTotal() async {
-    var done = await _challengeDao.sumByStatus(ChallengeStatus.done);
-    var failed = await  _challengeDao.sumByStatus(ChallengeStatus.failed);
-    var newTotal = done - failed;
-    totalPoints.value = newTotal;
-    return newTotal;
-  }
+  ChallengeService(this._challengeDao, this._creditService);
 
   Future<Challenge> getById(int id) async {
     return _challengeDao.getById(id);
@@ -50,8 +35,8 @@ class ChallengeService {
   Future<int> delete(Challenge c) async {
     var deleted = await _challengeDao.delete(c.id);
     log('Deleted ${c.name}');
-    if (deleted > 0) return calcTotal();
-    else return totalPoints.value;
+    if (deleted > 0) return _creditService.calcTotal();
+    else return _creditService.credit;
   }
   
   Future<List<Challenge>> load() async {
@@ -63,16 +48,13 @@ class ChallengeService {
     var now = DateTimeUtil.clearTime(DateTime.now());
     var overDue = values.where((c) => c.status == ChallengeStatus.open && DateTimeUtil.clearTime(c.latestAt).isBefore(now));
     if (overDue.length > 0) return _fail(overDue.toList());
-    else return getTotal();
+    else return _creditService.credit;
   }
 
   Future<int> _fail(List<Challenge> values) async {
-    int total = await getTotal();
-    int failed = await _challengeDao.fail(values);
-    var result = total - failed;
-    totalPoints.value = result;
+    final failed = await _challengeDao.fail(values);
     _log.info('Failed ${values.length} challenges with $failed points.');
-    return result;
+    return _creditService.calcTotal();
   }
 
   Future<int> complete(List<Challenge> values) async {
@@ -84,7 +66,7 @@ class ChallengeService {
         changed.add(await _challengeDao.save(challenge));
       }
     }
-    return calcTotal();
+    return _creditService.calcTotal();
   }
   Future<int> incomplete(List<Challenge> values) async {
     List<Challenge> changed = List();
@@ -95,7 +77,7 @@ class ChallengeService {
         changed.add(await _challengeDao.save(challenge));
       }
     }
-    return calcTotal();
+    return _creditService.calcTotal();
   }
 
   Future<List<Challenge>> loadOverDue() async {
@@ -105,8 +87,9 @@ class ChallengeService {
     return _challengeDao.loadByDate(dateTime);
   }
 
-  Future<void> deleteAll() {
-    return _challengeDao.deleteAll();
+  Future<void> deleteAll() async {
+    await _challengeDao.deleteAll();
+    _creditService.calcTotal();
   }
 
   Future<Challenge> insert(Challenge challenge) {

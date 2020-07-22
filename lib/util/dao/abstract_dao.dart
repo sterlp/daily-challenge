@@ -8,7 +8,7 @@ abstract class AbstractEntity {
     if (id == null) {
       return super == other;
     } else {
-      return id == other.id;
+      return id == other.id && this.runtimeType == other.runtimeType;
     }
   }
 
@@ -109,9 +109,8 @@ abstract class AbstractDao<T extends AbstractEntity> {
   Future<int> countAll() async {
     final Database db = await dbExecutor;
 
-    final r = await db.rawQuery("SELECT SUM(1) as result FROM $tableName");
-    if (r == null || r.length == 0) return 0;
-    else return r[0]['result'] ?? 0;
+    final r = await db.rawQuery("SELECT COUNT(*) as result FROM $tableName");
+    return Sqflite.firstIntValue(r) ?? 0;
   }
 
   T fromMap(Map<String, dynamic> values);

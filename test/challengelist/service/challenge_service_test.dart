@@ -2,49 +2,31 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:flutterapp/challengelist/dao/challenge_dao.dart';
 import 'package:flutterapp/challengelist/model/challenge_model.dart';
 import 'package:flutterapp/challengelist/service/challenge_service.dart';
-import 'package:flutterapp/db/db_provider.dart';
+import 'package:flutterapp/container/app_context.dart';
 import 'package:flutterapp/db/test_data.dart';
-import 'package:sqflite/sqflite.dart';
-import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+
+import '../../test_helper.dart';
 
 void main() {
-  Future<Database> db;
+  AppContext appContext;
   ChallengeDao challengeDao;
   ChallengeService challengeService;
 
   setUp(() async {
-    sqfliteFfiInit();
-    db = databaseFactoryFfi.openDatabase(inMemoryDatabasePath);
-    challengeDao = ChallengeDao(DbProvider.withDb(db).db);
-    challengeService = ChallengeService(challengeDao);
+    appContext = testContainer();
+    challengeDao = appContext.get<ChallengeDao>();
+    await challengeDao.deleteAll();
+    challengeService = appContext.get<ChallengeService>();
   });
 
   tearDown(() async {
-    (await db).close();
-    db = null;
+    appContext.close();
+    appContext = null;
   });
 
   test("Test generateTestData", () async {
     await TestData(challengeService).generatePresentationData();
     expect(3, (await challengeService.load()).length);
-  });
-
-  test("Test count open", () async {
-
-    int result = await challengeService.calcTotal();
-    expect(result, 0);
-
-    await challengeService.save(Challenge.withName("Test 1")
-      ..reward = 20);
-    await challengeService.save(Challenge.withName("Test 2")
-      ..status = ChallengeStatus.done
-      ..reward = 10);
-    await challengeService.save(Challenge.withName("Test 2")
-      ..status = ChallengeStatus.done
-      ..reward = 5);
-
-    result = await challengeService.calcTotal();
-    expect(result, 15);
   });
 
   test("Test complete", () async {
@@ -54,18 +36,8 @@ void main() {
 
     var result = await challengeService.complete([c]);
     expect(result, 20);
-  });
 
-  test("Test getTotal", () async {
-    await challengeService.save(Challenge.withName("Test 1")
-      ..status = ChallengeStatus.done
-      ..reward = 10);
-    await challengeService.save(Challenge.withName("Test 1")
-      ..latestAt = DateTime.now().add(Duration(days: 2))
-      ..reward = 20);
-
-    var result = await challengeService.getTotal();
-    expect(result, 10);
+    expect( (await challengeDao.getById(c.id)).status, ChallengeStatus.done);
   });
 
   test("Test fail", () async {

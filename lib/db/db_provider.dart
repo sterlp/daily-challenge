@@ -34,11 +34,10 @@ class DbProvider with Closeable {
   }
 
   @override
-  void close() {
-    db.then((value) {
-      value.close();
-      _log.debug('DB closed ${value.toString()}');
-    });
+  Future<void> close() async {
+    var close = (await db).close();
+    _log.debug('DB closed');
     db = null;
+    return close;
   }
 }

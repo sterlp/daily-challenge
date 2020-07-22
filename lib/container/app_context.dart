@@ -40,16 +40,19 @@ class AppContext with Closeable {
   }
 
   @override
-  void close() {
+  Future<void> close() async {
     _log.info('app context is shutting down.');
     _rattlingerFactory.clear();
-    _rattlinger.forEach((key, value) {
+    final toClean = _rattlinger.values.toList();
+    _rattlinger.clear();
+
+    for (int i = 0; i < toClean.length; ++i) {
+      final value = toClean[i];
       try {
-        if(value is Closeable) value.close();
+        if (value is Closeable) await value.close();
       } catch(e) {
         _log.warn('failed to close service name: ${value.toString()}, error: $e');
       }
-    });
-    _rattlinger.clear();
+    }
   }
 }

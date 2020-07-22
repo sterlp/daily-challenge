@@ -5,7 +5,7 @@ import 'package:sqflite_common/sqlite_api.dart';
 class RewardDao extends AbstractDao<Reward> {
   RewardDao(Future<Database> db) : super(db, 'REWARD');
 
-  Future<List<Reward>> list(int limit, int offset) async {
+  Future<List<Reward>> list(int limit, int offset) {
     return super.loadAll(limit: limit, offset: offset, orderBy: 'COST ASC');
   }
 

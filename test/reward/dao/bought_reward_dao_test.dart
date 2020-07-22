@@ -23,6 +23,7 @@ void main() {
       await subject.save(BoughtReward()
         ..name = 'Foo $i'
         ..cost = i
+        ..rewardId = 1
         ..boughtAt = DateTime.now().add(Duration(days: i)));
     }
     expect(await subject.countAll(), 10);
@@ -37,5 +38,22 @@ void main() {
     rewards = await subject.list(5, 5);
     expect(rewards[0].cost, 4);
     expect(rewards[4].cost, 0);
+  });
+
+  test('Test getMostRecentByRewardId', () async {
+      await subject.save(BoughtReward()
+        ..name = 'Old Foo'
+        ..rewardId = 1
+        ..boughtAt = DateTime.now().add(Duration(days: -1)));
+      await subject.save(BoughtReward()
+        ..name = 'New Foo'
+        ..rewardId = 1
+        ..boughtAt = DateTime.now());
+
+      var reward = await subject.getMostRecentByRewardId(1);
+      expect(reward.name, 'New Foo');
+
+      reward = await subject.getMostRecentByRewardId(2);
+      expect(reward, isNull);
   });
 }

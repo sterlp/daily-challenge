@@ -1,3 +1,3 @@
 mixin Closeable {
-  void close();
+  Future<dynamic> close();
 }
