@@ -74,17 +74,20 @@ class _ChallengeWidgetState extends State<ChallengeWidget> {
         )
       );
     }
-    actions.add(
-      Padding(
-        padding: _edge,
-        child: IconSlideAction(
-            caption: 'Edit',
-            color: Colors.indigo,
-            icon: Icons.edit,
-            onTap: () => _onEditChallenge(challenge, context)
-        ),
-      )
-    );
+    // allow edit only for non completed challenges
+    if (challenge.status == ChallengeStatus.open) {
+      actions.add(
+          Padding(
+            padding: _edge,
+            child: IconSlideAction(
+                caption: 'Edit',
+                color: Colors.indigo,
+                icon: Icons.edit,
+                onTap: () => _onEditChallenge(challenge, context)
+            ),
+          )
+      );
+    }
 
     return Slidable(
         actionPane: SlidableDrawerActionPane(),
