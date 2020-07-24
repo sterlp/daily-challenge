@@ -20,8 +20,10 @@ class ChallengeDao extends AbstractDao<Challenge> {
   /// Sets the given challenges to fail and returns their total reward.
   Future<int> fail(List<Challenge> values) async {
     int result = 0;
+    DateTime now = DateTimeUtil.clearTime(DateTime.now());
     for(Challenge c in values) {
       c.status = ChallengeStatus.failed;
+      c.doneAt = now;
       result += c.reward;
       await update(c);
     }
@@ -42,8 +44,8 @@ class ChallengeDao extends AbstractDao<Challenge> {
     var to = DateTime(dateTime.year, dateTime.month, dateTime.day, 23, 59, 59, 999);
 
     List<Challenge> results = await loadAll(
-        where: "dueAt >= ? AND dueAt <= ?",
-        whereArgs: [from.millisecondsSinceEpoch, to.millisecondsSinceEpoch],
+        where: "(dueAt >= ? AND dueAt <= ?) OR (doneAt >= ? AND doneAt <= ?)",
+        whereArgs: [from.millisecondsSinceEpoch, to.millisecondsSinceEpoch, from.millisecondsSinceEpoch, to.millisecondsSinceEpoch],
         orderBy: 'dueAt ASC, createdAt DESC');
     _log.debug('loadByDate from $from to $to results ${results.length}');
     return results;

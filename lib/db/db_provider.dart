@@ -8,36 +8,47 @@ import 'package:sqflite/sqflite.dart';
 
 class DbProvider with Closeable {
   static final Logger _log = LoggerFactory.get<DbProvider>();
+  Completer<Database> _completer = Completer();
+  Future<Database> get db => _completer.future;
 
-  Future<Database> db;
   DbProvider() {
-    db = _init(null);
+    _init(null);
   }
   DbProvider.withDb(Future<Database> database) {
-    db = _init(database);
+    _init(database);
   }
 
-  Future<Database> _init(Future<Database> _db) async {
-    if (_db == null) {
-      // await deleteDatabase(join(await getDatabasesPath(), 'challenge.db'));
-      return openDatabase(join(await getDatabasesPath(), 'challenge.db'), version: 2, onUpgrade: createDB);
-    } else {
-      await createDB(await _db, 0, 99);
-      return _db;
+  Future<void> _init(Future<Database> _db) async {
+    try {
+      _log.startSync('init DB');
+      Database database;
+      if (_db == null) {
+        // await deleteDatabase(join(await getDatabasesPath(), 'challenge.db'));
+        database = await openDatabase(join(await getDatabasesPath(), 'challenge.db'), version: 2, onUpgrade: _createDB);
+      } else {
+        database = await _db;
+        await _createDB(database, 0, 99);
+      }
+      _completer.complete(database);
+    } catch (e) {
+      _completer.completeError(e);
+      _log.error('Failed to load DB', e);
+    } finally {
+      _log.finishSync();
     }
   }
 
-  createDB(Database db, int oldVersion, int newVersion) async {
+  Future<int> _createDB(Database db, int oldVersion, int newVersion) async {
     _log.info('_createDB with from version $oldVersion to $newVersion');
-    oldVersion = DbV1().execute(oldVersion, db);
-    oldVersion = DbV2().execute(oldVersion, db);
+    oldVersion = await DbV1().execute(oldVersion, db);
+    oldVersion = await DbV2().execute(oldVersion, db);
+    return oldVersion;
   }
 
   @override
   Future<void> close() async {
-    var close = (await db).close();
+    var close = await (await db).close();
     _log.debug('DB closed');
-    db = null;
     return close;
   }
 }

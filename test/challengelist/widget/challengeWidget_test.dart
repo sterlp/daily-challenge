@@ -26,6 +26,6 @@ void main() {
     expect(find.text('test challenge 2'), findsOneWidget);
     expect(find.text('0'), findsOneWidget);
 
-    expect(find.byIcon(Icons.star), findsNWidgets(2));
+    expect(find.byIcon(Icons.stars), findsNWidgets(2));
   });
 }

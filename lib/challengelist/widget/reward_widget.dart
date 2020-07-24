@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutterapp/challengelist/model/challenge_model.dart';
+import 'package:flutterapp/common/common_types.dart';
 
 // TODO rename me
 class RewardWidget extends StatelessWidget {
@@ -10,15 +11,15 @@ class RewardWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    IconData icon = Icons.star;
-    Color color = Colors.amber;
-
+    IconData icon = Icons.stars;
+    Color color = Colors.orange;
+    final theme = Theme.of(context);
     if (status == ChallengeStatus.failed) {
       icon = Icons.warning;
-      color = Colors.pinkAccent;
+      color = theme.errorColor;
     } else if (status == ChallengeStatus.done) {
-      icon = Icons.stars;
-      color = Colors.greenAccent;
+      icon = Icons.star;
+      color = MyStyle.POSITIVE_BUDGET_COLOR;
     }
 
     return SizedBox.fromSize(

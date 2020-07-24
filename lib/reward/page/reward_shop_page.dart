@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutterapp/common/common_types.dart';
 import 'package:flutterapp/credit/service/credit_service.dart';
 import 'package:flutterapp/home/state/app_state_widget.dart';
 import 'package:flutterapp/home/widget/loading_widget.dart';
@@ -52,7 +53,7 @@ class _RewardShopPageState extends State<RewardShopPage> {
                       WidgetSpan(
                         child: Padding(
                           padding: EdgeInsets.all(2),
-                          child: Icon(MdiIcons.cashMultiple, color: Colors.green, size: bodyStyle.fontSize)),
+                          child: Icon(MdiIcons.cashMultiple, color: MyStyle.POSITIVE_BUDGET_COLOR, size: bodyStyle.fontSize)),
                       ),
                       TextSpan(text: r.cost.toString(), style: TextStyle(fontWeight: FontWeight.bold)),
                       TextSpan(text: ' for '),
@@ -122,7 +123,7 @@ class _RewardShopPageState extends State<RewardShopPage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
-          var result = await Navigator.push(context, MaterialPageRoute<Reward>(builder: (BuildContext context) => RewardPage(reward: Reward())));
+          var result = await Navigator.push(context, MaterialPageRoute<Reward>(builder: (BuildContext context) => RewardPage(reward: Reward()), fullscreenDialog: true));
           _log.debug('RewardPage returned with $result');
           if (result != null) _reload();
         },

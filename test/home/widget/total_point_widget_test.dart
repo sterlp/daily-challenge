@@ -6,6 +6,7 @@ import 'package:flutterapp/home/widget/total_points_widget.dart';
 import '../../test_helper.dart';
 
 void main() {
+
   testWidgets('Show simple challenge', (WidgetTester tester) async {
     final ValueNotifier<int> _model = ValueNotifier<int>(null);
 

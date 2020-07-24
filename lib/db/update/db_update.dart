@@ -9,13 +9,13 @@ abstract class DbUpdate {
     log = LoggerFactory.getWithName(this.runtimeType.toString());
   }
 
-  int execute(int currentVersion, Database db) {
+  Future<int> execute(int currentVersion, Database db) async {
     if (currentVersion + 1 == version) {
       log.info('update DB from $currentVersion -> $version.');
-      update(db);
+      await update(db);
       return version;
     }
     return currentVersion;
   }
-  void update(Database db);
+  Future<void> update(Database db);
 }

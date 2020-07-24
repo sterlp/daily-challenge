@@ -37,7 +37,7 @@ class _ChallengeMonthOverviewPageState extends State<ChallengeMonthOverviewPage>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Kick your butt today'),
+        title: Text('Challenge Yourself'),
         actions: <Widget>[
           FlatButton.icon(
             onPressed: () async {},

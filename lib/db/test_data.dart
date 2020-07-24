@@ -1,25 +1,80 @@
+import 'package:flutterapp/challengelist/dao/challenge_dao.dart';
 import 'package:flutterapp/challengelist/model/challenge_model.dart';
 import 'package:flutterapp/challengelist/service/challenge_service.dart';
+import 'package:flutterapp/container/app_context.dart';
+import 'package:flutterapp/credit/service/credit_service.dart';
+import 'package:flutterapp/reward/dao/bought_reward_dao.dart';
+import 'package:flutterapp/reward/dao/reward_dao.dart';
+import 'package:flutterapp/reward/model/reward_model.dart';
+import 'package:flutterapp/reward/service/reward_service.dart';
 import 'package:flutterapp/util/random_util.dart';
 
 class TestData {
   final ChallengeService _challengeService;
+  final CreditService _creditService;
+  final RewardService _rewardService;
+  final ChallengeDao _challengeDao;
+  final RewardDao _rewardDao;
+  final BoughtRewardDao _boughtRewardDao;
 
-  TestData(this._challengeService);
+  TestData.withContext(AppContext context) :
+    _challengeService = context.get<ChallengeService>(),
+    _creditService = context.get<CreditService>(),
+    _rewardService = context.get<RewardService>(),
+    _challengeDao = context.get<ChallengeDao>(),
+    _rewardDao = context.get<RewardDao>(),
+    _boughtRewardDao = context.get<BoughtRewardDao>();
+
+  Future<void> deleteAll() async {
+    return Future.wait([
+      _challengeDao.deleteAll(),
+      _rewardDao.deleteAll(),
+      _boughtRewardDao.deleteAll()
+    ]);
+  }
 
   Future<void> generatePresentationData() async {
     var now = DateTime.now();
     await this._challengeService.save(Challenge.withNameDateAndStatus('Rasen mähen', now.add(Duration(days: -1)), ChallengeStatus.open)
       ..reward = 10);
+
     await this._challengeService.save(Challenge.withNameDateAndStatus('Staubsaugen', DateTime.now(), ChallengeStatus.done)
       ..doneAt = now
       ..reward = 5);
+    await this._challengeService.save(Challenge.withNameDateAndStatus('Staubsaugen', DateTime.now(), ChallengeStatus.done)
+      ..doneAt = now.add(Duration(days: -5))
+      ..reward = 5);
+
+    await this._challengeService.save(Challenge.withNameDateAndStatus('Katzenklo machen', DateTime.now(), ChallengeStatus.done)
+      ..doneAt = now
+      ..reward = 3);
+
+    // should auto fail on first load
     await this._challengeService.save(Challenge.withNameDateAndStatus('Müll raustragen', now.add(Duration(days: -8)), ChallengeStatus.open)
       ..reward = 1);
 
+    await this._challengeService.save(Challenge.withNameDateAndStatus('10km laufen', now, ChallengeStatus.open)
+      ..reward = 3
+      ..latestAt = now);
+
+    var schoki = await this._rewardDao.save(Reward()
+      ..name = 'Ein Schokoriegel'
+      ..cost = 3);
+
+    await this._rewardDao.save(Reward()
+      ..name = 'Ein Bier'
+      ..cost = 5);
+
+    await this._rewardDao.save(Reward()
+      ..name = 'Neues Notebook'
+      ..cost = 1500);
+
+    _rewardService.buyReward(schoki);
+
+    await _creditService.calcTotal();
   }
 
-  Future<void> generateData(int count, {int daysPast = 0, int daysFuture = 0}) async {
+  Future<void> generateRandomChallengeData(int count, {int daysPast = 0, int daysFuture = 0}) async {
     var now = DateTime.now();
     await _newChallenges(count, now);
     

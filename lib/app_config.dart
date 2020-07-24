@@ -24,5 +24,5 @@ AppContext buildContext([Future<Database> database]) {
     ..addFactory((rattlinger) => BoughtRewardDao(rattlinger.get<DbProvider>().db))
     ..addFactory((rattlinger) => RewardService(rattlinger.get<RewardDao>(), rattlinger.get<BoughtRewardDao>(), rattlinger.get<CreditService>()))
 
-    ..addFactory((rattlinger) => TestData(rattlinger.get<ChallengeService>()));
+    ..addFactory((rattlinger) => TestData.withContext(rattlinger));
 }

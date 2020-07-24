@@ -24,14 +24,14 @@ class _ChallengeHomePageState extends State<ChallengeHomePage> {
               Tab(icon: Icon(MdiIcons.trophy), text: 'Rewards'),
             ],
           ),
-          title: Text('Kick your butt today'),
+          title: Text('Challenge Yourself'),
         ),
-          body: TabBarView(
-            children: [
-              ChallengeListPage(),
-              RewardShopPage()
-            ],
-          )
+        body: TabBarView(
+          children: [
+            ChallengeListPage(),
+            RewardShopPage()
+          ],
+        )
       ),
     );
   }

@@ -15,7 +15,7 @@ void main() {
   setUp(() async {
     appContext = testContainer();
     challengeDao = appContext.get<ChallengeDao>();
-    await challengeDao.deleteAll();
+    await appContext.get<TestData>().deleteAll();
     challengeService = appContext.get<ChallengeService>();
   });
 
@@ -25,8 +25,8 @@ void main() {
   });
 
   test("Test generateTestData", () async {
-    await TestData(challengeService).generatePresentationData();
-    expect(3, (await challengeService.load()).length);
+    await appContext.get<TestData>().generatePresentationData();
+    expect(6, (await challengeService.load()).length);
   });
 
   test("Test complete", () async {

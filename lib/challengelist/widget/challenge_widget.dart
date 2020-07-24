@@ -22,7 +22,6 @@ class ChallengeWidget extends StatefulWidget {
 }
 
 class _ChallengeWidgetState extends State<ChallengeWidget> {
-  static const _overDueStyle = TextStyle(color: Colors.pink);
   static const _notOpenTextStyle = TextStyle(decoration: TextDecoration.lineThrough);
   static const _edge = EdgeInsets.all(4.0);
 
@@ -59,7 +58,7 @@ class _ChallengeWidgetState extends State<ChallengeWidget> {
     final challenge = widget.challenge;
     final done = challenge.isDone;
     final failed = challenge.isFailed;
-
+    final theme = Theme.of(context);
     var actions = <Widget>[];
     if (widget.onDelete != null) {
       actions.add(
@@ -67,7 +66,7 @@ class _ChallengeWidgetState extends State<ChallengeWidget> {
           padding: _edge,
           child: IconSlideAction(
               caption: 'Delete',
-              color: Colors.red,
+              color: theme.errorColor,
               icon: Icons.delete,
               onTap: () => widget.onDelete(challenge, context)
           ),
@@ -81,14 +80,14 @@ class _ChallengeWidgetState extends State<ChallengeWidget> {
             padding: _edge,
             child: IconSlideAction(
                 caption: 'Edit',
-                color: Colors.indigo,
+                color: theme.primaryColor,
                 icon: Icons.edit,
                 onTap: () => _onEditChallenge(challenge, context)
             ),
           )
       );
     }
-
+    final _overDueStyle = TextStyle(color: Theme.of(context).errorColor);
     return Slidable(
         actionPane: SlidableDrawerActionPane(),
         actionExtentRatio: 0.25,
@@ -98,10 +97,10 @@ class _ChallengeWidgetState extends State<ChallengeWidget> {
             value: done,
             secondary: RewardWidget(reward: widget.challenge.reward, status: widget.challenge.status),
             subtitle: done
-                ? Text('Done ' + DateTimeUtil.format(challenge.doneAt, Challenge.doneFormat))
+                ? Text('Done ' + DateTimeUtil.formatDate(challenge.doneAt))
                 : failed ?
-            Text('Failed since ' + DateTimeUtil.format(challenge.latestAt, Challenge.dueFormat), style: challenge.isOverdue ? _overDueStyle : null)
-                : Text('Due until ' + DateTimeUtil.format(challenge.dueAt, Challenge.dueFormat), style: challenge.isOverdue ? _overDueStyle : null),
+            Text('Failed since ' + DateTimeUtil.formatDate(challenge.latestAt), style: challenge.isOverdue ? _overDueStyle : null)
+                : Text('Due until ' + DateTimeUtil.formatDate(challenge.dueAt), style: challenge.isOverdue ? _overDueStyle : null),
             title: Text(challenge.name, style: done || failed ? _notOpenTextStyle : null))
       ),
       secondaryActions: actions

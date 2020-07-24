@@ -1,3 +1,4 @@
+import 'package:flutterapp/common/common_types.dart';
 import 'package:intl/intl.dart';
 
 ///
@@ -14,5 +15,12 @@ class DateTimeUtil {
   static String format(DateTime d, DateFormat f) {
     if (d == null) return "";
     else return f.format(d);
+  }
+
+  static String formatDate(DateTime date) {
+    return format(date, MyFormatter.dateFormat);
+  }
+  static String formatDateTime(DateTime date) {
+    return format(date, MyFormatter.dateTimeFormat);
   }
 }

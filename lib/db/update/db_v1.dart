@@ -5,8 +5,8 @@ class DbV1 extends DbUpdate {
   DbV1() : super(1);
 
   @override
-  void update(Database db) {
-    db.execute('''CREATE TABLE IF NOT EXISTS CHALLENGE (
+  Future<void> update(Database db) {
+    return db.execute('''CREATE TABLE IF NOT EXISTS CHALLENGE (
           id integer PRIMARY KEY AUTOINCREMENT,
           name text NOT NULL,
           status varchar(10) DEFAULT 'open',
@@ -17,7 +17,8 @@ class DbV1 extends DbUpdate {
           latestAt integer
         );
         CREATE INDEX IF NOT EXISTS IDX_CHALLENGE_CREATE_AT ON CHALLENGE(createdAt);
-        CREATE INDEX IF NOT EXISTS IDX_CHALLENGE_DONE ON CHALLENGE(dueAt);
+        CREATE INDEX IF NOT EXISTS IDX_CHALLENGE_DUE_AT ON CHALLENGE(dueAt);
+        CREATE INDEX IF NOT EXISTS IDX_CHALLENGE_DONE_AT ON CHALLENGE(doneAt);
         CREATE INDEX IF NOT EXISTS IDX_CHALLENGE_DONE ON CHALLENGE(status);
       ''');
   }

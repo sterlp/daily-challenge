@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutterapp/common/common_types.dart';
 
 /// Show the total earned points
 class TotalPointsWidget extends StatefulWidget {
@@ -15,20 +16,22 @@ class _TotalPointsWidgetState extends State<TotalPointsWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return ValueListenableBuilder<int>(
         valueListenable: widget.points,
         builder: (context, total, _) {
           Widget result;
           if (total != null) {
             TextStyle style;
-            if (total < 0) style = TextStyle(color: Colors.redAccent, fontWeight: FontWeight.w600);
-            else if (total > 0) style = TextStyle(color: Colors.green, fontWeight: FontWeight.w600);
+            if (total < 0) style = TextStyle(color: theme.errorColor, fontWeight: FontWeight.w600);
+            else if (total > 0) style = TextStyle(color: MyStyle.POSITIVE_BUDGET_COLOR, fontWeight: FontWeight.w600);
             result = Row(
               children: <Widget>[
-                Icon(Icons.star, color: Colors.amber),
+                MyStyle.COST_ICON,
                 Padding(
                   padding: EdgeInsets.fromLTRB(4, 0, 0, 0),
-                  child: Text(total.toString(), style: style, textScaleFactor: 1.2))
+                  child: Text(total.toString(), style: style, textScaleFactor: 1.4))
               ]
             );
           } else {

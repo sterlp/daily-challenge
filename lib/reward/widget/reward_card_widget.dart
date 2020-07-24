@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:flutterapp/common/common_types.dart';
 import 'package:flutterapp/home/state/app_state_widget.dart';
 import 'package:flutterapp/reward/model/bought_reward_model.dart';
 import 'package:flutterapp/reward/model/reward_model.dart';
@@ -23,7 +24,6 @@ class RewardCardWidget extends StatefulWidget {
 }
 
 class _RewardCardWidgetState extends State<RewardCardWidget> {
-  final DateFormat dateFormat = DateFormat("EEEE, dd.MM 'at' h:mm a");
 
   static const ACTION_PADDING = EdgeInsets.all(4.0);
   Reward _reward;
@@ -34,7 +34,7 @@ class _RewardCardWidgetState extends State<RewardCardWidget> {
   @override
   Widget build(BuildContext context) {
     _boughtReward ??= AppStateWidget.of(context).get<RewardService>().getLastBoughtRewardByRewardId(_reward.id);
-
+    final theme = Theme.of(context);
     return Slidable(
       actionPane: SlidableDrawerActionPane(),
       child: Card(
@@ -50,16 +50,16 @@ class _RewardCardWidgetState extends State<RewardCardWidget> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
-                        Icon(MdiIcons.cashMultiple, color: Colors.green), // icon
-                        Text(_reward.cost.toString(), style: TextStyle(color: Colors.green), textScaleFactor: 1.2), // text
+                        MyStyle.COST_ICON,
+                        Text(_reward.cost.toString(), style: TextStyle(color: theme.errorColor), textScaleFactor: 1.2), // text
                       ],
                     ),
                   ),
                 ),
               ),
               title: Text(_reward.name),
-              trailing: Icon(MdiIcons.trophy, color: Colors.amber),
-              subtitle: snapshot.data == null ? null : Text('Last purchase on ' + dateFormat.format(snapshot.data.boughtAt)),
+              trailing: MyStyle.GOAL_ICON,
+              subtitle: snapshot.data == null ? null : Text('Last purchase on ' + MyFormatter.dateTimeFormat.format(snapshot.data.boughtAt)),
             ),
           ),
           ButtonBar(
@@ -75,8 +75,16 @@ class _RewardCardWidgetState extends State<RewardCardWidget> {
         Padding(
           padding: ACTION_PADDING,
           child: IconSlideAction(
+              caption: 'DELETE',
+              color: theme.errorColor,
+              icon: Icons.delete,
+              onTap: () => widget.deleteRewardCallback(_reward, context)),
+        ),
+        Padding(
+          padding: ACTION_PADDING,
+          child: IconSlideAction(
             caption: 'EDIT',
-            color: Theme.of(context).primaryColor,
+            color: theme.primaryColor,
             icon: Icons.edit,
             onTap: () async {
               var result = await Navigator.push(
@@ -85,14 +93,6 @@ class _RewardCardWidgetState extends State<RewardCardWidget> {
             },
           ),
         ),
-        Padding(
-          padding: ACTION_PADDING,
-          child: IconSlideAction(
-              caption: 'DELETE',
-              color: Colors.redAccent,
-              icon: Icons.delete,
-              onTap: () => widget.deleteRewardCallback(_reward, context)),
-        )
       ],
     );
   }

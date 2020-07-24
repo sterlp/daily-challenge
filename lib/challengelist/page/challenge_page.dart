@@ -3,6 +3,8 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:flutterapp/challengelist/model/challenge_model.dart';
 import 'package:flutterapp/challengelist/service/challenge_service.dart';
+import 'package:flutterapp/common/common_types.dart';
+import 'package:flutterapp/common/widget/input_form.dart';
 import 'package:flutterapp/home/state/app_state_widget.dart';
 import 'package:flutterapp/util/date.dart';
 import 'package:flutterapp/util/strings.dart';
@@ -17,8 +19,15 @@ class ChallengePage extends StatefulWidget {
 }
 class ChallengePageState extends State<ChallengePage> {
   final _formKey = GlobalKey<FormState>();
+
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _rewardController = TextEditingController();
+
+  final TextEditingController _dueAtController = TextEditingController();
+  DateTime _dueAt;
+  final TextEditingController _latestUntilController = TextEditingController();
+  DateTime _latestUntil;
+
   ChallengeService _challengeService;
 
   @override
@@ -27,9 +36,16 @@ class ChallengePageState extends State<ChallengePage> {
     _nameController.addListener(_valueChanged);
     _rewardController.addListener(_valueChanged);
     SchedulerBinding.instance.addPostFrameCallback((_) {
-      _challengeService = AppStateWidget.of(context).get<ChallengeService>();
+      _challengeService ??= AppStateWidget.of(context).get<ChallengeService>();
     });
+    final c = widget.challenge;
+    _nameController.text = c.name;
+    _rewardController.text = c.reward == null ? null : c.reward.toString();
 
+    _dueAt = c.dueAt;
+    _dueAtController.text = DateTimeUtil.formatDate(_dueAt);
+    _latestUntil = c.latestAt;
+    _latestUntilController.text = DateTimeUtil.formatDate(_latestUntil);
   }
 
   void _valueChanged() {
@@ -50,105 +66,109 @@ class ChallengePageState extends State<ChallengePage> {
     super.dispose();
     _nameController.dispose();
     _rewardController.dispose();
+    _dueAtController.dispose();
+    _latestUntilController.dispose();
   }
   @override
   Widget build(BuildContext context) {
     var c = widget.challenge;
-    if (_challengeService == null) _challengeService = AppStateWidget.of(context).get<ChallengeService>();
+    _challengeService ??= _challengeService = AppStateWidget.of(context).get<ChallengeService>();
+    c.dueAt ??= c.dueAt = DateTimeUtil.clearTime(DateTime.now());
+    c.latestAt ??= c.dueAt.add(Challenge.defaultChallengeWaitTime);
 
-    if (c.dueAt == null) c.dueAt = DateTimeUtil.clearTime(DateTime.now());
-    if (c.latestAt == null) c.latestAt = c.dueAt.add(Challenge.defaultChallengeWaitTime);
+    final newChallenge = c.id == null;
 
-    _nameController.text = c.name;
-    _rewardController.text = c.reward == null ? 0 : c.reward.toString();
     return Scaffold(
       appBar: AppBar(
-        title: Text(c.id != null ? 'Edit ${c.name}' : 'Create a new challenge'),
+        title: Text(newChallenge ? 'Create Challenge': 'Edit Challenge'),
         actions: <Widget>[
-          IconButton(icon: Icon(Icons.save), onPressed: _save)
+          FlatButton(child: Text(newChallenge ? 'CREATE' : 'UPDATE'), onPressed: _save)
         ]
       ),
-      floatingActionButton: FloatingActionButton(
-          onPressed: _save,
-          child: Icon(Icons.save)
-      ),
       // https://medium.com/flutterpub/create-beautiful-forms-with-flutter-47075cfe712
-      body: Form(key: _formKey, child:
-        ListView(
-          children: <Widget>[
-            new ListTile(
-              leading: _listIcon(Icon(Icons.thumb_up, color: Colors.lightGreen)),
-              title: TextFormField(
-                inputFormatters: [LengthLimitingTextInputFormatter(Challenge.NAME_LENGTH)],
-                controller: _nameController,
-                validator: (String v) => v.isNullOrEmpty ? 'Enter a challenge name' : null,
-                decoration: new InputDecoration(
-                  hintText: "Enter your challenge name",
-                  labelText: "Challenge"
-                ),
-                textInputAction: TextInputAction.next,
-                onFieldSubmitted: (v) {
+      body: InputForm(
+        formKey: _formKey,
+        children: <Widget>[
+          TextFormField(
+            autofocus: true,
+            inputFormatters: [LengthLimitingTextInputFormatter(Challenge.NAME_LENGTH)],
+            controller: _nameController,
+            validator: (String v) => v.isNullOrEmpty ? 'Enter a challenge name' : null,
+            decoration: new InputDecoration(
+              // icon: Icon(Icons.thumb_up, color: Colors.lightGreen),
+              hintText: "What is your Challenge ...?",
+              labelText: "Challenge Name"
+            ),
+            textInputAction: TextInputAction.next,
+            onFieldSubmitted: (v) {
+              FocusScope.of(context).nextFocus();
+            },
+          ),
+
+          TextFormField(
+            controller: _dueAtController,
+            onTap: () => _pickDueAt(c, context),
+            readOnly: true,
+            decoration: new InputDecoration(
+              icon: Icon(Icons.today),
+              labelText: "Due until",
+              suffixIcon: Icon(Icons.arrow_drop_down),
+            ),
+          ),
+
+          TextFormField(
+            controller: _latestUntilController,
+            onTap: () {
+              showDatePicker(context: context, initialDate: _latestUntil, firstDate: _dueAt, lastDate: DateTime.now().add(Duration(days: 365)))
+                  .then((date) {
+                if (date != null) {
+                  _latestUntilController.text = DateTimeUtil.formatDate(date);
+                  _latestUntil = date;
                   FocusScope.of(context).nextFocus();
-                },
-              ),
+                }
+              });
+            },
+            readOnly: true,
+            decoration: new InputDecoration(
+              icon: Icon(Icons.today),
+              labelText: "Latest until",
+              suffixIcon: Icon(Icons.arrow_drop_down),
             ),
-            new ListTile(
-              leading: _listIcon(const Icon(Icons.star, color: Colors.amber)),
-              title: TextFormField(
-                controller: _rewardController,
-                validator: (String v) => v.isNullOrEmpty ? 'Enter reward points' : null,
-                inputFormatters: [WhitelistingTextInputFormatter.digitsOnly],
-                keyboardType: TextInputType.number,
-                decoration: new InputDecoration(
-                    hintText: "Enter the value of this challenge",
-                    labelText: "Reward"
-                ),
-                textInputAction: TextInputAction.next,
-                onFieldSubmitted: (v) {
-                  FocusScope.of(context).nextFocus();
-                },
-              ),
+          ),
+
+          TextFormField(
+            controller: _rewardController,
+            validator: (String v) => v.isNullOrEmpty ? 'Enter reward points' : null,
+            inputFormatters: [WhitelistingTextInputFormatter.digitsOnly],
+            keyboardType: TextInputType.number,
+            decoration: new InputDecoration(
+                icon: MyStyle.COST_ICON,
+                hintText: "Enter the value of this challenge",
+                labelText: "Reward"
             ),
-            new ListTile(
-              leading: Container(child: Icon(Icons.today), alignment: Alignment.center, height: 40, width: 20),
-              title: Text('Due until'),
-              subtitle: Text(Challenge.dueFormat.format(c.dueAt)),
-              onTap: () {
-                showDatePicker(context: context, initialDate: c.dueAt, firstDate: DateTime.now(), lastDate: DateTime.now().add(Duration(days: 365)))
-                  .then((value) {
-                    if (value != null) {
-                      setState(() {
-                        c.dueAt = value;
-                        if (value.isAfter(c.latestAt)) {
-                          c.latestAt = c.dueAt;
-                        }
-                      });
-                    }
-                });
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.today),
-              title: Text('Latest until'),
-              subtitle: Text(Challenge.dueFormat.format(c.latestAt)),
-              onTap: () {
-                showDatePicker(context: context, initialDate: c.latestAt, firstDate: c.dueAt, lastDate: DateTime.now().add(Duration(days: 365)))
-                  .then((value) {
-                    if (value != null) {
-                      setState(() {
-                        c.latestAt = value;
-                      });
-                    }
-                });
-              },
-            ),
-          ],
-        ),
+            textInputAction: TextInputAction.done,
+            onFieldSubmitted: (v) {
+              _save();
+            },
+          ),
+        ],
       )
     );
   }
 
-  Widget _listIcon(Icon icon) {
-    return Container(child: icon, alignment: Alignment.center, height: 40, width: 20);
+  void _pickDueAt(Challenge c, BuildContext context) {
+    var now = DateTime.now();
+    showDatePicker(context: context, initialDate: _dueAt, firstDate: now, lastDate: now.add(Duration(days: 365)))
+        .then((date) {
+      if (date != null) {
+        _dueAt = date;
+        _dueAtController.text = DateTimeUtil.formatDate(date);
+        if (date.isAfter(_latestUntil)) {
+          _latestUntil = _dueAt;
+          _latestUntilController.text = DateTimeUtil.formatDate(date);
+        }
+        FocusScope.of(context).nextFocus();
+      }
+    });
   }
 }

@@ -7,7 +7,7 @@
          FlutterApplication and put your custom class here. -->
     <application
         android:name="io.flutter.app.FlutterApplication"
-        android:label="Kick your butt today"
+        android:label="Challenge Yourself"
         android:icon="@mipmap/icon">
         <activity
             android:name=".MainActivity"
