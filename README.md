@@ -26,4 +26,4 @@ If you like the app and you want to support my work:
 
 [![Donate with Paypal](https://www.paypalobjects.com/en_US/DK/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=RRA2HNFB9264C&source=url)
 
-If you like to contribute feel free to create a pull request or discuss feature is the [issues area](https://github.com/sterlp/daily-challenge/issues).
+If you like to contribute and you are a developer feel free to create a pull request and/or discuss features is the [issues area](https://github.com/sterlp/daily-challenge/issues).
