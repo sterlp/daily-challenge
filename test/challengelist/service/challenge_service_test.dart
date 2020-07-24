@@ -31,7 +31,7 @@ void main() {
 
   test("Test complete", () async {
 
-    var c = await challengeService.save(Challenge.withName("Test 1")
+    var c = await challengeService.save(Challenge.of("Test 1")
       ..reward = 20);
 
     var result = await challengeService.complete([c]);
@@ -41,10 +41,10 @@ void main() {
   });
 
   test("Test fail", () async {
-    await challengeService.save(Challenge.withName("Test 1")
+    await challengeService.save(Challenge.of("Test 1")
       ..status = ChallengeStatus.done
       ..reward = 9);
-    var c = await challengeService.save(Challenge.withName("Test 1")
+    var c = await challengeService.save(Challenge.of("Test 1")
       ..latestAt = DateTime.now().add(Duration(days: -1))
       ..reward = 15);
 
@@ -54,7 +54,7 @@ void main() {
   });
 
   test("Test not fail challenge same day today", () async {
-    var c = await challengeService.save(Challenge.withName("Test 1")
+    var c = await challengeService.save(Challenge.of("Test 1")
       ..latestAt = DateTime.now().add(Duration(minutes: -1))
       ..reward = 15);
 
@@ -68,7 +68,7 @@ void main() {
 
   test("Test incomplete", () async {
 
-    var c = await challengeService.save(Challenge.withName("Test 1")
+    var c = await challengeService.save(Challenge.of("Test 1")
       ..reward = 20);
 
     var result = await challengeService.complete([c]);

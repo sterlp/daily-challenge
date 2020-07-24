@@ -35,26 +35,18 @@ class TestData {
 
   Future<void> generatePresentationData() async {
     var now = DateTime.now();
-    await this._challengeService.save(Challenge.withNameDateAndStatus('Rasen mähen', now.add(Duration(days: -1)), ChallengeStatus.open)
-      ..reward = 10);
+    await this._challengeService.save(Challenge.full('Rasen mähen', now.add(Duration(days: -1)), ChallengeStatus.open, 10));
 
-    await this._challengeService.save(Challenge.withNameDateAndStatus('Staubsaugen', DateTime.now(), ChallengeStatus.done)
-      ..doneAt = now
-      ..reward = 5);
-    await this._challengeService.save(Challenge.withNameDateAndStatus('Staubsaugen', DateTime.now(), ChallengeStatus.done)
-      ..doneAt = now.add(Duration(days: -5))
-      ..reward = 5);
+    await this._challengeService.save(Challenge.full('Staubsaugen', DateTime.now(), ChallengeStatus.done, 5, now));
 
-    await this._challengeService.save(Challenge.withNameDateAndStatus('Katzenklo machen', DateTime.now(), ChallengeStatus.done)
-      ..doneAt = now
-      ..reward = 3);
+    await this._challengeService.save(Challenge.full('Staubsaugen', DateTime.now(), ChallengeStatus.done, 5, now.add(Duration(days: -5))));
+
+    await this._challengeService.save(Challenge.full('Katzenklo machen', DateTime.now(), ChallengeStatus.done, 3, now));
 
     // should auto fail on first load
-    await this._challengeService.save(Challenge.withNameDateAndStatus('Müll raustragen', now.add(Duration(days: -8)), ChallengeStatus.open)
-      ..reward = 1);
+    await this._challengeService.save(Challenge.full('Müll raustragen', now.add(Duration(days: -8)), ChallengeStatus.open, 1));
 
-    await this._challengeService.save(Challenge.withNameDateAndStatus('10km laufen', now, ChallengeStatus.open)
-      ..reward = 3
+    await this._challengeService.save(Challenge.full('10km laufen', now, ChallengeStatus.open, 3)
       ..latestAt = now);
 
     var schoki = await this._rewardDao.save(Reward()
@@ -93,11 +85,10 @@ class TestData {
   Future<void> _newChallenges(int count, DateTime day) async {
     var toSave = List<Challenge>();
     for(int i = 0; i < count; ++i) {
-      toSave.add(Challenge.withNameDateAndStatus(
+      toSave.add(Challenge.full(
           RandomUtil.randomString(7) + ' ${i + 1}',
           day,
-          i % 2 == 0 ? ChallengeStatus.open : ChallengeStatus.done)
-        ..reward = RandomUtil.randomInt(50)
+          i % 2 == 0 ? ChallengeStatus.open : ChallengeStatus.done, RandomUtil.randomInt(50))
       );
     }
     await this._challengeService.saveAll(toSave);

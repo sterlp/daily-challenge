@@ -6,13 +6,12 @@ import 'package:flutterapp/challengelist/widget/challenge_widget.dart';
 void main() {
   testWidgets('Show simple challenge', (WidgetTester tester) async {
     // Create the widget by telling the tester to build it.
-    Challenge c = Challenge.withName('test challenge 1')
-      ..reward = 77;
+    Challenge c = Challenge.of('test challenge 1', null, 77);
     await tester.pumpWidget(MaterialApp(
         home: Card(child: ListView(
           children: [
               ChallengeWidget(challenge: c),
-              ChallengeWidget(challenge: Challenge.withName('test challenge 2'))
+              ChallengeWidget(challenge: Challenge.of('test challenge 2'))
             ]
           )
         )

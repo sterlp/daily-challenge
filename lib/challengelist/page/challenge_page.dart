@@ -110,7 +110,7 @@ class ChallengePageState extends State<ChallengePage> {
             onTap: () => _pickDueAt(c, context),
             readOnly: true,
             decoration: new InputDecoration(
-              icon: Icon(Icons.today),
+              prefixIcon: Icon(Icons.today),
               labelText: "Due until",
               suffixIcon: Icon(Icons.arrow_drop_down),
             ),
@@ -130,7 +130,7 @@ class ChallengePageState extends State<ChallengePage> {
             },
             readOnly: true,
             decoration: new InputDecoration(
-              icon: Icon(Icons.today),
+              prefixIcon: Icon(Icons.today),
               labelText: "Latest until",
               suffixIcon: Icon(Icons.arrow_drop_down),
             ),
@@ -142,14 +142,12 @@ class ChallengePageState extends State<ChallengePage> {
             inputFormatters: [WhitelistingTextInputFormatter.digitsOnly],
             keyboardType: TextInputType.number,
             decoration: new InputDecoration(
-                icon: MyStyle.COST_ICON,
+                prefixIcon: MyStyle.COST_ICON,
                 hintText: "Enter the value of this challenge",
                 labelText: "Reward"
             ),
             textInputAction: TextInputAction.done,
-            onFieldSubmitted: (v) {
-              _save();
-            },
+            onFieldSubmitted: (v) => _save()
           ),
         ],
       )

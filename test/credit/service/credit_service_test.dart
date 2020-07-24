@@ -36,41 +36,30 @@ void main() {
     int result = await creditService.calcTotal();
     expect(result, 0);
 
-    await challengeDao.save(Challenge.withName("Test 1")
-      ..reward = 99);
+    await challengeDao.save(Challenge.of("Test 1", null, 99));
     result = await creditService.calcTotal();
     expect(result, 0);
 
-    await challengeDao.save(Challenge.withName("Test 2")
-      ..status = ChallengeStatus.done
-      ..reward = 10);
+    await challengeDao.save(Challenge.full("Test 2", null, ChallengeStatus.done, 10));
     result = await creditService.calcTotal();
     expect(result, 10);
 
-    await challengeDao.save(Challenge.withName("Test 3")
-      ..status = ChallengeStatus.failed
-      ..reward = 5);
+    await challengeDao.save(Challenge.full("Test 3", null, ChallengeStatus.failed, 5));
 
     result = await creditService.calcTotal();
     expect(result, 5);
   });
 
   test("Test calcTotal with done challenge", () async {
-    await challengeDao.save(Challenge.withName("Test 1")
-      ..status = ChallengeStatus.done
-      ..reward = 10);
-    await challengeDao.save(Challenge.withName("Test 1")
-      ..latestAt = DateTime.now().add(Duration(days: 2))
-      ..reward = 20);
+    await challengeDao.save(Challenge.full("Test 1", null, ChallengeStatus.done, 10));
+    await challengeDao.save(Challenge.full("Test 2", null, ChallengeStatus.open, 20));
 
     var result = await creditService.calcTotal();
     expect(result, 10);
   });
 
   test("Test calcTotal with spend credits", () async {
-    await challengeDao.save(Challenge.withName("Steuer")
-      ..status = ChallengeStatus.done
-      ..reward = 20);
+    await challengeDao.save(Challenge.full("Steuer", null, ChallengeStatus.done, 20));
 
     await boughtRewardDao.save(BoughtReward()
       ..cost = 1
@@ -81,9 +70,7 @@ void main() {
       ..name = 'Bier'
       ..rewardId = 2);
 
-    await challengeDao.save(Challenge.withName("Saugen")
-      ..status = ChallengeStatus.failed
-      ..reward = 5);
+    await challengeDao.save(Challenge.full("Saugen", null, ChallengeStatus.failed, 5));
 
     var result = await creditService.calcTotal();
     expect(result, 11);

@@ -21,7 +21,7 @@ void main() {
   });
 
   test('Challenge toMap', () {
-    final Challenge c = Challenge.withName('test');
+    final Challenge c = Challenge.of('test');
 
     c.dueAt = null;
     var map = subject.toMap(c);
@@ -56,13 +56,13 @@ void main() {
     List<Challenge> results = await subject.loadAll();
     expect(results.length, 0);
 
-    await subject.insert(Challenge.withName('Test 1'));
+    await subject.insert(Challenge.of('Test 1'));
     results = await subject.loadAll();
     expect(results.length, 1);
   });
 
   test('Save and load test', () async {
-    var c = Challenge.withName('Test 1');
+    var c = Challenge.of('Test 1');
     c.status = ChallengeStatus.done;
 
     c = await subject.save(c);
@@ -77,11 +77,11 @@ void main() {
 
   test('Query loadByDate', () async {
     var now = DateTime.now();
-    await subject.save(Challenge.withName('Test 1'));
-    await subject.save(Challenge.withName('Test 2'));
-    await subject.save(Challenge.withNameAndDate('Test 3', now.add(Duration(days: -1))));
-    await subject.save(Challenge.withNameAndDate('Test 4', now.add(Duration(days: -2))));
-    await subject.save(Challenge.withNameAndDate('Test 5', now.add(Duration(days: 1))));
+    await subject.save(Challenge.of('Test 1'));
+    await subject.save(Challenge.of('Test 2'));
+    await subject.save(Challenge.of('Test 3', now.add(Duration(days: -1))));
+    await subject.save(Challenge.of('Test 4', now.add(Duration(days: -2))));
+    await subject.save(Challenge.of('Test 5', now.add(Duration(days: 1))));
 
     var results = await subject.loadByDate(now);
     expect(results.length, 2);
@@ -99,7 +99,7 @@ void main() {
 
   test('Query load one by date', () async {
     var now = DateTime(2020, 5, 17);
-    await subject.save(Challenge.withNameDateAndStatus('Test 1', now, ChallengeStatus.done));
+    await subject.save(Challenge.full('Test 1', now, ChallengeStatus.done));
     var results = await subject.loadByDate(now);
     expect(results.length, 1);
     expect(results[0].name, 'Test 1');
@@ -107,10 +107,10 @@ void main() {
 
   test('Query loadOverDue and fail them', () async {
     var now = DateTime.now();
-    await subject.save(Challenge.withNameAndDate('Test 1', now.add(Duration(minutes: 10))));
-    await subject.save(Challenge.withNameAndDate('Test 2', now.add(Duration(days: -1))));
-    await subject.save(Challenge.withNameAndDate('Test 3', now.add(Duration(days: -33))));
-    await subject.save(Challenge.withNameDateAndStatus('Test 4', now.add(Duration(days: -2)), ChallengeStatus.done));
+    await subject.save(Challenge.of('Test 1', now.add(Duration(minutes: 10))));
+    await subject.save(Challenge.of('Test 2', now.add(Duration(days: -1))));
+    await subject.save(Challenge.of('Test 3', now.add(Duration(days: -33))));
+    await subject.save(Challenge.full('Test 4', now.add(Duration(days: -2)), ChallengeStatus.done));
 
     var results = await subject.loadOverDue();
     expect(results.length, 2);
@@ -126,7 +126,7 @@ void main() {
   });
 
   test('Delete test', () async {
-    Challenge c = await subject.save(Challenge.withName('Foo'));
+    Challenge c = await subject.save(Challenge.of('Foo'));
     expect((await subject.loadAll()).length, 1);
 
     await subject.delete(c.id);
@@ -134,7 +134,7 @@ void main() {
   });
 
   test('Delete challenge count test', () async {
-    Challenge c = Challenge.withName('Foo');
+    Challenge c = Challenge.of('Foo');
     c.reward = 99;
     // delete no ID and not created
     int count = await subject.delete(c.id);
@@ -152,7 +152,7 @@ void main() {
 
   test('Save again after delete', () async {
     await subject.deleteAll();
-    final Challenge c = await subject.save(Challenge.withName('Foo'));
+    final Challenge c = await subject.save(Challenge.of('Foo'));
     expect(await subject.countAll(), 1);
 
     subject.delete(c.id);
@@ -165,7 +165,7 @@ void main() {
   test('Save long name', () async {
     await subject.deleteAll();
     final _name = RandomUtil.randomString(100);
-    Challenge c = await subject.save(Challenge.withName(_name));
+    Challenge c = await subject.save(Challenge.of(_name));
     expect(await subject.countAll(), 1);
 
     c = await subject.getById(c.id);
