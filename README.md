@@ -20,4 +20,4 @@ https://play.google.com/apps/internaltest/4697929787810922001
 
 If you like the app and you want to support my work:
 
-[![Donate with Paypal](https://www.paypalobjects.com/en_US/DK/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=A8YE92K9QM7NA)
+[![Donate with Paypal](https://www.paypalobjects.com/en_US/DK/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=RRA2HNFB9264C&source=url)
