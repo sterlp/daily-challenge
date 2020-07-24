@@ -1,3 +1,7 @@
+<p align="center">
+    <img alt="Daily Challenge CI Status" src="https://github.com/sterlp/daily-challenge/workflows/Flutter%20CI/badge.svg">
+</p>
+
 # Android Store
 
 https://play.google.com/store/apps/details?id=org.sterl.challengeapp
