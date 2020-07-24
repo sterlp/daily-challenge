@@ -1,6 +1,6 @@
 # Android Store
 
-- https://play.google.com/store/apps/details?id=org.sterl.challengeapp
+https://play.google.com/store/apps/details?id=org.sterl.challengeapp
 
 ## Aplha Version Link
 
@@ -14,7 +14,7 @@ https://play.google.com/apps/internaltest/4697929787810922001
 
 1. Please send me an email including your PlayStore email address to paul@sterl.org
 2. Use one of the links above to join one of the test tracks.
-3. Report issues & feature requests [here](https://github.com/sterlp/daily-challeng/issues)
+3. Report issues & feature requests [here](https://github.com/sterlp/daily-challenge/issues)
 
 # Support me
 
