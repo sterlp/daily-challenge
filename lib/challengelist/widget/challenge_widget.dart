@@ -95,7 +95,15 @@ class _ChallengeWidgetState extends State<ChallengeWidget> {
           child: CheckboxListTile(
             onChanged: (v) => _onChallengeChecked(v, context),
             value: done,
-            secondary: RewardWidget(reward: widget.challenge.reward, status: widget.challenge.status),
+            secondary: AnimatedSwitcher(
+                duration: const Duration(milliseconds: 800),
+                // transitionBuilder: (child, animation) => ScaleTransition(child: child, scale: animation),
+                child: RewardWidget(
+                    reward: widget.challenge.reward,
+                    status: widget.challenge.status,
+                    key: ValueKey('${widget.challenge.id}_${widget.challenge.status}'),
+                )
+            ),
             subtitle: done
                 ? Text('Done ' + DateTimeUtil.formatDate(challenge.doneAt))
                 : failed ?
