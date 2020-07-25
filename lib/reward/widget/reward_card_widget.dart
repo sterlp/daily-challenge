@@ -2,71 +2,103 @@ import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flutterapp/common/common_types.dart';
 import 'package:flutterapp/home/state/app_state_widget.dart';
+import 'package:flutterapp/log/logger.dart';
 import 'package:flutterapp/reward/model/bought_reward_model.dart';
 import 'package:flutterapp/reward/model/reward_model.dart';
 import 'package:flutterapp/reward/page/reward_page.dart';
 import 'package:flutterapp/reward/service/reward_service.dart';
-import 'package:intl/intl.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:flutterapp/reward/widget/buy_reward_dialog.dart';
+
 
 typedef RewardCallback = void Function(Reward reward, BuildContext context);
 
 class RewardCardWidget extends StatefulWidget {
   final Reward _reward;
-  final int credit;
-  final RewardCallback buyRewardCallback;
+  final ValueNotifier _credit;
   final RewardCallback deleteRewardCallback;
 
-  RewardCardWidget(this._reward, this.credit, this.buyRewardCallback, this.deleteRewardCallback, {Key key}) : super(key: key);
+  RewardCardWidget(this._reward, this._credit, this.deleteRewardCallback, {Key key}) : super(key: key);
 
   @override
-  _RewardCardWidgetState createState() => _RewardCardWidgetState(_reward);
+  _RewardCardWidgetState createState() => _RewardCardWidgetState();
 }
 
 class _RewardCardWidgetState extends State<RewardCardWidget> {
-
+  static final _log = LoggerFactory.get<RewardCardWidget>();
   static const ACTION_PADDING = EdgeInsets.all(4.0);
-  Reward _reward;
-  Future<BoughtReward> _boughtReward;
 
-  _RewardCardWidgetState(this._reward);
+  RewardService _rewardService;
+  BoughtReward _boughtReward;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _rewardService ??= AppStateWidget.of(context).get<RewardService>();
+    _loadBoughtReward();
+  }
+
+  void _loadBoughtReward() async {
+    var boughtReward = await _rewardService.getLastBoughtRewardByRewardId(widget._reward.id);
+    if (boughtReward != null && boughtReward != _boughtReward) {
+      setState(() => _boughtReward = boughtReward);
+    }
+  }
+
+  void _buyReward() async {
+    bool buy = await showBuyRewardDialog(context, widget._reward, widget._credit.value);
+    if (buy) {
+      _boughtReward = await _rewardService.buyReward(widget._reward);
+      setState(() {});
+    }
+  }
+
+  void _editReward() async {
+    var result = await Navigator.push(
+        context, MaterialPageRoute<Reward>(builder: (BuildContext context) => RewardPage(reward: widget._reward)));
+    if (result != null) setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
-    _boughtReward ??= AppStateWidget.of(context).get<RewardService>().getLastBoughtRewardByRewardId(_reward.id);
     final theme = Theme.of(context);
+    final _reward = widget._reward;
+
     return Slidable(
       actionPane: SlidableDrawerActionPane(),
       child: Card(
         child: Column(mainAxisSize: MainAxisSize.min, children: [
-          FutureBuilder<BoughtReward>(
-            future: _boughtReward,
-            builder: (context, snapshot) => ListTile(
-              leading: Padding(
-                padding: EdgeInsets.fromLTRB(0, 8, 0, 0),
-                child: SizedBox.fromSize(
-                  size: Size(56, 56), // button width and height
-                  child: ClipOval(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        MyStyle.COST_ICON,
-                        Text(_reward.cost.toString(), style: TextStyle(color: theme.errorColor), textScaleFactor: 1.2), // text
-                      ],
-                    ),
+          ListTile(
+            leading: Padding(
+              padding: EdgeInsets.fromLTRB(0, 8, 0, 0),
+              child: SizedBox.fromSize(
+                size: Size(56, 56), // button width and height
+                child: ClipOval(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      MyStyle.COST_ICON,
+                      Text(_reward.cost.toString(), style: TextStyle(color: theme.errorColor), textScaleFactor: 1.2), // text
+                    ],
                   ),
                 ),
               ),
-              title: Text(_reward.name),
-              trailing: MyStyle.GOAL_ICON,
-              subtitle: snapshot.data == null ? null : Text('Last purchase on ' + MyFormatter.dateTimeFormat.format(snapshot.data.boughtAt)),
             ),
+            title: Text(_reward.name),
+            trailing: MyStyle.GOAL_ICON,
+            subtitle: _boughtReward == null ? null : Text('Last purchase on ' + MyFormatter.dateTimeFormat.format(_boughtReward.boughtAt)),
           ),
           ButtonBar(
             children: <Widget>[
-              FlatButton(
-                  child: const Text('REWARD MYSELF'),
-                  onPressed: (_reward.cost <= widget.credit ? () => widget.buyRewardCallback(_reward, context) : null)),
+              ValueListenableBuilder(
+                valueListenable: widget._credit,
+                builder: (context, credit, child) {
+                  // TODO this is called twice by Flutter but why?
+                  // _log.debug('Building reward action button for reward ${_reward.id} with value $credit ...');
+                  return RaisedButton(
+                      child: const Text('REWARD MYSELF'),
+                      onPressed: (_reward.cost <= credit ? () => _buyReward() : null));
+                },
+              ),
             ],
           )
         ]),
@@ -86,11 +118,7 @@ class _RewardCardWidgetState extends State<RewardCardWidget> {
             caption: 'EDIT',
             color: theme.primaryColor,
             icon: Icons.edit,
-            onTap: () async {
-              var result = await Navigator.push(
-                  context, MaterialPageRoute<Reward>(builder: (BuildContext context) => RewardPage(reward: _reward)));
-              if (result != null) setState(() => _reward = result);
-            },
+            onTap: () => _editReward(),
           ),
         ),
       ],

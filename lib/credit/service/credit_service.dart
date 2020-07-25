@@ -37,7 +37,7 @@ class CreditService {
       final int spend = values[2];
       final int result = done - failed - spend;
       _log.finishSync('calcTotal -> done($done) - failed($failed) - spend($spend) = $result');
-      _credit.value = result;
+      if (_credit.value != result) _credit.value = result;
       completer.complete(result);
     }).catchError((e) => completer.completeError(e));
 

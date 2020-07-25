@@ -18,6 +18,9 @@ class Challenge extends AbstractEntity {
   Challenge.full(this.name, [this.dueAt, this.status = ChallengeStatus.open, this.reward = 0, this.doneAt]) {
     this.dueAt ??= DateTime.now();
     this.latestAt ??= this.dueAt.add(defaultChallengeWaitTime);
+    if (this.status != ChallengeStatus.open && this.dueAt == null) {
+      doneAt = DateTime.now();
+    }
   }
 
   String name;

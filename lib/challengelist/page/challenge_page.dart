@@ -26,15 +26,13 @@ class ChallengePageState extends State<ChallengePage> {
   final TextEditingController _dueAtController = TextEditingController();
   DateTime _dueAt;
   final TextEditingController _latestUntilController = TextEditingController();
-  DateTime _latestUntil;
+  DateTime _latestAt;
 
   ChallengeService _challengeService;
 
   @override
   void initState() {
     super.initState();
-    _nameController.addListener(_valueChanged);
-    _rewardController.addListener(_valueChanged);
     SchedulerBinding.instance.addPostFrameCallback((_) {
       _challengeService ??= AppStateWidget.of(context).get<ChallengeService>();
     });
@@ -44,20 +42,18 @@ class ChallengePageState extends State<ChallengePage> {
 
     _dueAt = c.dueAt;
     _dueAtController.text = DateTimeUtil.formatDate(_dueAt);
-    _latestUntil = c.latestAt;
-    _latestUntilController.text = DateTimeUtil.formatDate(_latestUntil);
+    _latestAt = c.latestAt;
+    _latestUntilController.text = DateTimeUtil.formatDate(_latestAt);
   }
 
-  void _valueChanged() {
-    var c = widget.challenge;
-    c.name = _nameController.text;
-    if (_rewardController.text != "") c.reward = int.parse(_rewardController.text);
-    // dev.log('_valueChanged $c');
-  }
   _save() async {
     if (_formKey.currentState.validate()) {
-      _valueChanged();
-      var c = await _challengeService.save(widget.challenge);
+      var c = widget.challenge;
+      c.name = _nameController.text;
+      if (_rewardController.text != "") c.reward = int.parse(_rewardController.text);
+      c.dueAt = _dueAt;
+      c.latestAt = _latestAt;
+      c = await _challengeService.save(widget.challenge);
       Navigator.pop(context, c);
     }
   }
@@ -118,16 +114,7 @@ class ChallengePageState extends State<ChallengePage> {
 
           TextFormField(
             controller: _latestUntilController,
-            onTap: () {
-              showDatePicker(context: context, initialDate: _latestUntil, firstDate: _dueAt, lastDate: DateTime.now().add(Duration(days: 365)))
-                  .then((date) {
-                if (date != null) {
-                  _latestUntilController.text = DateTimeUtil.formatDate(date);
-                  _latestUntil = date;
-                  FocusScope.of(context).nextFocus();
-                }
-              });
-            },
+            onTap: () => _pickLatestAt(c, context),
             readOnly: true,
             decoration: new InputDecoration(
               prefixIcon: Icon(Icons.today),
@@ -143,7 +130,7 @@ class ChallengePageState extends State<ChallengePage> {
             keyboardType: TextInputType.number,
             decoration: new InputDecoration(
                 prefixIcon: MyStyle.COST_ICON,
-                hintText: "Enter the value of this challenge",
+                hintText: "How many points should be rewarded?",
                 labelText: "Reward"
             ),
             textInputAction: TextInputAction.done,
@@ -154,15 +141,26 @@ class ChallengePageState extends State<ChallengePage> {
     );
   }
 
+  void _pickLatestAt(Challenge c, BuildContext context) {
+    showDatePicker(context: context, initialDate: _latestAt, firstDate: _dueAt, lastDate: DateTime.now().add(Duration(days: 365)))
+        .then((date) {
+      if (date != null) {
+        _latestUntilController.text = DateTimeUtil.formatDate(date);
+        _latestAt = date;
+        FocusScope.of(context).nextFocus();
+      }
+    });
+  }
+
   void _pickDueAt(Challenge c, BuildContext context) {
     var now = DateTime.now();
-    showDatePicker(context: context, initialDate: _dueAt, firstDate: now, lastDate: now.add(Duration(days: 365)))
+    showDatePicker(context: context, initialDate: _dueAt, firstDate: now.isAfter(_dueAt) ? _dueAt : now, lastDate: now.add(Duration(days: 365)))
         .then((date) {
       if (date != null) {
         _dueAt = date;
         _dueAtController.text = DateTimeUtil.formatDate(date);
-        if (date.isAfter(_latestUntil)) {
-          _latestUntil = _dueAt;
+        if (date.isAfter(_latestAt)) {
+          _latestAt = _dueAt;
           _latestUntilController.text = DateTimeUtil.formatDate(date);
         }
         FocusScope.of(context).nextFocus();

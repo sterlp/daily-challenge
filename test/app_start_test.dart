@@ -10,20 +10,12 @@ void main() async {
   AppContext appContext;
   setUp(() async {
     appContext = testContainer();
-    await appContext.get<DbProvider>().db;
   });
 
   testWidgets('Challenge App start test', (WidgetTester tester) async {
     // avoid block of the main test thread
     await tester.runAsync(() async {
       final myApp = MyApp(container: appContext);
-      await tester.pumpWidget(myApp);
-
-      // first we should have the loading DB spinner ...
-      expect(find.byType(CircularProgressIndicator), findsOneWidget);
-      expect(find.text('Building DB ...'), findsOneWidget);
-      // after the DB was build
-      await appContext.get<DbProvider>().db;
       await tester.pumpWidget(myApp);
 
       // the main page should be shown

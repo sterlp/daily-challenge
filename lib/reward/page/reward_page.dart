@@ -6,7 +6,6 @@ import 'package:flutterapp/home/state/app_state_widget.dart';
 import 'package:flutterapp/reward/model/reward_model.dart';
 import 'package:flutterapp/reward/service/reward_service.dart';
 import 'package:flutterapp/util/strings.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 /// https://dartpad.dev/embed-flutter.html?id=7a32619ce3c99711dc7e2fb8d235a635
 class RewardPage extends StatefulWidget {
@@ -68,9 +67,8 @@ class _RewardPageState extends State<RewardPage> {
             controller: _nameController,
             validator: (String v) => v.isNullOrEmpty ? 'Enter a reward name' : null,
             decoration: new InputDecoration(
-                icon: MyStyle.GOAL_ICON,
-                hintText: "Enter reward name",
-                labelText: "Reward",
+                hintText: "What is your Reward ...?",
+                labelText: "Reward Name",
             ),
             textInputAction: TextInputAction.next,
             onFieldSubmitted: (v) => FocusScope.of(context).nextFocus()
@@ -81,8 +79,8 @@ class _RewardPageState extends State<RewardPage> {
             validator: (String v) => v.isNullOrEmpty ? 'Enter a reward cost' : null,
             textInputAction: TextInputAction.done,
             decoration: new InputDecoration(
-              icon: MyStyle.COST_ICON,
-              hintText: "Enter the reward costs",
+              prefixIcon: MyStyle.COST_ICON,
+              hintText: "What should the reward cost?",
               labelText: "Costs",
             ),
             keyboardType: TextInputType.number,

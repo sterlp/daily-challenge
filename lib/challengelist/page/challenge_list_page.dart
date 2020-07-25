@@ -5,7 +5,6 @@ import 'package:flutterapp/challengelist/service/challenge_service.dart';
 import 'package:flutterapp/challengelist/widget/challenge_widget.dart';
 import 'package:flutterapp/common/common_types.dart';
 import 'package:flutterapp/credit/service/credit_service.dart';
-import 'package:flutterapp/db/test_data.dart';
 import 'package:flutterapp/home/state/app_state_widget.dart';
 import 'package:flutterapp/home/widget/loading_widget.dart';
 import 'package:flutterapp/home/widget/total_points_widget.dart';
@@ -80,16 +79,19 @@ class ChallengeListPageState extends State<ChallengeListPage> {
         )
       );
     } else {
-
-      final Iterable<Widget> tiles = _challenges.map((e) => ChallengeWidget(
-          challenge: e,
-          onDelete: _onDeleteChallenge,
-          key: ValueKey(e),
-        )
-      );
       return Padding(
           padding: const EdgeInsets.all(8.0),
-          child: ListView(children: tiles.toList())
+          child: ListView.builder(
+            itemCount: _challenges.length,
+            itemBuilder: (context, index) {
+              final e = _challenges[index];
+              return ChallengeWidget(
+                challenge: e,
+                onDelete: _onDeleteChallenge,
+                key: ObjectKey(e),
+              );
+            }
+          )
       );
     }
   }

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutterapp/common/common_types.dart';
 import 'package:flutterapp/credit/service/credit_service.dart';
 import 'package:flutterapp/home/state/app_state_widget.dart';
 import 'package:flutterapp/home/widget/loading_widget.dart';
@@ -9,7 +8,6 @@ import 'package:flutterapp/reward/model/reward_model.dart';
 import 'package:flutterapp/reward/page/reward_page.dart';
 import 'package:flutterapp/reward/service/reward_service.dart';
 import 'package:flutterapp/reward/widget/reward_card_widget.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 class RewardShopPage extends StatefulWidget {
   RewardShopPage({Key key}) : super(key: key);
@@ -24,115 +22,62 @@ class _RewardShopPageState extends State<RewardShopPage> {
   RewardService _rewardService;
   CreditService _creditService;
 
-  Future<List<Reward>> _rewards;
+  List<Reward> _rewards;
   ValueNotifier<int> _totalCredit;
 
-  void _reload() {
-    _rewards = _creditService.credit.then((value) {
-      return _rewardService.listRewards(999, 0);
-    });
+  void _reload() async {
+    _log.debug('Reload ...');
+    await _creditService.credit;
+    _rewards = await _rewardService.listRewards(999, 0);
     setState(() {});
   }
 
-  void _buyReward(Reward r, BuildContext context) {
-    final bodyStyle = Theme.of(context).textTheme.bodyText1;
-
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Buy Reward'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              RichText(
-                text: TextSpan(
-                    style: bodyStyle,
-                    text: 'Do you really want to spend ',
-                    children: [
-                      WidgetSpan(
-                        child: Padding(
-                          padding: EdgeInsets.all(2),
-                          child: Icon(MdiIcons.cashMultiple, color: MyStyle.POSITIVE_BUDGET_COLOR, size: bodyStyle.fontSize)),
-                      ),
-                      TextSpan(text: r.cost.toString(), style: TextStyle(fontWeight: FontWeight.bold)),
-                      TextSpan(text: ' for '),
-                      TextSpan(text: r.name, style: TextStyle(fontWeight: FontWeight.bold)),
-                      TextSpan(text: '?'),
-                    ]
-                ),
-              ),
-              RichText(
-                text: TextSpan(
-                  style: bodyStyle,
-                  text: 'You still have ',
-                  children: [
-                    WidgetSpan(
-                      child: Padding(
-                          padding: EdgeInsets.all(2),
-                          child: Icon(Icons.star, color: Colors.amber, size: bodyStyle.fontSize)),
-                    ),
-                    TextSpan(text: _totalCredit.value.toString(), style: TextStyle(fontWeight: FontWeight.bold)),
-                    TextSpan(text: ' left.'),
-                  ]
-                ),
-              ),
-            ]
-          ),
-          actions: <Widget>[
-            FlatButton(child: const Text('CANCEL'), onPressed: () => Navigator.of(context).pop()),
-            FlatButton(child: const Text('CONFIRM'), onPressed: () {
-              _rewardService.buyReward(r);
-              Navigator.of(context).pop();
-            }),
-          ],
-        );
-      },
-    );
-    // _rewardService.buyReward(r).then((v) => _reload());
+  void _deleteReward(Reward r, BuildContext context) async {
+    _log.debug('delete reward $r');
+    await _rewardService.deleteReward(r);
+    _rewards.remove(r);
+    setState(() {});
   }
 
-  void _deleteReward(Reward r, BuildContext context) {
-    _log.debug('delete reward $r');
-    _rewardService.deleteReward(r).then((v) => _reload());
+  Widget _buildBody(BuildContext context) {
+    _log.debug('_buildBody has data ${_rewards != null} ...');
+    Widget result;
+    if (_rewards == null) {
+      result = LoadingWidget();
+    } else if (_rewards.isEmpty) {
+      result = _buildEmptyStore(context);
+    } else {
+      result = _buildResult(context, _rewards);
+    }
+    return result;
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _rewardService ??= AppStateWidget.of(context).get<RewardService>();
+    _creditService ??= AppStateWidget.of(context).get<CreditService>();
+    _totalCredit ??= _creditService.creditNotifier;
+    if (_rewards == null) _reload();
   }
 
   @override
   Widget build(BuildContext context) {
-    _log.debug('build ...');
-    _rewardService ??= AppStateWidget.of(context).get<RewardService>();
-    _creditService ??= AppStateWidget.of(context).get<CreditService>();
-    _totalCredit ??= _creditService.creditNotifier;
-
-    _rewards ??= _creditService.credit.then((value) {
-      return _rewardService.listRewards(999, 0);
-    });
-
     return Scaffold(
-      body: FutureBuilder<List<Reward>>(
-        future: _rewards,
-        builder: (context, snapshot) {
-          if (snapshot.hasData && snapshot.data.isEmpty) {
-            return _buildEmptyStore(context);
-          } else if (snapshot.hasData) {
-            return _buildResult(context, snapshot.data);
-          } else {
-            return LoadingWidget();
-          }
-        },
-      ),
-      floatingActionButton: FloatingActionButton(
+      body: _buildBody(context),
+      floatingActionButton: FloatingActionButton.extended(
         onPressed: () async {
           var result = await Navigator.push(context, MaterialPageRoute<Reward>(builder: (BuildContext context) => RewardPage(reward: Reward()), fullscreenDialog: true));
           _log.debug('RewardPage returned with $result');
           if (result != null) _reload();
         },
         tooltip: 'New Reward',
-        child: Icon(Icons.add),
+        icon: Icon(Icons.add),
+        label: Text('Create Reward'),
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       bottomNavigationBar: BottomAppBar(
-        shape: CircularNotchedRectangle(),
+        // shape: CircularNotchedRectangle(),
         clipBehavior: Clip.antiAlias,
         child: Row(
           children: <Widget>[
@@ -148,10 +93,14 @@ class _RewardShopPageState extends State<RewardShopPage> {
   }
 
   Widget _buildResult(BuildContext context, List<Reward> rewards) {
-    return ListView(
-        padding: const EdgeInsets.all(8.0),
-        children:
-            rewards.map((e) => RewardCardWidget(e, _totalCredit.value, _buyReward, _deleteReward, key: ValueKey(e))).toList());
+    return ListView.builder(
+      itemCount: rewards.length,
+      padding: const EdgeInsets.all(8.0),
+      itemBuilder: (BuildContext context, int index) {
+        final reward = rewards[index];
+        return RewardCardWidget(reward, _totalCredit, _deleteReward, key: ObjectKey(reward));
+      }
+    );
   }
 
   Widget _buildEmptyStore(BuildContext context) {
