@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutterapp/common/widget/scroll_view_position_listener.dart';
 import 'package:flutterapp/container/app_context.dart';
 import 'package:flutterapp/credit/service/credit_service.dart';
 import 'package:flutterapp/home/state/app_state_widget.dart';
@@ -19,7 +20,7 @@ class RewardShopPage extends StatefulWidget {
   _RewardShopPageState createState() => _RewardShopPageState();
 }
 
-class _RewardShopPageState extends State<RewardShopPage> {
+class _RewardShopPageState extends State<RewardShopPage> with ScrollViewPositionListener<RewardShopPage> {
   static final Logger _log = LoggerFactory.get<RewardShopPage>();
 
   AppContext _appContext;
@@ -28,6 +29,18 @@ class _RewardShopPageState extends State<RewardShopPage> {
 
   List<Reward> _rewards;
   ValueNotifier<int> _totalCredit;
+
+  @override
+  void initState() {
+    super.initState();
+    initScrollListener();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    disposeScrollListener();
+  }
 
   void _reload() async {
     try {
@@ -47,6 +60,13 @@ class _RewardShopPageState extends State<RewardShopPage> {
     await _rewardService.deleteReward(r);
     _rewards.remove(r);
     setState(() {});
+  }
+
+  void _createReward() async {
+    var result = await Navigator.push(context, MaterialPageRoute<Reward>(builder: (BuildContext context) =>
+        RewardPage(reward: Reward()), fullscreenDialog: true));
+    _log.debug('RewardPage returned with $result');
+    if (result != null) _reload();
   }
 
   Widget _buildBody(BuildContext context) {
@@ -76,16 +96,15 @@ class _RewardShopPageState extends State<RewardShopPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: _buildBody(context),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () async {
-          var result = await Navigator.push(context, MaterialPageRoute<Reward>(builder: (BuildContext context) =>
-              RewardPage(reward: Reward()), fullscreenDialog: true));
-          _log.debug('RewardPage returned with $result');
-          if (result != null) _reload();
-        },
-        tooltip: 'New Reward',
-        icon: Icon(Icons.add),
-        label: Text('Create Reward'),
+      floatingActionButton: AnimatedOpacity(
+        opacity: scrolledToBottom ? 0.0 : 1.0,
+        duration: Duration(milliseconds: 500),
+        child: FloatingActionButton.extended(
+          onPressed: _createReward,
+          tooltip: 'New Reward',
+          icon: Icon(Icons.add),
+          label: Text('Create Reward'),
+        ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       bottomNavigationBar: BottomAppBar(
@@ -108,6 +127,7 @@ class _RewardShopPageState extends State<RewardShopPage> {
     return ListView.builder(
       itemCount: rewards.length,
       padding: const EdgeInsets.all(8.0),
+      controller: scrollController,
       itemBuilder: (BuildContext context, int index) {
         final reward = rewards[index];
         return RewardCardWidget(reward, _totalCredit, _deleteReward, key: ObjectKey(reward));

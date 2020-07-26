@@ -4,6 +4,7 @@ import 'package:flutterapp/challengelist/page/challenge_page.dart';
 import 'package:flutterapp/challengelist/service/challenge_service.dart';
 import 'package:flutterapp/challengelist/widget/challenge_widget.dart';
 import 'package:flutterapp/common/common_types.dart';
+import 'package:flutterapp/common/widget/scroll_view_position_listener.dart';
 import 'package:flutterapp/credit/service/credit_service.dart';
 import 'package:flutterapp/home/state/app_state_widget.dart';
 import 'package:flutterapp/home/widget/loading_widget.dart';
@@ -16,7 +17,7 @@ class ChallengeListPage extends StatefulWidget {
   State<StatefulWidget> createState() => ChallengeListPageState();
 }
 
-class ChallengeListPageState extends State<ChallengeListPage> {
+class ChallengeListPageState extends State<ChallengeListPage> with ScrollViewPositionListener<ChallengeListPage> {
   static final Logger _log = LoggerFactory.get<ChallengeListPageState>();
 
   CreditService _creditService;
@@ -25,6 +26,18 @@ class ChallengeListPageState extends State<ChallengeListPage> {
   DateTime _selectedDay = DateTime.now();
 
   Future<List<Challenge>> _data;
+
+  @override
+  void initState() {
+    super.initState();
+    initScrollListener();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    disposeScrollListener();
+  }
 
   Future<List<Challenge>> _doReload() async {
     List<Challenge> result = [];
@@ -92,6 +105,7 @@ class ChallengeListPageState extends State<ChallengeListPage> {
       return Padding(
           padding: const EdgeInsets.all(8.0),
           child: ListView.builder(
+            controller: scrollController,
             itemCount: _challenges.length,
             itemBuilder: (context, index) {
               final e = _challenges[index];
@@ -156,10 +170,14 @@ class ChallengeListPageState extends State<ChallengeListPage> {
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: _createChallenge,
-        icon: Icon(Icons.add),
-        label: Text('New Challenge'),
+      floatingActionButton: AnimatedOpacity(
+        opacity: scrolledToBottom ? 0.0 : 1.0,
+        duration: Duration(milliseconds: 500),
+        child: FloatingActionButton.extended(
+          onPressed: _createChallenge,
+          icon: Icon(Icons.add),
+          label: Text('New Challenge'),
+        ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       body: FutureBuilder(
