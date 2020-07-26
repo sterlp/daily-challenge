@@ -26,7 +26,6 @@ class _RewardShopPageState extends State<RewardShopPage> with ScrollViewPosition
   AppContext _appContext;
   RewardService _rewardService;
   CreditService _creditService;
-
   List<Reward> _rewards;
   ValueNotifier<int> _totalCredit;
 
@@ -99,12 +98,18 @@ class _RewardShopPageState extends State<RewardShopPage> with ScrollViewPosition
       floatingActionButton: AnimatedOpacity(
         opacity: scrolledToBottom ? 0.0 : 1.0,
         duration: Duration(milliseconds: 500),
-        child: FloatingActionButton.extended(
-          onPressed: _createReward,
-          tooltip: 'New Reward',
-          icon: Icon(Icons.add),
-          label: Text('Create Reward'),
+        child: Visibility(
+          visible: showFab,
+          child: FloatingActionButton.extended(
+            onPressed: _createReward,
+            tooltip: 'New Reward',
+            icon: Icon(Icons.add),
+            label: Text('Create Reward'),
+          ),
         ),
+        onEnd: () {
+          if (scrolledToBottom && showFab) setState(() { showFab = false; });
+        },
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       bottomNavigationBar: BottomAppBar(

@@ -24,7 +24,6 @@ class ChallengeListPageState extends State<ChallengeListPage> with ScrollViewPos
   ChallengeService _challengeService;
   ValueNotifier<int> _credit;
   DateTime _selectedDay = DateTime.now();
-
   Future<List<Challenge>> _data;
 
   @override
@@ -172,12 +171,18 @@ class ChallengeListPageState extends State<ChallengeListPage> with ScrollViewPos
       ),
       floatingActionButton: AnimatedOpacity(
         opacity: scrolledToBottom ? 0.0 : 1.0,
-        duration: Duration(milliseconds: 500),
-        child: FloatingActionButton.extended(
-          onPressed: _createChallenge,
-          icon: Icon(Icons.add),
-          label: Text('New Challenge'),
+        duration: Duration(milliseconds: 600),
+        child: Visibility(
+          visible: showFab,
+          child: FloatingActionButton.extended(
+            onPressed: _createChallenge,
+            icon: Icon(Icons.add),
+            label: Text('New Challenge'),
+          ),
         ),
+        onEnd: () {
+          if (scrolledToBottom && showFab) setState(() { showFab = false; });
+        },
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       body: FutureBuilder(
