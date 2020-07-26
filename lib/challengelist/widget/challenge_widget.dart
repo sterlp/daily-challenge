@@ -28,8 +28,9 @@ class _ChallengeWidgetState extends State<ChallengeWidget> {
   _onEditChallenge(Challenge c, BuildContext context) async {
     var result = await Navigator.push(
         context,
-        MaterialPageRoute<Challenge>(
-            builder: (BuildContext context) => ChallengePage(challenge: c)
+        MaterialPageRoute<dynamic>(
+          builder: (BuildContext context) => ChallengePage(challenge: c),
+          fullscreenDialog: true
         )
     );
     if (result != null) setState(() {});

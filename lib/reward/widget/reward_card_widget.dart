@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flutterapp/common/common_types.dart';
 import 'package:flutterapp/home/state/app_state_widget.dart';
-import 'package:flutterapp/log/logger.dart';
 import 'package:flutterapp/reward/model/bought_reward_model.dart';
 import 'package:flutterapp/reward/model/reward_model.dart';
 import 'package:flutterapp/reward/page/reward_page.dart';
@@ -23,18 +22,33 @@ class RewardCardWidget extends StatefulWidget {
   _RewardCardWidgetState createState() => _RewardCardWidgetState();
 }
 
-class _RewardCardWidgetState extends State<RewardCardWidget> {
-  static final _log = LoggerFactory.get<RewardCardWidget>();
+class _RewardCardWidgetState extends State<RewardCardWidget> with SingleTickerProviderStateMixin {
   static const ACTION_PADDING = EdgeInsets.all(4.0);
 
+  AnimationController animationController;
   RewardService _rewardService;
   BoughtReward _boughtReward;
+
+  @override
+  void initState() {
+    super.initState();
+    animationController = new AnimationController(
+      vsync: this,
+      duration: new Duration(seconds: 4),
+    );
+  }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     _rewardService ??= AppStateWidget.of(context).get<RewardService>();
     _loadBoughtReward();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    animationController.dispose();
   }
 
   void _loadBoughtReward() async {
@@ -48,13 +62,17 @@ class _RewardCardWidgetState extends State<RewardCardWidget> {
     bool buy = await showBuyRewardDialog(context, widget._reward, widget._credit.value);
     if (buy) {
       _boughtReward = await _rewardService.buyReward(widget._reward);
+      animationController.forward();
       setState(() {});
     }
   }
 
   void _editReward() async {
     var result = await Navigator.push(
-        context, MaterialPageRoute<Reward>(builder: (BuildContext context) => RewardPage(reward: widget._reward)));
+        context, MaterialPageRoute<Reward>(builder: (BuildContext context) => RewardPage(reward: widget._reward),
+        fullscreenDialog: true
+      )
+    );
     if (result != null) setState(() {});
   }
 
@@ -69,18 +87,23 @@ class _RewardCardWidgetState extends State<RewardCardWidget> {
         child: Column(mainAxisSize: MainAxisSize.min, children: [
           ListTile(
             leading: Padding(
-              padding: EdgeInsets.fromLTRB(0, 8, 0, 0),
-              child: SizedBox.fromSize(
-                size: Size(56, 56), // button width and height
-                child: ClipOval(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      MyStyle.COST_ICON,
-                      Text(_reward.cost.toString(), style: TextStyle(color: theme.errorColor), textScaleFactor: 1.2), // text
-                    ],
+              padding: EdgeInsets.fromLTRB(0, 4, 0, 0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  AnimatedBuilder(
+                    child: MyStyle.COST_ICON,
+                    animation: animationController,
+                    builder: (BuildContext context, Widget _widget) {
+                      return new Transform.rotate(
+                        angle: animationController.value * 6.3,
+                        child: _widget,
+                      );
+                    }
                   ),
-                ),
+                  Text(_reward.cost.toString(), style: TextStyle(color: theme.errorColor), textScaleFactor: 1.2), // text
+                ],
               ),
             ),
             title: Text(_reward.name),

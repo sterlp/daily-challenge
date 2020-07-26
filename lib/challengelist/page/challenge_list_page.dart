@@ -26,44 +26,54 @@ class ChallengeListPageState extends State<ChallengeListPage> {
 
   Future<List<Challenge>> _data;
 
-  // InheritedWidget doesn't work with initState, Flutter isn't consistent here.
-  @override
-  void initState() {
-    super.initState();
+  Future<List<Challenge>> _doReload() async {
+    List<Challenge> result = [];
+    try {
+      _challengeService ??= AppStateWidget.of(context).get<ChallengeService>();
+      _creditService ??= AppStateWidget.of(context).get<CreditService>();
+      _credit ??= _creditService.creditNotifier;
+
+      final isToday = DateTimeUtil.clearTime(_selectedDay).millisecondsSinceEpoch == DateTimeUtil.clearTime(DateTime.now()).millisecondsSinceEpoch;
+
+      _log.startSync('ChallengeListPage._doReload, ${isToday ? "today" : "not today"}.');
+
+      await _creditService.credit;
+
+      final current = await _challengeService.loadByDate(_selectedDay);
+      var overDue = <Challenge>[];
+
+      // TODO just for now, business logic in view
+      if (isToday) {
+        overDue = await _challengeService.loadOverDue();
+        await _challengeService.failOverDue(overDue);
+      }
+
+      result.clear();
+      result.addAll(overDue);
+      if (result.length > 0) {
+        for (Challenge c in current) {
+          if (!result.contains(c)) result.add(c);
+        }
+      } else {
+        result.addAll(current);
+      }
+    } catch (e) {
+      _log.error('_doReload failed!', e);
+    } finally {
+      _log.finishSync();
+    }
+    return result;
   }
 
-  Future<List<Challenge>> _doReload() async {
-    _challengeService ??= AppStateWidget.of(context).get<ChallengeService>();
-    _creditService ??= AppStateWidget.of(context).get<CreditService>();
-    _credit ??= _creditService.creditNotifier;
-
-    final isToday = DateTimeUtil.clearTime(_selectedDay).millisecondsSinceEpoch == DateTimeUtil.clearTime(DateTime.now()).millisecondsSinceEpoch;
-    List<Challenge> _challenges = [];
-    _log.startSync('ChallengeListPage._doReload, ${isToday ? "today" : "not today"}.');
-
-    await _creditService.credit;
-
-    final current = await _challengeService.loadByDate(_selectedDay);
-    var overDue = <Challenge>[];
-
-    // TODO just for now, business logic in view
-    if (isToday) {
-      overDue = await _challengeService.loadOverDue();
-      await _challengeService.failOverDue(overDue);
+  void _createChallenge() async {
+    var result = await Navigator.push(
+        context,
+        MaterialPageRoute<dynamic>(builder: (BuildContext context) => ChallengePage(challenge: Challenge()), fullscreenDialog: true)
+    );
+    if (result != null) {
+      _data = _doReload();
+      setState(() {});
     }
-
-    _challenges.clear();
-    _challenges.addAll(overDue);
-    if (_challenges.length > 0) {
-      for (Challenge c in current) {
-        if (!_challenges.contains(c)) _challenges.add(c);
-      }
-    } else {
-      _challenges.addAll(current);
-    }
-
-    _log.finishSync();
-    return _challenges;
   }
 
   Widget _buildChallenges(List<Challenge> _challenges) {
@@ -147,53 +157,11 @@ class ChallengeListPageState extends State<ChallengeListPage> {
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () async {
-          var result = await Navigator.push(
-            context,
-            MaterialPageRoute<Challenge>(builder: (BuildContext context) => ChallengePage(challenge: Challenge()), fullscreenDialog: true)
-          );
-          if (result != null) {
-            _data = _doReload();
-            setState(() {});
-          }
-        },
+        onPressed: _createChallenge,
         icon: Icon(Icons.add),
         label: Text('New Challenge'),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      /*
-      floatingActionButton: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: <Widget>[
-          FloatingActionButton(
-              onPressed: () async {
-                await AppStateWidget.of(context).get<TestData>().deleteAll();
-                await AppStateWidget.of(context).get<TestData>().generatePresentationData();
-                _data = _doReload();
-                setState(() { _selectedDay = DateTime.now(); });
-              },
-              child: Icon(Icons.system_update_alt)
-          ),
-          SizedBox(
-            height: 8,
-          ),
-
-          FloatingActionButton(
-            onPressed: () async {
-              var result = await Navigator.push(
-                  context,
-                  MaterialPageRoute<Challenge>(builder: (BuildContext context) => ChallengePage(challenge: Challenge()))
-              );
-              if (result != null) {
-                _data = _doReload();
-                setState(() {});
-              }
-            },
-            child: Icon(Icons.add)
-          ),
-        ]
-      ),
-      */
       body: FutureBuilder(
         future: _data,
         builder: (context, snapshot) {

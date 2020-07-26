@@ -1,21 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutterapp/container/app_context.dart';
-import 'package:flutterapp/db/db_provider.dart';
 import 'package:flutterapp/main.dart';
-
-import 'test_helper.dart';
+import 'mock_appcontext.dart';
 
 void main() async {
-  AppContext appContext;
+  AppContextMock appContextMock;
+
   setUp(() async {
-    appContext = testContainer();
+    appContextMock = AppContextMock();
   });
 
   testWidgets('Challenge App start test', (WidgetTester tester) async {
     // avoid block of the main test thread
     await tester.runAsync(() async {
-      final myApp = MyApp(container: appContext);
+      final myApp = MyApp(container: appContextMock.appContext);
       await tester.pumpWidget(myApp);
 
       // the main page should be shown

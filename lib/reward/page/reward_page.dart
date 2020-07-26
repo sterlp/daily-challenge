@@ -50,7 +50,7 @@ class _RewardPageState extends State<RewardPage> {
   @override
   Widget build(BuildContext context) {
     if (_rewardService == null) _rewardService = AppStateWidget.of(context).get<RewardService>();
-    final bool newReward = widget.reward != null;
+    final bool newReward = widget.reward.id == null;
     return Scaffold(
       appBar: AppBar(
         title: Text(newReward ? 'New Reward' : 'Edit Reward'),
@@ -79,7 +79,7 @@ class _RewardPageState extends State<RewardPage> {
             validator: (String v) => v.isNullOrEmpty ? 'Enter a reward cost' : null,
             textInputAction: TextInputAction.done,
             decoration: new InputDecoration(
-              prefixIcon: MyStyle.COST_ICON,
+              icon: MyStyle.COST_ICON,
               hintText: "What should the reward cost?",
               labelText: "Costs",
             ),

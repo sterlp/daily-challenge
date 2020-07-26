@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutterapp/container/app_context.dart';
 import 'package:flutterapp/credit/service/credit_service.dart';
 import 'package:flutterapp/home/state/app_state_widget.dart';
 import 'package:flutterapp/home/widget/loading_widget.dart';
@@ -10,7 +11,9 @@ import 'package:flutterapp/reward/service/reward_service.dart';
 import 'package:flutterapp/reward/widget/reward_card_widget.dart';
 
 class RewardShopPage extends StatefulWidget {
-  RewardShopPage({Key key}) : super(key: key);
+  final AppContext appContext;
+  
+  RewardShopPage({Key key, this.appContext}) : super(key: key);
 
   @override
   _RewardShopPageState createState() => _RewardShopPageState();
@@ -19,6 +22,7 @@ class RewardShopPage extends StatefulWidget {
 class _RewardShopPageState extends State<RewardShopPage> {
   static final Logger _log = LoggerFactory.get<RewardShopPage>();
 
+  AppContext _appContext;
   RewardService _rewardService;
   CreditService _creditService;
 
@@ -26,10 +30,16 @@ class _RewardShopPageState extends State<RewardShopPage> {
   ValueNotifier<int> _totalCredit;
 
   void _reload() async {
-    _log.debug('Reload ...');
-    await _creditService.credit;
-    _rewards = await _rewardService.listRewards(999, 0);
-    setState(() {});
+    try {
+      _log.startSync('Reload ...');
+      await _creditService.credit;
+      _rewards = await _rewardService.listRewards(999, 0);
+      setState(() {});
+    } catch(e) {
+      _log.error('Reload failed.', e);
+    } finally {
+      _log.finishSync();
+    }
   }
 
   void _deleteReward(Reward r, BuildContext context) async {
@@ -55,8 +65,9 @@ class _RewardShopPageState extends State<RewardShopPage> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _rewardService ??= AppStateWidget.of(context).get<RewardService>();
-    _creditService ??= AppStateWidget.of(context).get<CreditService>();
+    _appContext ??= widget.appContext == null ? AppStateWidget.of(context) : widget.appContext;
+    _rewardService ??= _appContext.get<RewardService>();
+    _creditService ??= _appContext.get<CreditService>();
     _totalCredit ??= _creditService.creditNotifier;
     if (_rewards == null) _reload();
   }
@@ -67,7 +78,8 @@ class _RewardShopPageState extends State<RewardShopPage> {
       body: _buildBody(context),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () async {
-          var result = await Navigator.push(context, MaterialPageRoute<Reward>(builder: (BuildContext context) => RewardPage(reward: Reward()), fullscreenDialog: true));
+          var result = await Navigator.push(context, MaterialPageRoute<Reward>(builder: (BuildContext context) =>
+              RewardPage(reward: Reward()), fullscreenDialog: true));
           _log.debug('RewardPage returned with $result');
           if (result != null) _reload();
         },

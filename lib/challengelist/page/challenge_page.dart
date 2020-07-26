@@ -5,6 +5,7 @@ import 'package:flutterapp/challengelist/model/challenge_model.dart';
 import 'package:flutterapp/challengelist/service/challenge_service.dart';
 import 'package:flutterapp/common/common_types.dart';
 import 'package:flutterapp/common/widget/input_form.dart';
+import 'package:flutterapp/db/test_data.dart';
 import 'package:flutterapp/home/state/app_state_widget.dart';
 import 'package:flutterapp/util/date.dart';
 import 'package:flutterapp/util/strings.dart';
@@ -26,8 +27,8 @@ class ChallengePageState extends State<ChallengePage> {
   final TextEditingController _dueAtController = TextEditingController();
   DateTime _dueAt;
   final TextEditingController _latestUntilController = TextEditingController();
-  DateTime _latestAt;
 
+  DateTime _latestAt;
   ChallengeService _challengeService;
 
   @override
@@ -54,9 +55,37 @@ class ChallengePageState extends State<ChallengePage> {
       c.dueAt = _dueAt;
       c.latestAt = _latestAt;
       c = await _challengeService.save(widget.challenge);
-      Navigator.pop(context, c);
+      Navigator.pop(context, true);
     }
   }
+
+  int _headTabCount = 0;
+  _headTap() {
+    ++_headTabCount;
+    print('_headTap $_headTabCount');
+    if (_headTabCount >= 10) {
+      _headTabCount = 0;
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            content: Text('Replace data with presentation data?'),
+            actions: <Widget>[
+              FlatButton(child: const Text('CANCEL'), onPressed: () => Navigator.of(context).pop()),
+              FlatButton(child: const Text('REPLACE ALL DATA'), onPressed: () => Navigator.of(context).pop(true))
+            ],
+          );
+        }
+      ).then((value) async {
+        if (value != null && value == true)  {
+          await AppStateWidget.of(context).get<TestData>().deleteAll();
+          await AppStateWidget.of(context).get<TestData>().generatePresentationData();
+          Navigator.pop(context, true);
+        }
+      });
+    }
+  }
+
   @override
   void dispose() {
     super.dispose();
@@ -76,7 +105,10 @@ class ChallengePageState extends State<ChallengePage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(newChallenge ? 'Create Challenge': 'Edit Challenge'),
+        title: GestureDetector(
+          child: Text(newChallenge ? 'Create Challenge': 'Edit Challenge'),
+          onTap: _headTap,
+        ),
         actions: <Widget>[
           FlatButton(child: Text(newChallenge ? 'CREATE' : 'UPDATE'), onPressed: _save)
         ]
@@ -106,7 +138,7 @@ class ChallengePageState extends State<ChallengePage> {
             onTap: () => _pickDueAt(c, context),
             readOnly: true,
             decoration: new InputDecoration(
-              prefixIcon: Icon(Icons.today),
+              icon: Icon(Icons.today),
               labelText: "Due until",
               suffixIcon: Icon(Icons.arrow_drop_down),
             ),
@@ -117,7 +149,7 @@ class ChallengePageState extends State<ChallengePage> {
             onTap: () => _pickLatestAt(c, context),
             readOnly: true,
             decoration: new InputDecoration(
-              prefixIcon: Icon(Icons.today),
+              icon: Icon(Icons.today),
               labelText: "Latest until",
               suffixIcon: Icon(Icons.arrow_drop_down),
             ),
@@ -129,7 +161,7 @@ class ChallengePageState extends State<ChallengePage> {
             inputFormatters: [WhitelistingTextInputFormatter.digitsOnly],
             keyboardType: TextInputType.number,
             decoration: new InputDecoration(
-                prefixIcon: MyStyle.COST_ICON,
+                icon: MyStyle.COST_ICON,
                 hintText: "How many points should be rewarded?",
                 labelText: "Reward"
             ),
