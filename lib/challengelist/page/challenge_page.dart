@@ -174,8 +174,11 @@ class ChallengePageState extends State<ChallengePage> {
   }
 
   void _pickLatestAt(Challenge c, BuildContext context) {
-    showDatePicker(context: context, initialDate: _latestAt, firstDate: _dueAt, lastDate: DateTime.now().add(Duration(days: 365)))
-        .then((date) {
+    showDatePicker(context: context, initialDate: _latestAt, firstDate: _dueAt,
+        lastDate: DateTime.now().add(Duration(days: 365)),
+        helpText: 'Date this Challenge failed. You will lose points!',
+
+    ).then((date) {
       if (date != null) {
         _latestUntilController.text = DateTimeUtil.formatDate(date);
         _latestAt = date;
@@ -186,8 +189,11 @@ class ChallengePageState extends State<ChallengePage> {
 
   void _pickDueAt(Challenge c, BuildContext context) {
     var now = DateTime.now();
-    showDatePicker(context: context, initialDate: _dueAt, firstDate: now.isAfter(_dueAt) ? _dueAt : now, lastDate: now.add(Duration(days: 365)))
-        .then((date) {
+    showDatePicker(context: context, initialDate: _dueAt,
+        firstDate: now.isAfter(_dueAt) ? _dueAt : now,
+        lastDate: now.add(Duration(days: 365)),
+        helpText: 'Then do you plan to do this Challenge?'
+      ).then((date) {
       if (date != null) {
         _dueAt = date;
         _dueAtController.text = DateTimeUtil.formatDate(date);

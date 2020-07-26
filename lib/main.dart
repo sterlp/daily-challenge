@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutterapp/app_config.dart';
 import 'package:flutterapp/container/app_context.dart';
 import 'package:flutterapp/home/page/challenge_home_page.dart';
@@ -22,6 +23,13 @@ class MyApp extends StatelessWidget {
     return AppStateWidget(
       context: appContext,
       child: MaterialApp(
+        // https://flutter.dev/docs/development/accessibility-and-localization/internationalization
+        localizationsDelegates: GlobalMaterialLocalizations.delegates,
+        supportedLocales: [
+          const Locale('en', 'US'),
+          const Locale('en', 'GB'),
+          const Locale('de', 'DE'),
+        ],
         theme:  darkThemeData.copyWith(
           accentColor: Colors.blue,
           indicatorColor: Colors.blue,
