@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutterapp/challengelist/page/challenge_list_page.dart';
+import 'package:flutterapp/i18n/challenge_localization_delegate.dart';
 import 'package:flutterapp/reward/page/reward_shop_page.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
@@ -14,6 +15,7 @@ class ChallengeHomePage extends StatefulWidget {
 class _ChallengeHomePageState extends State<ChallengeHomePage> {
   @override
   Widget build(BuildContext context) {
+    final i18n = Localizations.of<ChallengeLocalizations>(context, ChallengeLocalizations);
     return DefaultTabController(
       length: 2,
       child: Scaffold(
@@ -24,7 +26,7 @@ class _ChallengeHomePageState extends State<ChallengeHomePage> {
               Tab(icon: Icon(MdiIcons.trophy), text: 'Rewards'),
             ],
           ),
-          title: Text('Challenge Yourself'),
+          title: Text(i18n.appName),
         ),
         body: TabBarView(
           children: [

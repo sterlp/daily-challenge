@@ -7,6 +7,7 @@ import 'package:flutterapp/common/common_types.dart';
 import 'package:flutterapp/common/widget/input_form.dart';
 import 'package:flutterapp/db/test_data.dart';
 import 'package:flutterapp/home/state/app_state_widget.dart';
+import 'package:flutterapp/i18n/challenge_localization_delegate.dart';
 import 'package:flutterapp/util/date.dart';
 import 'package:flutterapp/util/strings.dart';
 
@@ -96,6 +97,7 @@ class ChallengePageState extends State<ChallengePage> {
   }
   @override
   Widget build(BuildContext context) {
+    final i18n = Localizations.of<ChallengeLocalizations>(context, ChallengeLocalizations);
     var c = widget.challenge;
     _challengeService ??= _challengeService = AppStateWidget.of(context).get<ChallengeService>();
     c.dueAt ??= c.dueAt = DateTimeUtil.clearTime(DateTime.now());
@@ -110,7 +112,7 @@ class ChallengePageState extends State<ChallengePage> {
           onTap: _headTap,
         ),
         actions: <Widget>[
-          FlatButton(child: Text(newChallenge ? 'CREATE' : 'UPDATE'), onPressed: _save)
+          FlatButton(child: Text(i18n.buttonSave(newChallenge)), onPressed: _save)
         ]
       ),
       // https://medium.com/flutterpub/create-beautiful-forms-with-flutter-47075cfe712

@@ -7,7 +7,7 @@ import 'package:flutterapp/reward/model/reward_model.dart';
 import 'package:flutterapp/reward/page/reward_page.dart';
 import 'package:flutterapp/reward/service/reward_service.dart';
 import 'package:flutterapp/reward/widget/buy_reward_dialog.dart';
-
+import 'package:intl/date_symbol_data_local.dart';
 
 typedef RewardCallback = void Function(Reward reward, BuildContext context);
 
@@ -36,6 +36,7 @@ class _RewardCardWidgetState extends State<RewardCardWidget> with SingleTickerPr
       vsync: this,
       duration: new Duration(seconds: 4),
     );
+    initializeDateFormatting('de');
   }
 
   @override
@@ -108,7 +109,8 @@ class _RewardCardWidgetState extends State<RewardCardWidget> with SingleTickerPr
             ),
             title: Text(_reward.name),
             trailing: MyStyle.GOAL_ICON,
-            subtitle: _boughtReward == null ? null : Text('Last purchase on ' + MyFormatter.dateTimeFormat.format(_boughtReward.boughtAt)),
+            subtitle: _boughtReward == null ? null : Text('Last purchase on '
+                + MyFormatter.formatDateTime(context, _boughtReward.boughtAt)),
           ),
           ButtonBar(
             children: <Widget>[

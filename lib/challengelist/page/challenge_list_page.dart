@@ -9,6 +9,7 @@ import 'package:flutterapp/credit/service/credit_service.dart';
 import 'package:flutterapp/home/state/app_state_widget.dart';
 import 'package:flutterapp/home/widget/loading_widget.dart';
 import 'package:flutterapp/home/widget/total_points_widget.dart';
+import 'package:flutterapp/i18n/challenge_localization_delegate.dart';
 import 'package:flutterapp/log/logger.dart';
 import 'package:flutterapp/util/date.dart';
 
@@ -140,7 +141,7 @@ class ChallengeListPageState extends State<ChallengeListPage> with ScrollViewPos
   @override
   Widget build(BuildContext context) {
     if (_data == null) _data = _doReload();
-
+    final i18n = Localizations.of<ChallengeLocalizations>(context, ChallengeLocalizations);
     return Scaffold(
       bottomNavigationBar: BottomAppBar(
         // shape: CircularNotchedRectangle(),
@@ -177,7 +178,7 @@ class ChallengeListPageState extends State<ChallengeListPage> with ScrollViewPos
           child: FloatingActionButton.extended(
             onPressed: _createChallenge,
             icon: Icon(Icons.add),
-            label: Text('New Challenge'),
+            label: Text(i18n.newChallengeButton),
           ),
         ),
         onEnd: () {
