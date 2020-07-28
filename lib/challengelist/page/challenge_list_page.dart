@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutterapp/challengelist/i18n/challengelist_localization.dart';
 import 'package:flutterapp/challengelist/model/challenge_model.dart';
 import 'package:flutterapp/challengelist/page/challenge_page.dart';
 import 'package:flutterapp/challengelist/service/challenge_service.dart';
 import 'package:flutterapp/challengelist/widget/challenge_widget.dart';
-import 'package:flutterapp/common/common_types.dart';
 import 'package:flutterapp/common/widget/scroll_view_position_listener.dart';
 import 'package:flutterapp/credit/service/credit_service.dart';
 import 'package:flutterapp/home/state/app_state_widget.dart';
@@ -27,10 +27,20 @@ class ChallengeListPageState extends State<ChallengeListPage> with ScrollViewPos
   DateTime _selectedDay = DateTime.now();
   Future<List<Challenge>> _data;
 
+  ChallengeListLocalizations i18n;
+  ChallengeLocalizations commonI18n;
+
   @override
   void initState() {
     super.initState();
     initScrollListener();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    i18n = Localizations.of<ChallengeListLocalizations>(context, ChallengeListLocalizations);
+    commonI18n = Localizations.of<ChallengeLocalizations>(context, ChallengeLocalizations);
   }
 
   @override
@@ -97,7 +107,7 @@ class ChallengeListPageState extends State<ChallengeListPage> with ScrollViewPos
           children: <Widget>[
             Text('No challenges today!', style: Theme.of(context).textTheme.headline5),
             SizedBox(height: 8),
-            Text('${MyFormatter.dateFormat.format(_selectedDay)}', style: Theme.of(context).textTheme.headline6)
+            Text('${commonI18n.formatDate(_selectedDay)}', style: Theme.of(context).textTheme.headline6)
           ]
         )
       );
@@ -140,8 +150,8 @@ class ChallengeListPageState extends State<ChallengeListPage> with ScrollViewPos
 
   @override
   Widget build(BuildContext context) {
-    if (_data == null) _data = _doReload();
-    final i18n = Localizations.of<ChallengeLocalizations>(context, ChallengeLocalizations);
+    _data ??= _doReload();
+
     return Scaffold(
       bottomNavigationBar: BottomAppBar(
         // shape: CircularNotchedRectangle(),
@@ -160,7 +170,7 @@ class ChallengeListPageState extends State<ChallengeListPage> with ScrollViewPos
                 }
               },
               icon: Icon(Icons.arrow_drop_down),
-              label: Text(MyFormatter.dateFormat.format(_selectedDay), style: TextStyle(fontWeight: FontWeight.w600))
+              label: Text(commonI18n.formatDate(_selectedDay), style: TextStyle(fontWeight: FontWeight.w600))
             ),
             Spacer(),
             Padding(

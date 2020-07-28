@@ -27,3 +27,11 @@ If you like the app and you want to support my work:
 [![Donate with Paypal](https://www.paypalobjects.com/en_US/DK/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=RRA2HNFB9264C&source=url)
 
 If you like to contribute and you are a developer feel free to create a pull request and/or discuss features is the [issues area](https://github.com/sterlp/daily-challenge/issues).
+
+
+# Doc
+
+## Generate Icons
+
+- https://github.com/sterlp/svg2png/releases
+- run in assets `java -jar svg2png-0.2.x.jar --android-launch -f icon.svg -o ..\android\app\src\main\res\`

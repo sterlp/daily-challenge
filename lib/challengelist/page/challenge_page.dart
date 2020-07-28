@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
+import 'package:flutterapp/challengelist/i18n/challengelist_localization.dart';
 import 'package:flutterapp/challengelist/model/challenge_model.dart';
 import 'package:flutterapp/challengelist/service/challenge_service.dart';
 import 'package:flutterapp/common/common_types.dart';
@@ -32,20 +33,24 @@ class ChallengePageState extends State<ChallengePage> {
   DateTime _latestAt;
   ChallengeService _challengeService;
 
+  ChallengeListLocalizations _i18n;
+  ChallengeLocalizations _commonI18n;
+
   @override
-  void initState() {
-    super.initState();
-    SchedulerBinding.instance.addPostFrameCallback((_) {
-      _challengeService ??= AppStateWidget.of(context).get<ChallengeService>();
-    });
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _challengeService ??= AppStateWidget.of(context).get<ChallengeService>();
+    _i18n = Localizations.of<ChallengeListLocalizations>(context, ChallengeListLocalizations);
+    _commonI18n = Localizations.of<ChallengeLocalizations>(context, ChallengeLocalizations);
+
     final c = widget.challenge;
     _nameController.text = c.name;
     _rewardController.text = c.reward == null ? null : c.reward.toString();
 
     _dueAt = c.dueAt;
-    _dueAtController.text = DateTimeUtil.formatDate(_dueAt);
+    _dueAtController.text = _commonI18n.formatDate(_dueAt);
     _latestAt = c.latestAt;
-    _latestUntilController.text = DateTimeUtil.formatDate(_latestAt);
+    _latestUntilController.text = _commonI18n.formatDate(_latestAt);
   }
 
   _save() async {
@@ -182,7 +187,7 @@ class ChallengePageState extends State<ChallengePage> {
 
     ).then((date) {
       if (date != null) {
-        _latestUntilController.text = DateTimeUtil.formatDate(date);
+        _latestUntilController.text = _commonI18n.formatDate(date);
         _latestAt = date;
         FocusScope.of(context).nextFocus();
       }
@@ -198,10 +203,10 @@ class ChallengePageState extends State<ChallengePage> {
       ).then((date) {
       if (date != null) {
         _dueAt = date;
-        _dueAtController.text = DateTimeUtil.formatDate(date);
+        _dueAtController.text = _commonI18n.formatDate(date);
         if (date.isAfter(_latestAt)) {
           _latestAt = _dueAt;
-          _latestUntilController.text = DateTimeUtil.formatDate(date);
+          _latestUntilController.text = _commonI18n.formatDate(date);
         }
         FocusScope.of(context).nextFocus();
       }

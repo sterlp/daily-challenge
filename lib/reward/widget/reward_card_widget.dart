@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flutterapp/common/common_types.dart';
 import 'package:flutterapp/home/state/app_state_widget.dart';
+import 'package:flutterapp/i18n/challenge_localization_delegate.dart';
 import 'package:flutterapp/reward/model/bought_reward_model.dart';
 import 'package:flutterapp/reward/model/reward_model.dart';
 import 'package:flutterapp/reward/page/reward_page.dart';
@@ -82,6 +83,8 @@ class _RewardCardWidgetState extends State<RewardCardWidget> with SingleTickerPr
     final theme = Theme.of(context);
     final _reward = widget._reward;
 
+    final commonI18n = Localizations.of<ChallengeLocalizations>(context, ChallengeLocalizations);
+
     return Slidable(
       actionPane: SlidableDrawerActionPane(),
       child: Card(
@@ -110,7 +113,7 @@ class _RewardCardWidgetState extends State<RewardCardWidget> with SingleTickerPr
             title: Text(_reward.name),
             trailing: MyStyle.GOAL_ICON,
             subtitle: _boughtReward == null ? null : Text('Last purchase on '
-                + MyFormatter.formatDateTime(context, _boughtReward.boughtAt)),
+                + commonI18n.formatDateTime(_boughtReward.boughtAt)),
           ),
           ButtonBar(
             children: <Widget>[
