@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:flutterapp/challengelist/i18n/challengelist_localization.dart';
 import 'package:flutterapp/challengelist/model/challenge_model.dart';
 import 'package:flutterapp/challengelist/service/challenge_service.dart';
-import 'package:flutterapp/common/common_types.dart';
 import 'package:flutterapp/common/widget/input_form.dart';
 import 'package:flutterapp/db/test_data.dart';
 import 'package:flutterapp/home/state/app_state_widget.dart';
@@ -68,7 +67,6 @@ class ChallengePageState extends State<ChallengePage> {
   int _headTabCount = 0;
   _headTap() {
     ++_headTabCount;
-    print('_headTap $_headTabCount');
     if (_headTabCount >= 10) {
       _headTabCount = 0;
       showDialog(
@@ -95,14 +93,13 @@ class ChallengePageState extends State<ChallengePage> {
   @override
   void dispose() {
     super.dispose();
-    _nameController.dispose();
+    // _nameController.dispose();
     _rewardController.dispose();
     _dueAtController.dispose();
     _latestUntilController.dispose();
   }
   @override
   Widget build(BuildContext context) {
-    final i18n = Localizations.of<ChallengeLocalizations>(context, ChallengeLocalizations);
     var c = widget.challenge;
     _challengeService ??= _challengeService = AppStateWidget.of(context).get<ChallengeService>();
     c.dueAt ??= c.dueAt = DateTimeUtil.clearTime(DateTime.now());
@@ -113,40 +110,55 @@ class ChallengePageState extends State<ChallengePage> {
     return Scaffold(
       appBar: AppBar(
         title: GestureDetector(
-          child: Text(newChallenge ? 'Create Challenge': 'Edit Challenge'),
+          child: Text(_i18n.editChallengeHeader(newChallenge)),
           onTap: _headTap,
         ),
         actions: <Widget>[
-          FlatButton(child: Text(i18n.buttonSave(newChallenge)), onPressed: _save)
+          FlatButton(child: Text(_commonI18n.buttonSave(newChallenge)), onPressed: _save)
         ]
       ),
       // https://medium.com/flutterpub/create-beautiful-forms-with-flutter-47075cfe712
       body: InputForm(
         formKey: _formKey,
         children: <Widget>[
-          TextFormField(
-            autofocus: true,
-            inputFormatters: [LengthLimitingTextInputFormatter(Challenge.NAME_LENGTH)],
-            controller: _nameController,
-            validator: (String v) => v.isNullOrEmpty ? 'Enter a challenge name' : null,
-            decoration: new InputDecoration(
-              // icon: Icon(Icons.thumb_up, color: Colors.lightGreen),
-              hintText: "What is your Challenge ...?",
-              labelText: "Challenge Name"
+          TypeAheadFormField(
+            textFieldConfiguration: TextFieldConfiguration (
+              autofocus: true,
+              inputFormatters: [LengthLimitingTextInputFormatter(Challenge.NAME_LENGTH)],
+              controller: _nameController,
+              decoration: _i18n.challengeName.decorator,
+              textInputAction: TextInputAction.next,
+              onSubmitted: (v) {
+                FocusScope.of(context).nextFocus();
+              },
             ),
-            textInputAction: TextInputAction.next,
-            onFieldSubmitted: (v) {
+            suggestionsCallback: (pattern) {
+              if (pattern != null && pattern.length > 1) return _challengeService.completeChallengesName(pattern);
+              return null;
+            },
+            suggestionsBoxDecoration: SuggestionsBoxDecoration(
+              color: Theme.of(context).backgroundColor,
+            ),
+            noItemsFoundBuilder: (context) => null,
+            itemBuilder: (context, suggestion) {
+              return ListTile(
+                title: Text(suggestion),
+              );
+            },
+            onSuggestionSelected: (suggestion) {
+              this._nameController.text = suggestion;
               FocusScope.of(context).nextFocus();
             },
+            validator: (String v) => v.isNullOrEmpty ? _i18n.challengeName.nullError : null,
           ),
-
           TextFormField(
             controller: _dueAtController,
             onTap: () => _pickDueAt(c, context),
             readOnly: true,
-            decoration: new InputDecoration(
+            decoration: InputDecoration(
               icon: Icon(Icons.today),
-              labelText: "Due until",
+              labelText: _i18n.challengeDueAt.label,
+              hintText: _i18n.challengeDueAt.hint,
               suffixIcon: Icon(Icons.arrow_drop_down),
             ),
           ),
@@ -157,21 +169,18 @@ class ChallengePageState extends State<ChallengePage> {
             readOnly: true,
             decoration: new InputDecoration(
               icon: Icon(Icons.today),
-              labelText: "Latest until",
+              labelText: _i18n.challengeLatestAt.label,
+              hintText: _i18n.challengeLatestAt.hint,
               suffixIcon: Icon(Icons.arrow_drop_down),
             ),
           ),
 
           TextFormField(
             controller: _rewardController,
-            validator: (String v) => v.isNullOrEmpty ? 'Enter reward points' : null,
+            validator: (String v) => v.isNullOrEmpty ? _i18n.challengeReward.nullError : null,
             inputFormatters: [WhitelistingTextInputFormatter.digitsOnly],
             keyboardType: TextInputType.number,
-            decoration: new InputDecoration(
-                icon: MyStyle.COST_ICON,
-                hintText: "How many points should be rewarded?",
-                labelText: "Reward"
-            ),
+            decoration: _i18n.challengeReward.decorator,
             textInputAction: TextInputAction.done,
             onFieldSubmitted: (v) => _save()
           ),
@@ -183,7 +192,7 @@ class ChallengePageState extends State<ChallengePage> {
   void _pickLatestAt(Challenge c, BuildContext context) {
     showDatePicker(context: context, initialDate: _latestAt, firstDate: _dueAt,
         lastDate: DateTime.now().add(Duration(days: 365)),
-        helpText: 'Date this Challenge failed. You will lose points!',
+        helpText:_i18n.challengeLatestAt.hint,
 
     ).then((date) {
       if (date != null) {
@@ -199,7 +208,7 @@ class ChallengePageState extends State<ChallengePage> {
     showDatePicker(context: context, initialDate: _dueAt,
         firstDate: now.isAfter(_dueAt) ? _dueAt : now,
         lastDate: now.add(Duration(days: 365)),
-        helpText: 'Then do you plan to do this Challenge?'
+        helpText: _i18n.challengeDueAt.hint
       ).then((date) {
       if (date != null) {
         _dueAt = date;

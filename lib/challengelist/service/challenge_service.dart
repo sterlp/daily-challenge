@@ -95,4 +95,8 @@ class ChallengeService {
   Future<Challenge> insert(Challenge challenge) {
     return _challengeDao.insert(challenge);
   }
+
+  Future<Iterable<String>> completeChallengesName(String pattern) {
+    return _challengeDao.loadNamesByPattern(pattern, limit: 5);
+  }
 }

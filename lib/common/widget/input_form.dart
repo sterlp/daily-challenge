@@ -57,7 +57,7 @@ class InputForm extends StatelessWidget {
                 onChanged: () {
                   var form = Form.of(primaryFocus.context);
                   if (form != null) form.save();
-                  print('Save form $form ${formKey.currentState}');
+                  // print('Save form $form ${formKey.currentState}');
                 },
                 child: ListView(
                   padding: EdgeInsets.symmetric(horizontal: 16.0),

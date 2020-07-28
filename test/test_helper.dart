@@ -3,12 +3,19 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:flutterapp/app_config.dart';
 import 'package:flutterapp/container/app_context.dart';
 import 'package:flutterapp/home/state/app_state_widget.dart';
+import 'package:flutterapp/i18n/app_localizations_delegate.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 MaterialApp createTestApp(Widget widget, [AppContext appContext]) {
-  if (appContext == null) return MaterialApp(home: widget);
+  if (appContext == null) return MaterialApp(
+      localizationsDelegates: AppLocalizationsDelegate.delegates,
+      supportedLocales: AppLocalizationsDelegate.locales,
+      home: widget
+  );
   else return MaterialApp(
+      localizationsDelegates: AppLocalizationsDelegate.delegates,
+      supportedLocales: AppLocalizationsDelegate.locales,
       home: AppStateWidget(
         context: appContext,
         child: widget,

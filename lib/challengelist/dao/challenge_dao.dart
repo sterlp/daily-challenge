@@ -17,6 +17,14 @@ class ChallengeDao extends AbstractDao<Challenge> {
     else return r[0]['rewardSum'] ?? 0;
   }
 
+
+  Future<Iterable<String>> loadNamesByPattern(String pattern, {int limit = 5}) async {
+    var db = await dbExecutor;
+    var list = await db.rawQuery('SELECT DISTINCT name FROM $tableName WHERE status <> "open" AND name like ? ORDER BY NAME',
+        [pattern + "%"]);
+    return list.map((e) => e['name']);
+  }
+
   /// Sets the given challenges to fail and returns their total reward.
   Future<int> fail(List<Challenge> values) async {
     int result = 0;

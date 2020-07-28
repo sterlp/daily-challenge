@@ -9,13 +9,15 @@ void main() {
   AppContext context;
   ChallengeDao subject;
 
-  setUp(() async {
+  setUpAll(() {
     context = testContainer();
     subject = context.get<ChallengeDao>();
+  });
+  setUp(() async {
     await subject.deleteAll();
   });
-  tearDown(() async {
-    await subject.deleteAll();
+  tearDown(() async => await subject.deleteAll());
+  tearDownAll(() async {
     if (context != null) await context.close();
     context = null;
   });
@@ -170,6 +172,28 @@ void main() {
 
     c = await subject.getById(c.id);
     expect(c.name, _name);
+  });
+
+  test('Test loadNamesByPattern', () async {
+    await subject.save(Challenge.of('Foo')..status = ChallengeStatus.done);
+    await subject.save(Challenge.of('Faa')..status = ChallengeStatus.done);
+    await subject.save(Challenge.of('Boo')..status = ChallengeStatus.done);
+    await subject.save(Challenge.of('Not done'));
+
+    var result = await subject.loadNamesByPattern('k');
+    expect(result.toList().length, 0);
+
+    result = await subject.loadNamesByPattern('F');
+    expect(result.toList().length, 2);
+
+    result = await subject.loadNamesByPattern('Foo');
+    expect(result.toList().length, 1);
+
+    result = await subject.loadNamesByPattern('Bo');
+    expect(result.toList().length, 1);
+
+    result = await subject.loadNamesByPattern('Not');
+    expect(result.toList().length, 0);
   });
 }
 

@@ -3,18 +3,19 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:flutterapp/challengelist/model/challenge_model.dart';
 import 'package:flutterapp/challengelist/widget/challenge_widget.dart';
 
+import '../../test_helper.dart';
+
 void main() {
   testWidgets('Show simple challenge', (WidgetTester tester) async {
     // Create the widget by telling the tester to build it.
     Challenge c = Challenge.of('test challenge 1', null, 77);
-    await tester.pumpWidget(MaterialApp(
-        home: Card(child: ListView(
-          children: [
-              ChallengeWidget(challenge: c),
-              ChallengeWidget(challenge: Challenge.of('test challenge 2'))
-            ]
-          )
-        )
+    await pumpTestApp(tester, Card(
+      child: ListView(
+        children: [
+            ChallengeWidget(challenge: c),
+            ChallengeWidget(challenge: Challenge.of('test challenge 2'))
+          ]
+        ),
       )
     );
     await tester.pumpAndSettle();

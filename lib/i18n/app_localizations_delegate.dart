@@ -7,12 +7,12 @@ import 'package:flutterapp/i18n/challenge_localization_delegate.dart';
 // Consider https://pub.dev/packages/i18n
 abstract class AppLocalizationsDelegate<T> extends LocalizationsDelegate<T> {
   static const List<LocalizationsDelegate<dynamic>> delegates = <LocalizationsDelegate<dynamic>>[
-    ChallengeLocalizations.delegate,
-    ChallengeListLocalizations.delegate,
-
     GlobalCupertinoLocalizations.delegate,
     GlobalMaterialLocalizations.delegate,
     GlobalWidgetsLocalizations.delegate,
+
+    ChallengeLocalizations.delegate,
+    ChallengeListLocalizations.delegate,
   ];
   static const List<Locale> locales = [
     const Locale('en'),

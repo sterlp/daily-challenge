@@ -34,4 +34,4 @@ If you like to contribute and you are a developer feel free to create a pull req
 ## Generate Icons
 
 - https://github.com/sterlp/svg2png/releases
-- run in assets `java -jar svg2png-0.2.x.jar --android-launch -f icon.svg -o ..\android\app\src\main\res\`
+- run in `svgs` `java -jar svg2png-0.2.x.jar --android-launch -f icon-xx.svg -n icon.png -o ..\android\app\src\main\res\`
