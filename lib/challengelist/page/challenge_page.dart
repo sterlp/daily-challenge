@@ -4,10 +4,12 @@ import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:flutterapp/challengelist/i18n/challengelist_localization.dart';
 import 'package:flutterapp/challengelist/model/challenge_model.dart';
 import 'package:flutterapp/challengelist/service/challenge_service.dart';
+import 'package:flutterapp/common/widget/fixed_flutter_state.dart';
 import 'package:flutterapp/common/widget/input_form.dart';
 import 'package:flutterapp/db/test_data.dart';
 import 'package:flutterapp/home/state/app_state_widget.dart';
 import 'package:flutterapp/i18n/challenge_localization_delegate.dart';
+import 'package:flutterapp/log/logger.dart';
 import 'package:flutterapp/util/date.dart';
 import 'package:flutterapp/util/strings.dart';
 
@@ -19,7 +21,8 @@ class ChallengePage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() => ChallengePageState();
 }
-class ChallengePageState extends State<ChallengePage> {
+class ChallengePageState extends FixedState<ChallengePage> {
+  static final Logger _log = LoggerFactory.get<ChallengePage>();
   final _formKey = GlobalKey<FormState>();
 
   final TextEditingController _nameController = TextEditingController();
@@ -27,7 +30,7 @@ class ChallengePageState extends State<ChallengePage> {
 
   final TextEditingController _dueAtController = TextEditingController();
   DateTime _dueAt;
-  final TextEditingController _latestUntilController = TextEditingController();
+  final TextEditingController _latestAtController = TextEditingController();
 
   DateTime _latestAt;
   ChallengeService _challengeService;
@@ -37,10 +40,14 @@ class ChallengePageState extends State<ChallengePage> {
 
   @override
   void didChangeDependencies() {
-    super.didChangeDependencies();
-    _challengeService ??= AppStateWidget.of(context).get<ChallengeService>();
     _i18n = Localizations.of<ChallengeListLocalizations>(context, ChallengeListLocalizations);
     _commonI18n = Localizations.of<ChallengeLocalizations>(context, ChallengeLocalizations);
+    super.didChangeDependencies();
+  }
+
+  @override
+  void saveInitState() {
+    _challengeService = AppStateWidget.of(context).get<ChallengeService>();
 
     final c = widget.challenge;
     _nameController.text = c.name;
@@ -49,7 +56,7 @@ class ChallengePageState extends State<ChallengePage> {
     _dueAt = c.dueAt;
     _dueAtController.text = _commonI18n.formatDate(_dueAt);
     _latestAt = c.latestAt;
-    _latestUntilController.text = _commonI18n.formatDate(_latestAt);
+    _latestAtController.text = _commonI18n.formatDate(_latestAt);
   }
 
   _save() async {
@@ -59,7 +66,8 @@ class ChallengePageState extends State<ChallengePage> {
       if (_rewardController.text != "") c.reward = int.parse(_rewardController.text);
       c.dueAt = _dueAt;
       c.latestAt = _latestAt;
-      c = await _challengeService.save(widget.challenge);
+      c = await _challengeService.save(c);
+      _log.debug('saved challenge: $c dueAt: $_dueAt latest $_latestAt');
       Navigator.pop(context, true);
     }
   }
@@ -92,11 +100,11 @@ class ChallengePageState extends State<ChallengePage> {
 
   @override
   void dispose() {
-    super.dispose();
-    // _nameController.dispose();
+    _nameController.dispose();
     _rewardController.dispose();
     _dueAtController.dispose();
-    _latestUntilController.dispose();
+    _latestAtController.dispose();
+    super.dispose();
   }
   @override
   Widget build(BuildContext context) {
@@ -164,11 +172,11 @@ class ChallengePageState extends State<ChallengePage> {
           ),
 
           TextFormField(
-            controller: _latestUntilController,
+            controller: _latestAtController,
             onTap: () => _pickLatestAt(c, context),
             readOnly: true,
             decoration: new InputDecoration(
-              icon: Icon(Icons.today),
+              icon: Icon(Icons.date_range),
               labelText: _i18n.challengeLatestAt.label,
               hintText: _i18n.challengeLatestAt.hint,
               suffixIcon: Icon(Icons.arrow_drop_down),
@@ -196,7 +204,7 @@ class ChallengePageState extends State<ChallengePage> {
 
     ).then((date) {
       if (date != null) {
-        _latestUntilController.text = _commonI18n.formatDate(date);
+        _latestAtController.text = _commonI18n.formatDate(date);
         _latestAt = date;
         FocusScope.of(context).nextFocus();
       }
@@ -212,10 +220,10 @@ class ChallengePageState extends State<ChallengePage> {
       ).then((date) {
       if (date != null) {
         _dueAt = date;
-        _dueAtController.text = _commonI18n.formatDate(date);
+        _dueAtController.text = _commonI18n.formatDate(_dueAt);
         if (date.isAfter(_latestAt)) {
           _latestAt = _dueAt;
-          _latestUntilController.text = _commonI18n.formatDate(date);
+          _latestAtController.text = _commonI18n.formatDate(date);
         }
         FocusScope.of(context).nextFocus();
       }

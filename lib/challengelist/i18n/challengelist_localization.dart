@@ -21,6 +21,10 @@ class ChallengeListLocalizations {
   String get newChallengeButton => 'New Challenge';
 
   String challengeWillFail(Duration duration) => 'Will fail in ${duration.inDays} day(s).';
+  String dueUntil(String date) => 'Due on $date';
+  String doneAt(String date) => 'Done on $date';
+  String failedSince(String date) => 'Failed since $date';
+
 
   //-- challenge page
   String get createChallengeHeader => 'Create Challenge';
@@ -40,13 +44,27 @@ class ChallengeListLocalizationsDE extends ChallengeListLocalizations {
   String get newChallengeButton => 'Neue Challenge';
   @override
   String challengeWillFail(Duration duration) => 'Wird in ${duration.inDays} Tagen fehlschlagen.';
+  @override
+  String dueUntil(String date) => 'Am $date fällig';
+  @override
+  String doneAt(String date) => 'Am $date erledigt';
+  @override
+  String failedSince(String date) => 'Fehlgeschlagen seit $date';
 
   //-- challenge page
+  @override
   String get createChallengeHeader => 'Neue Challenge';
+  @override
   String get updateChallengeHeader => 'Challenge aktualisieren';
 
+
+
+  @override
   IFormField get challengeName => const SimpleFormField('Challenge Name', 'Was ist Deine Herausforderung...?', 'Gib einen Challenge-Namen ein');
+  @override
   IFormField get challengeDueAt => const SimpleFormField('Fällig am', 'Wann planst Du das zu tun?', 'Gin ein Fälligkeitsdatum ein');
+  @override
   IFormField get challengeLatestAt => const SimpleFormField('Fehlschlag am', 'Wann soll die Challenge fehlschlagen? Du verlierst Punkte!');
-  IFormField get challengeReward => const SimpleFormField('Lohn', 'Wieviele Punkte bringt die Challenge?', 'Gib an wieviele Punkte die Challenge wert ist', MyStyle.COST_ICON);
+  @override
+  IFormField get challengeReward => const SimpleFormField('Punkte', 'Wieviele Punkte bringt die Challenge?', 'Gib an wieviele Punkte die Challenge wert ist', MyStyle.COST_ICON);
 }

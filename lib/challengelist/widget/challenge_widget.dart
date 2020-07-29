@@ -73,18 +73,18 @@ class _ChallengeWidgetState extends State<ChallengeWidget> {
     final done = challenge.isDone;
     final failed = challenge.isFailed;
 
-    if (done) return Text('Done ' + _commonI18n.formatDate(challenge.doneAt));
+    if (done) return Text(_i18n.doneAt(_commonI18n.formatDate(challenge.doneAt)));
     else if (failed) {
-      return Text('Failed since ' + _commonI18n.formatDate(challenge.latestAt), style: _overDueStyle);
+      return Text(_i18n.failedSince(_commonI18n.formatDate(challenge.latestAt)), style: _overDueStyle);
     } else if (challenge.isOverdue) {
       if (challenge.latestAt == null) {
-        return Text('Was due until ' + _commonI18n.formatDate(challenge.dueAt), style: _overDueStyle);
+        return Text('Was due ' + _commonI18n.formatDate(challenge.dueAt), style: _overDueStyle);
       } else {
         Duration failIn = challenge.latestAt.difference(DateTime.now());
         return Text(_i18n.challengeWillFail(failIn), style: _overDueStyle);
       }
     } else {
-      return Text('Due until ' + _commonI18n.formatDate(challenge.dueAt));
+      return Text(_i18n.dueUntil(_commonI18n.formatDate(challenge.dueAt)));
     }
   }
 

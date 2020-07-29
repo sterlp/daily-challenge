@@ -41,6 +41,9 @@ class ChallengeListPageState extends State<ChallengeListPage> with ScrollViewPos
     super.didChangeDependencies();
     i18n = Localizations.of<ChallengeListLocalizations>(context, ChallengeListLocalizations);
     commonI18n = Localizations.of<ChallengeLocalizations>(context, ChallengeLocalizations);
+    _challengeService ??= AppStateWidget.of(context).get<ChallengeService>();
+    _creditService ??= AppStateWidget.of(context).get<CreditService>();
+    _credit ??= _creditService.creditNotifier;
   }
 
   @override
@@ -52,10 +55,6 @@ class ChallengeListPageState extends State<ChallengeListPage> with ScrollViewPos
   Future<List<Challenge>> _doReload() async {
     List<Challenge> result = [];
     try {
-      _challengeService ??= AppStateWidget.of(context).get<ChallengeService>();
-      _creditService ??= AppStateWidget.of(context).get<CreditService>();
-      _credit ??= _creditService.creditNotifier;
-
       final isToday = DateTimeUtil.clearTime(_selectedDay).millisecondsSinceEpoch == DateTimeUtil.clearTime(DateTime.now()).millisecondsSinceEpoch;
 
       _log.startSync('ChallengeListPage._doReload, ${isToday ? "today" : "not today"}.');
