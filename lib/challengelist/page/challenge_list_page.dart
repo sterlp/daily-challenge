@@ -159,6 +159,7 @@ class ChallengeListPageState extends State<ChallengeListPage> with ScrollViewPos
         child: Row(
           children: <Widget>[
             FlatButton.icon(
+              key: ValueKey('home_day_select'),
               onPressed: () async {
                 var newDate = await showDatePicker(context: context, initialDate: _selectedDay,
                     firstDate: _selectedDay.add(Duration(days: -60)), lastDate: _selectedDay.add(Duration(days: 60)));

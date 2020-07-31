@@ -1,13 +1,16 @@
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutterapp/challengelist/i18n/challengelist_localization.dart';
 import 'package:flutterapp/challengelist/model/challenge_model.dart';
 import 'package:flutterapp/challengelist/page/challenge_page.dart';
 import 'package:flutterapp/challengelist/service/challenge_service.dart';
 import 'package:flutterapp/i18n/challenge_localization_delegate.dart';
+import 'package:flutterapp/main.dart';
 import 'package:mockito/mockito.dart';
 
+import '../../home/page/challenge_home_page_model.dart';
 import '../../mock_appcontext.dart';
 import '../../test_helper.dart';
 
@@ -22,21 +25,24 @@ void main() {
 
   // TEST broken because of https://github.com/AbdulRahmanAlHamali/flutter_typeahead/issues/155
   testWidgets('RewardShopPage no rewards', (WidgetTester tester) async {
+    final homeModel = ChallengeHomePageModel(tester);
+
     final challengeService = appContextMock.appContext.get<ChallengeService>();
     final DateTime now = DateTime.now();
+
+    final startChallenge = DateTime(now.year, now.month, 10);
     final dateDue = DateTime(now.year, now.month, 11);
     final dateLatest = DateTime(now.year, now.month, 15);
-    final startChallenge = Challenge()
-      ..dueAt = DateTime(now.year, now.month, 10)
-      ..latestAt = null;
 
-    // we use a challenge with the day from yesterday:
-    await pumpTestApp(tester, ChallengePage(challenge: startChallenge), appContextMock.appContext);
-    await tester.pumpAndSettle();
+    final myApp = MyApp(container: appContextMock.appContext);
+    await tester.pumpWidget(myApp);
+    await tester.pumpAndSettle(); // yeah we have now to wait for flutter to load i18n resources, this is of course not documented
 
-    expect(find.text(i18n.createChallengeHeader), findsOneWidget);
     // the day should be shown
-    expect(find.text(commonI18n.formatDate(startChallenge.dueAt)), findsOneWidget);
+    await homeModel.selectDay(10);
+    await homeModel.goNewChallenge();
+
+    expect(find.text(commonI18n.formatDate(startChallenge)), findsOneWidget);
 
     await tester.enterText(find.byKey(ValueKey('challenge_name')), 'Test Challenge');
     await tester.pumpAndSettle();
@@ -49,7 +55,7 @@ void main() {
     await tester.tap(find.text("OK"));
     await tester.pumpAndSettle();
     expect(find.text(commonI18n.formatDate(dateDue)), findsOneWidget);
-    expect(find.text(commonI18n.formatDate(startChallenge.dueAt)), findsNothing);
+    expect(find.text(commonI18n.formatDate(startChallenge)), findsNothing);
 
     // select latest date
     await tester.tap(find.text(i18n.challengeLatestAt.label));
@@ -61,15 +67,18 @@ void main() {
     expect(find.text(commonI18n.formatDate(dateLatest)), findsOneWidget);
 
     // enter reward
-    await tester.enterText(find.byKey(ValueKey('challenge_reward')), '6');
+    await tester.tap(find.text(i18n.challengeReward.label));
+    await tester.enterText(find.byType(TextFormField).at(2), '6');
     await tester.tap(find.text(commonI18n.buttonCreate));
     await tester.pumpAndSettle();
 
-    verify(challengeService.save(any)).called(1);
-
-    Challenge c = verify(challengeService.save(any)).captured.single;
+    Challenge c = verify(challengeService.save(captureAny)).captured.single;
     expect(c.name, 'Test Challenge');
-
+    expect(c.reward, 6);
+    expect(c.createdAt, isNotNull);
+    expect(c.createdAt.day, DateTime.now().day);
+    expect(c.dueAt, dateDue);
+    expect(c.latestAt, dateLatest);
   });
 
 }

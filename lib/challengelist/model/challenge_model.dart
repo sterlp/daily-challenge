@@ -28,8 +28,8 @@ class Challenge extends AbstractEntity {
   ChallengeStatus status = ChallengeStatus.open;
   DateTime createdAt = DateTime.now();
   DateTime doneAt;
-  DateTime dueAt = DateTime.now();
-  DateTime latestAt = DateTime.now().add(defaultChallengeWaitTime);
+  DateTime dueAt;
+  DateTime latestAt;
 
   bool get isOverdue => DateTimeUtil.clearTime(dueAt).isBefore(DateTimeUtil.clearTime(DateTime.now()));
   bool get isDone => status == ChallengeStatus.done;
