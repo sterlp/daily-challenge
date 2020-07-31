@@ -35,9 +35,9 @@ class _RewardPageState extends State<RewardPage> {
 
   @override
   void dispose() {
-    super.dispose();
     _nameController.dispose();
     _costController.dispose();
+    super.dispose();
   }
 
   @override

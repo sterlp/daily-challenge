@@ -48,8 +48,8 @@ class ChallengeListPageState extends State<ChallengeListPage> with ScrollViewPos
 
   @override
   void dispose() {
-    super.dispose();
     disposeScrollListener();
+    super.dispose();
   }
 
   Future<List<Challenge>> _doReload() async {

@@ -37,8 +37,8 @@ class _RewardShopPageState extends State<RewardShopPage> with ScrollViewPosition
 
   @override
   void dispose() {
-    super.dispose();
     disposeScrollListener();
+    super.dispose();
   }
 
   void _reload() async {

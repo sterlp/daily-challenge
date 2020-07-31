@@ -49,8 +49,8 @@ class _RewardCardWidgetState extends State<RewardCardWidget> with SingleTickerPr
 
   @override
   void dispose() {
-    super.dispose();
     animationController.dispose();
+    super.dispose();
   }
 
   void _loadBoughtReward() async {

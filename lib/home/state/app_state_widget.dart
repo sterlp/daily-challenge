@@ -27,8 +27,8 @@ class _AppStateWidgetState extends State<AppStateWidget> {
   }
   @override
   void dispose() {
-    super.dispose();
     widget.context.close();
+    super.dispose();
   }
 }
 
