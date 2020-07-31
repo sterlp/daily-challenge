@@ -10,6 +10,7 @@ import 'package:mockito/mockito.dart';
 
 import '../../home/page/challenge_home_page_model.dart';
 import '../../mock_appcontext.dart';
+import 'challenge_page_model.dart';
 
 void main() {
   AppContextMock appContextMock;
@@ -20,9 +21,9 @@ void main() {
     appContextMock = AppContextMock();
   });
 
-  // TEST broken because of https://github.com/AbdulRahmanAlHamali/flutter_typeahead/issues/155
-  testWidgets('RewardShopPage no rewards', (WidgetTester tester) async {
+  testWidgets('Create challenge test', (WidgetTester tester) async {
     final homeModel = ChallengeHomePageModel(tester);
+    final challengePageModel = ChallengePageModel(tester);
 
     final challengeService = appContextMock.appContext.get<ChallengeService>();
     final DateTime now = DateTime.now();
@@ -41,33 +42,19 @@ void main() {
 
     expect(find.text(commonI18n.formatDate(startChallenge)), findsOneWidget);
 
-    await tester.enterText(find.byKey(ValueKey('challenge_name')), 'Test Challenge');
-    await tester.pumpAndSettle();
+    await challengePageModel.enterName('Test Challenge');
 
     // select a due at date
-    await tester.tap(find.text(i18n.challengeDueAt.label));
-    await tester.pumpAndSettle();
-    await tester.tap(find.text(dateDue.day.toString()));
-    await tester.pumpAndSettle();
-    await tester.tap(find.text("OK"));
-    await tester.pumpAndSettle();
+    await challengePageModel.enterDueAtDay(dateDue.day);
     expect(find.text(commonI18n.formatDate(dateDue)), findsOneWidget);
     expect(find.text(commonI18n.formatDate(startChallenge)), findsNothing);
 
     // select latest date
-    await tester.tap(find.text(i18n.challengeLatestAt.label));
-    await tester.pumpAndSettle();
-    await tester.tap(find.text(dateLatest.day.toString()));
-    await tester.pumpAndSettle();
-    await tester.tap(find.text("OK"));
-    await tester.pumpAndSettle();
+    await challengePageModel.enterLatestAtDay(dateLatest.day);
     expect(find.text(commonI18n.formatDate(dateLatest)), findsOneWidget);
 
     // enter reward
-    await tester.tap(find.text(i18n.challengeReward.label));
-    await tester.enterText(find.byType(TextFormField).at(2), '6');
-    await tester.tap(find.text(commonI18n.buttonCreate));
-    await tester.pumpAndSettle();
+    await challengePageModel.enterReward(6);
 
     Challenge c = verify(challengeService.save(captureAny)).captured.single;
     expect(c.name, 'Test Challenge');

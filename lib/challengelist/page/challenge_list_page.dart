@@ -32,18 +32,18 @@ class ChallengeListPageState extends State<ChallengeListPage> with ScrollViewPos
 
   @override
   void initState() {
-    super.initState();
     initScrollListener();
+    super.initState();
   }
 
   @override
   void didChangeDependencies() {
-    super.didChangeDependencies();
     i18n = Localizations.of<ChallengeListLocalizations>(context, ChallengeListLocalizations);
     commonI18n = Localizations.of<ChallengeLocalizations>(context, ChallengeLocalizations);
-    _challengeService ??= AppStateWidget.of(context).get<ChallengeService>();
-    _creditService ??= AppStateWidget.of(context).get<CreditService>();
-    _credit ??= _creditService.creditNotifier;
+    _challengeService = AppStateWidget.of(context).get<ChallengeService>();
+    _creditService = AppStateWidget.of(context).get<CreditService>();
+    _credit = _creditService.creditNotifier;
+    super.didChangeDependencies();
   }
 
   @override
@@ -67,7 +67,7 @@ class ChallengeListPageState extends State<ChallengeListPage> with ScrollViewPos
       // TODO just for now, business logic in view
       if (isToday) {
         overDue = await _challengeService.loadOverDue();
-        await _challengeService.failOverDue(overDue);
+        if (overDue.length > 0) await _challengeService.failOverDue(overDue);
       }
 
       result.clear();

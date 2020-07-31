@@ -3,7 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 import '../../page_model/page_model.dart';
 
-class ChallengeHomePageModel extends PageModel {
+class ChallengeHomePageModel extends AbstractPageModel {
 
   ChallengeHomePageModel(WidgetTester tester) : super(tester);
 
