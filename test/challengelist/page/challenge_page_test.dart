@@ -1,10 +1,8 @@
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutterapp/challengelist/i18n/challengelist_localization.dart';
 import 'package:flutterapp/challengelist/model/challenge_model.dart';
-import 'package:flutterapp/challengelist/page/challenge_page.dart';
 import 'package:flutterapp/challengelist/service/challenge_service.dart';
 import 'package:flutterapp/i18n/challenge_localization_delegate.dart';
 import 'package:flutterapp/main.dart';
@@ -12,7 +10,6 @@ import 'package:mockito/mockito.dart';
 
 import '../../home/page/challenge_home_page_model.dart';
 import '../../mock_appcontext.dart';
-import '../../test_helper.dart';
 
 void main() {
   AppContextMock appContextMock;

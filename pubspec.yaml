@@ -34,6 +34,7 @@ dependencies:
   flutter_slidable: ^0.5.5
   # use MdiIcons
   material_design_icons_flutter: ^4.0.5345
+  flutter_typeahead: 1.8.7
   flutter_keyboard_visibility: ^3.2.1
 
 dev_dependencies:
