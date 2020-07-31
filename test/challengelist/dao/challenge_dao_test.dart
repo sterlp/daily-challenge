@@ -3,6 +3,7 @@ import 'package:flutterapp/challengelist/dao/challenge_dao.dart';
 import 'package:flutterapp/challengelist/model/challenge_model.dart';
 import 'package:flutterapp/container/app_context.dart';
 import 'package:flutterapp/util/random_util.dart';
+
 import '../../test_helper.dart';
 
 void main() {
@@ -186,8 +187,11 @@ void main() {
     result = await subject.loadNamesByPattern('F');
     expect(result.toList().length, 2);
 
-    result = await subject.loadNamesByPattern('Foo');
+    result = await subject.loadNamesByPattern('Fo');
     expect(result.toList().length, 1);
+
+    result = await subject.loadNamesByPattern('Foo');
+    expect(result.toList().length, 0);
 
     result = await subject.loadNamesByPattern('Bo');
     expect(result.toList().length, 1);

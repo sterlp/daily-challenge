@@ -1,21 +1,14 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutterapp/challengelist/i18n/challengelist_localization.dart';
 import 'package:flutterapp/challengelist/model/challenge_model.dart';
 import 'package:flutterapp/challengelist/service/challenge_service.dart';
-import 'package:flutterapp/i18n/challenge_localization_delegate.dart';
 import 'package:flutterapp/main.dart';
 import 'package:mockito/mockito.dart';
 
-import '../../home/page/challenge_home_page_model.dart';
 import '../../mock_appcontext.dart';
 
 void main() {
   AppContextMock appContextMock;
-  final ChallengeListLocalizations i18n = ChallengeListLocalizations(Locale('en'));
-  final ChallengeLocalizations commonI18n = ChallengeLocalizations(Locale('en'));
 
   setUp(() async {
     appContextMock = AppContextMock();
@@ -23,7 +16,6 @@ void main() {
 
   // TEST broken because of https://github.com/AbdulRahmanAlHamali/flutter_typeahead/issues/155
   testWidgets('Simple show challenges', (WidgetTester tester) async {
-    final homeModel = ChallengeHomePageModel(tester);
     final challengeService = appContextMock.appContext.get<ChallengeService>();
 
     when(challengeService.loadByDate(any)).thenAnswer((realInvocation) =>

@@ -141,7 +141,9 @@ class ChallengePageState extends FixedState<ChallengePage> {
               },
             ),
             suggestionsCallback: (pattern) {
-              if (pattern != null && pattern.length > 1) return _challengeService.completeChallengesName(pattern);
+              if (pattern != null && pattern.length > 1) {
+                return _challengeService.completeChallengesName(pattern);
+              }
               return null;
             },
             suggestionsBoxDecoration: SuggestionsBoxDecoration(

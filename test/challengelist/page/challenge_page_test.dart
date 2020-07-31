@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutterapp/challengelist/i18n/challengelist_localization.dart';
 import 'package:flutterapp/challengelist/model/challenge_model.dart';
 import 'package:flutterapp/challengelist/service/challenge_service.dart';
 import 'package:flutterapp/i18n/challenge_localization_delegate.dart';
@@ -14,7 +13,6 @@ import 'challenge_page_model.dart';
 
 void main() {
   AppContextMock appContextMock;
-  final ChallengeListLocalizations i18n = ChallengeListLocalizations(Locale('en'));
   final ChallengeLocalizations commonI18n = ChallengeLocalizations(Locale('en'));
 
   setUp(() async {

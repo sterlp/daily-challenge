@@ -20,8 +20,8 @@ class ChallengeDao extends AbstractDao<Challenge> {
 
   Future<Iterable<String>> loadNamesByPattern(String pattern, {int limit = 5}) async {
     var db = await dbExecutor;
-    var list = await db.rawQuery('SELECT DISTINCT name FROM $tableName WHERE status <> "open" AND name like ? ORDER BY NAME',
-        [pattern + "%"]);
+    var list = await db.rawQuery('SELECT DISTINCT name FROM $tableName WHERE status <> "open" AND name <> ? AND name like ? ORDER BY NAME',
+        [pattern, pattern + "%"]);
     return list.map((e) => e['name']);
   }
 
