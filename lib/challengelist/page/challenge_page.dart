@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:flutterapp/challengelist/i18n/challengelist_localization.dart';
 import 'package:flutterapp/challengelist/model/challenge_model.dart';
 import 'package:flutterapp/challengelist/service/challenge_service.dart';
 import 'package:flutterapp/common/widget/fixed_flutter_state.dart';
+import 'package:flutterapp/common/widget/flutter_typeahead.dart';
 import 'package:flutterapp/common/widget/input_form.dart';
 import 'package:flutterapp/db/test_data.dart';
 import 'package:flutterapp/home/state/app_state_widget.dart';
@@ -48,8 +48,11 @@ class ChallengePageState extends FixedState<ChallengePage> {
   @override
   void saveInitState() {
     _challengeService = AppStateWidget.of(context).get<ChallengeService>();
-
     final c = widget.challenge;
+
+    c.dueAt ??= c.dueAt = DateTimeUtil.clearTime(DateTime.now());
+    c.latestAt ??= c.dueAt.add(Challenge.defaultChallengeWaitTime);
+
     _nameController.text = c.name;
     _rewardController.text = c.reward == null ? null : c.reward.toString();
 
@@ -108,11 +111,7 @@ class ChallengePageState extends FixedState<ChallengePage> {
   }
   @override
   Widget build(BuildContext context) {
-    var c = widget.challenge;
-    _challengeService ??= _challengeService = AppStateWidget.of(context).get<ChallengeService>();
-    c.dueAt ??= c.dueAt = DateTimeUtil.clearTime(DateTime.now());
-    c.latestAt ??= c.dueAt.add(Challenge.defaultChallengeWaitTime);
-
+    final c = widget.challenge;
     final newChallenge = c.id == null;
 
     return Scaffold(
@@ -130,6 +129,7 @@ class ChallengePageState extends FixedState<ChallengePage> {
         formKey: _formKey,
         children: <Widget>[
           TypeAheadFormField(
+            key: ValueKey('challenge_name'),
             textFieldConfiguration: TextFieldConfiguration (
               autofocus: true,
               inputFormatters: [LengthLimitingTextInputFormatter(Challenge.NAME_LENGTH)],
@@ -201,11 +201,10 @@ class ChallengePageState extends FixedState<ChallengePage> {
     showDatePicker(context: context, initialDate: _latestAt, firstDate: _dueAt,
         lastDate: DateTime.now().add(Duration(days: 365)),
         helpText:_i18n.challengeLatestAt.hint,
-
     ).then((date) {
       if (date != null) {
-        _latestAtController.text = _commonI18n.formatDate(date);
         _latestAt = date;
+        _latestAtController.text = _commonI18n.formatDate(_latestAt);
         FocusScope.of(context).nextFocus();
       }
     });

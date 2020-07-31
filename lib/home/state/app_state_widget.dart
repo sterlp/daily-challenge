@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutterapp/container/app_context.dart';
+import 'package:flutterapp/log/logger.dart';
 
 ///
 /// Provides the AppContext
@@ -32,12 +33,21 @@ class _AppStateWidgetState extends State<AppStateWidget> {
 }
 
 class _InheritedDiContainer extends InheritedWidget {
-
+  static final Logger _log = LoggerFactory.get<AppStateWidget>();
   final AppContext context;
 
   _InheritedDiContainer({Key key, @required this.context, @required Widget child})
       : super(key: key, child: child);
 
   @override
-  bool updateShouldNotify(InheritedWidget oldWidget) => this != oldWidget;
+  bool updateShouldNotify(InheritedWidget oldWidget) {
+    bool result;
+    if (oldWidget is _InheritedDiContainer) {
+      result = oldWidget.context != this.context;
+    } else {
+      result = this != oldWidget;
+    }
+    if (result) _log.debug('rebuild triggered...');
+    return result;
+  }
 }

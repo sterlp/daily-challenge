@@ -90,7 +90,8 @@ class ChallengeListPageState extends State<ChallengeListPage> with ScrollViewPos
   void _createChallenge() async {
     var result = await Navigator.push(
         context,
-        MaterialPageRoute<dynamic>(builder: (BuildContext context) => ChallengePage(challenge: Challenge()), fullscreenDialog: true)
+        MaterialPageRoute<dynamic>(builder: (BuildContext context) =>
+            ChallengePage(challenge: Challenge()..dueAt = _selectedDay), fullscreenDialog: true)
     );
     if (result != null) {
       _data = _doReload();
