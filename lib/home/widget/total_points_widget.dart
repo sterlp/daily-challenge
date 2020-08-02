@@ -31,7 +31,12 @@ class _TotalPointsWidgetState extends State<TotalPointsWidget> {
                 MyStyle.COST_ICON,
                 Padding(
                   padding: EdgeInsets.fromLTRB(4, 0, 0, 0),
-                  child: Text(total.toString(), style: style, textScaleFactor: 1.4))
+                  child: AnimatedSwitcher(
+                    transitionBuilder: (child, animation) => ScaleTransition(child: child, scale: animation),
+                    duration: const Duration(milliseconds: 500),
+                    child: Text(total.toString(), style: style, textScaleFactor: 1.4, key: ValueKey(total))
+                  )
+                )
               ]
             );
           } else {

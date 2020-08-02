@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:flutterapp/challengelist/i18n/challengelist_localization.dart';
 import 'package:flutterapp/common/common_types.dart';
 import 'package:flutterapp/home/state/app_state_widget.dart';
 import 'package:flutterapp/i18n/challenge_localization_delegate.dart';
@@ -25,29 +26,38 @@ class RewardCardWidget extends StatefulWidget {
 class _RewardCardWidgetState extends State<RewardCardWidget> with SingleTickerProviderStateMixin {
   static const ACTION_PADDING = EdgeInsets.all(4.0);
 
-  AnimationController animationController;
+  AnimationController _animationController;
   RewardService _rewardService;
   BoughtReward _boughtReward;
+  ChallengeLocalizations _commonI18n;
+  ChallengeListLocalizations _i18n;
 
   @override
   void initState() {
-    super.initState();
-    animationController = new AnimationController(
+    _animationController = new AnimationController(
       vsync: this,
-      duration: new Duration(seconds: 4),
+      duration: new Duration(seconds: 1),
+      lowerBound: 0.0,
+      upperBound: 1.0,
     );
+    _animationController.addStatusListener((status) {
+      if (status == AnimationStatus.completed) _animationController.reverse();
+    });
+    super.initState();
   }
 
   @override
   void didChangeDependencies() {
     _rewardService = AppStateWidget.of(context).get<RewardService>();
+    _commonI18n = Localizations.of<ChallengeLocalizations>(context, ChallengeLocalizations);
+    _i18n = Localizations.of<ChallengeListLocalizations>(context, ChallengeListLocalizations);
     _loadBoughtReward();
     super.didChangeDependencies();
   }
 
   @override
   void dispose() {
-    animationController.dispose();
+    _animationController.dispose();
     super.dispose();
   }
 
@@ -62,16 +72,15 @@ class _RewardCardWidgetState extends State<RewardCardWidget> with SingleTickerPr
     bool buy = await showBuyRewardDialog(context, widget._reward, widget._credit.value);
     if (buy) {
       _boughtReward = await _rewardService.buyReward(widget._reward);
-      animationController.forward();
+      _animationController.forward();
       setState(() {});
     }
   }
 
   void _editReward() async {
     var result = await Navigator.push(
-        context, MaterialPageRoute<Reward>(builder: (BuildContext context) => RewardPage(reward: widget._reward),
-        fullscreenDialog: true
-      )
+      context, MaterialPageRoute<Reward>(
+      builder: (BuildContext context) => RewardPage(reward: widget._reward), fullscreenDialog: true)
     );
     if (result != null) setState(() {});
   }
@@ -81,53 +90,52 @@ class _RewardCardWidgetState extends State<RewardCardWidget> with SingleTickerPr
     final theme = Theme.of(context);
     final _reward = widget._reward;
 
-    final commonI18n = Localizations.of<ChallengeLocalizations>(context, ChallengeLocalizations);
-
     return Slidable(
       actionPane: SlidableDrawerActionPane(),
       child: Card(
-        child: Column(mainAxisSize: MainAxisSize.min, children: [
-          ListTile(
-            leading: Padding(
-              padding: EdgeInsets.fromLTRB(0, 4, 0, 0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  AnimatedBuilder(
-                    child: MyStyle.COST_ICON,
-                    animation: animationController,
-                    builder: (BuildContext context, Widget _widget) {
-                      return new Transform.rotate(
-                        angle: animationController.value * 6.3,
-                        child: _widget,
-                      );
-                    }
-                  ),
-                  Text(_reward.cost.toString(), style: TextStyle(color: theme.errorColor), textScaleFactor: 1.2), // text
-                ],
+        child: Column(mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: Padding(
+                padding: EdgeInsets.fromLTRB(0, 4, 0, 0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    AnimatedBuilder(
+                      child: MyStyle.COST_ICON,
+                      animation: _animationController,
+                      builder: (BuildContext context, Widget _widget) {
+                        return Transform.scale(
+                          scale: 1 + _animationController.value,
+                          child: _widget,
+                        );
+                      }
+                    ),
+                    Text('${_reward.cost}', style: TextStyle(color: theme.errorColor), textScaleFactor: 1.2), // text
+                  ],
+                ),
               ),
-            ),
-            title: Text(_reward.name),
-            trailing: MyStyle.GOAL_ICON,
-            subtitle: _boughtReward == null ? null : Text('Last purchase on '
-                + commonI18n.formatDateTime(_boughtReward.boughtAt)),
-          ),
-          ButtonBar(
-            children: <Widget>[
-              ValueListenableBuilder(
+              title: Text(_reward.name),
+              subtitle: _boughtReward == null
+                  ? null
+                  : Text(_i18n.lastPurchase(_commonI18n.formatDateTime(_boughtReward.boughtAt))),
+              trailing: ValueListenableBuilder(
                 valueListenable: widget._credit,
                 builder: (context, credit, child) {
                   // TODO this is called twice by Flutter but why?
                   // _log.debug('Building reward action button for reward ${_reward.id} with value $credit ...');
-                  return RaisedButton(
-                      child: const Text('REWARD MYSELF'),
-                      onPressed: (_reward.cost <= credit ? () => _buyReward() : null));
+                  return SizedBox(
+                    width: 64,
+                    child: RaisedButton(
+                      child: MyStyle.GOAL_ICON,
+                      onPressed: (_reward.cost <= credit ? () => _buyReward() : null)),
+                  );
                 },
               ),
-            ],
-          )
-        ]),
+            ),
+          ]
+        ),
       ),
       secondaryActions: <Widget>[
         Padding(

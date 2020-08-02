@@ -35,6 +35,9 @@ class ChallengeListLocalizations {
   IFormField get challengeDueAt => const SimpleFormField('Due at', 'Then do you plan to do this Challenge?', 'Enter due date');
   IFormField get challengeLatestAt => const SimpleFormField('Fail on', 'When should the Challenge fail? You will lose points!');
   IFormField get challengeReward => const SimpleFormField('Reward', 'How many points should be rewarded?', 'Enter reward points', MyStyle.COST_ICON);
+
+  // Reward Page
+  String lastPurchase(String date) =>  'Last rewarded on $date';
 }
 
 class ChallengeListLocalizationsDE extends ChallengeListLocalizations {
@@ -58,7 +61,6 @@ class ChallengeListLocalizationsDE extends ChallengeListLocalizations {
   String get updateChallengeHeader => 'Challenge aktualisieren';
 
 
-
   @override
   IFormField get challengeName => const SimpleFormField('Challenge Name', 'Was ist Deine Herausforderung...?', 'Gib einen Challenge-Namen ein');
   @override
@@ -67,4 +69,8 @@ class ChallengeListLocalizationsDE extends ChallengeListLocalizations {
   IFormField get challengeLatestAt => const SimpleFormField('Fehlschlag am', 'Wann soll die Challenge fehlschlagen? Du verlierst Punkte!');
   @override
   IFormField get challengeReward => const SimpleFormField('Punkte', 'Wieviele Punkte bringt die Challenge?', 'Gib an wieviele Punkte die Challenge wert ist', MyStyle.COST_ICON);
+
+
+  // Reward Page
+  String lastPurchase(String date) =>  'Letztmalig belohnt am $date';
 }
