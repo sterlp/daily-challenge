@@ -31,12 +31,6 @@ class ChallengeListPageState extends State<ChallengeListPage> with ScrollViewPos
   ChallengeLocalizations commonI18n;
 
   @override
-  void initState() {
-    initScrollListener();
-    super.initState();
-  }
-
-  @override
   void didChangeDependencies() {
     i18n = Localizations.of<ChallengeListLocalizations>(context, ChallengeListLocalizations);
     commonI18n = Localizations.of<ChallengeLocalizations>(context, ChallengeLocalizations);
@@ -44,12 +38,6 @@ class ChallengeListPageState extends State<ChallengeListPage> with ScrollViewPos
     _creditService = AppStateWidget.of(context).get<CreditService>();
     _credit = _creditService.creditNotifier;
     super.didChangeDependencies();
-  }
-
-  @override
-  void dispose() {
-    disposeScrollListener();
-    super.dispose();
   }
 
   Future<List<Challenge>> _doReload() async {
@@ -112,20 +100,17 @@ class ChallengeListPageState extends State<ChallengeListPage> with ScrollViewPos
         )
       );
     } else {
-      return Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: ListView.builder(
-            controller: scrollController,
-            itemCount: _challenges.length,
-            itemBuilder: (context, index) {
-              final e = _challenges[index];
-              return ChallengeWidget(
-                challenge: e,
-                onDelete: _onDeleteChallenge,
-                key: ObjectKey(e),
-              );
-            }
-          )
+      return ListView.builder(
+        controller: scrollController,
+        itemCount: _challenges.length,
+        itemBuilder: (context, index) {
+          final e = _challenges[index];
+          return ChallengeWidget(
+            challenge: e,
+            onDelete: _onDeleteChallenge,
+            key: ObjectKey(e),
+          );
+        }
       );
     }
   }

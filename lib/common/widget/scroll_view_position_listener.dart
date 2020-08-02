@@ -1,18 +1,22 @@
 import 'package:flutter/material.dart';
 
-mixin ScrollViewPositionListener<T extends StatefulWidget> implements State<T> {
+mixin ScrollViewPositionListener<T extends StatefulWidget> on State<T> {
   final ScrollController scrollController = ScrollController();
   bool scrolledToBottom = false;
   bool scrolledToTop = true;
   bool showFab = true;
 
   @mustCallSuper
-  void initScrollListener() {
+  @override
+  void initState() {
     scrollController.addListener(calculateScrollStatus);
+    super.initState();
   }
+  @override
   @mustCallSuper
-  void disposeScrollListener() {
+  void dispose() {
     scrollController.dispose();
+    super.dispose();
   }
   void calculateScrollStatus() {
     var newScrolledToBottom;

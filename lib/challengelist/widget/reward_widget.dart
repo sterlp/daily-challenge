@@ -11,14 +11,14 @@ class RewardWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    IconData icon = Icons.stars;
+    IconData icon = MyStyle.ICON_PENDING_CHALLENGE;
     Color color = Colors.orange;
     final theme = Theme.of(context);
     if (status == ChallengeStatus.failed) {
-      icon = Icons.warning;
+      icon = MyStyle.ICON_FAILED_CHALLENGE;
       color = theme.errorColor;
     } else if (status == ChallengeStatus.done) {
-      icon = Icons.star;
+      icon = MyStyle.ICON_DONE_CHALLENGE;
       color = MyStyle.POSITIVE_BUDGET_COLOR;
     }
 

@@ -22,6 +22,10 @@ class RewardService {
     return _rewardDao.list(limit, offset);
   }
 
+  Future<List<BoughtReward>> listBoughtRewards() {
+    return _boughtRewardDao.list(999, 0);
+  }
+
   Future<int> deleteReward(Reward reward) {
     _cache.remove(reward.id);
     return _rewardDao.delete(reward.id);
@@ -29,6 +33,7 @@ class RewardService {
 
   Future<BoughtReward> buyReward(Reward reward) async {
     var boughtReward = BoughtReward.fromReward(reward);
+    boughtReward.boughtAt = DateTime.now();
     boughtReward = await _boughtRewardDao.save(boughtReward);
     _creditService.spendCredits(boughtReward.cost);
     _cache[reward.id] = Future.value(boughtReward);
@@ -42,5 +47,9 @@ class RewardService {
       _cache[rewardId] = result;
     }
     return result;
+  }
+
+  Future<int> countBoughtRewards() {
+    return this._boughtRewardDao.countAll();
   }
 }

@@ -3,6 +3,7 @@ import 'package:flutterapp/log/logger.dart';
 import 'package:flutterapp/util/dao/abstract_dao.dart';
 import 'package:flutterapp/util/data.dart';
 import 'package:flutterapp/util/date.dart';
+import 'package:sqflite/sqflite.dart';
 import 'package:sqflite_common/sqlite_api.dart';
 
 class ChallengeDao extends AbstractDao<Challenge> {
@@ -28,7 +29,7 @@ class ChallengeDao extends AbstractDao<Challenge> {
   /// Sets the given challenges to fail and returns their total reward.
   Future<int> fail(List<Challenge> values) async {
     int result = 0;
-    DateTime now = DateTimeUtil.clearTime(DateTime.now());
+    final DateTime now = DateTimeUtil.midnight(DateTime.now());
     for(Challenge c in values) {
       c.status = ChallengeStatus.failed;
       c.doneAt = now;
@@ -57,6 +58,12 @@ class ChallengeDao extends AbstractDao<Challenge> {
         orderBy: 'dueAt ASC, createdAt DESC');
     _log.debug('loadByDate from $from to $to results ${results.length}');
     return results;
+  }
+  Future<int> countFinished() async {
+    final Database db = await dbExecutor;
+
+    final r = await db.rawQuery("SELECT COUNT(*) as result FROM $tableName WHERE status <> 'open'");
+    return Sqflite.firstIntValue(r) ?? 0;
   }
 
   @override

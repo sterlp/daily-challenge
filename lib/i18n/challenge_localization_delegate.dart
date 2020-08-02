@@ -26,11 +26,13 @@ class ChallengeLocalizations {
   String get dateFormatTime => "EEEE, dd.MM 'at' h:mm a";
 
   String formatDate(DateTime date) => DateTimeUtil.formatWithString(date, dateFormat, locale);
+  String formatMonth(DateTime date) => DateTimeUtil.formatWithString(date, "MMMM, yyyy", locale);
 
   String formatDateTime(DateTime date) => DateTimeUtil.formatWithString(date, dateFormatTime, locale);
 
   String get challengeTab => 'Challenges';
   String get rewardTab => 'Rewards';
+  String get historyTab => 'History';
 
 }
 

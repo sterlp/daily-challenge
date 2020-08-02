@@ -33,7 +33,7 @@ abstract class AbstractDao<T extends AbstractEntity> {
   Future<T> getById(int id) async {
     final Database db = await dbExecutor;
     final List<Map<String, dynamic>> results = await db.query(
-        'CHALLENGE',
+        tableName,
         where: "id = ?",
         whereArgs: [id]);
     assert(results.length <= 1, 'Get by ID should return only one element but returned ${results.length} elements.');

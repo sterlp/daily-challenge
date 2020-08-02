@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutterapp/common/widget/fixed_flutter_state.dart';
 import 'package:flutterapp/common/widget/scroll_view_position_listener.dart';
 import 'package:flutterapp/container/app_context.dart';
 import 'package:flutterapp/credit/service/credit_service.dart';
@@ -20,7 +21,7 @@ class RewardShopPage extends StatefulWidget {
   _RewardShopPageState createState() => _RewardShopPageState();
 }
 
-class _RewardShopPageState extends State<RewardShopPage> with ScrollViewPositionListener<RewardShopPage> {
+class _RewardShopPageState extends FixedState<RewardShopPage> with ScrollViewPositionListener<RewardShopPage> {
   static final Logger _log = LoggerFactory.get<RewardShopPage>();
 
   AppContext _appContext;
@@ -29,28 +30,18 @@ class _RewardShopPageState extends State<RewardShopPage> with ScrollViewPosition
   List<Reward> _rewards;
   ValueNotifier<int> _totalCredit;
 
-  @override
-  void initState() {
-    super.initState();
-    initScrollListener();
-  }
-
-  @override
-  void dispose() {
-    disposeScrollListener();
-    super.dispose();
-  }
-
   void _reload() async {
-    try {
-      _log.startSync('Reload ...');
-      await _creditService.credit;
-      _rewards = await _rewardService.listRewards(999, 0);
-      setState(() {});
-    } catch(e) {
-      _log.error('Reload failed.', e);
-    } finally {
-      _log.finishSync();
+    if (mounted) {
+      try {
+        _log.startSync('Reload ...');
+        await _creditService.credit;
+        _rewards = await _rewardService.listRewards(999, 0);
+        if (mounted) setState(() {});
+      } catch(e) {
+        _log.error('Reload failed.', e);
+      } finally {
+        _log.finishSync();
+      }
     }
   }
 
@@ -82,17 +73,23 @@ class _RewardShopPageState extends State<RewardShopPage> with ScrollViewPosition
   }
 
   @override
+  void saveInitState() {
+    _reload();
+    super.saveInitState();
+  }
+
+  @override
   void didChangeDependencies() {
+    _appContext = widget.appContext == null ? AppStateWidget.of(context) : widget.appContext;
+    _rewardService = _appContext.get<RewardService>();
+    _creditService = _appContext.get<CreditService>();
+    _totalCredit = _creditService.creditNotifier;
     super.didChangeDependencies();
-    _appContext ??= widget.appContext == null ? AppStateWidget.of(context) : widget.appContext;
-    _rewardService ??= _appContext.get<RewardService>();
-    _creditService ??= _appContext.get<CreditService>();
-    _totalCredit ??= _creditService.creditNotifier;
-    if (_rewards == null) _reload();
   }
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       body: _buildBody(context),
       floatingActionButton: AnimatedOpacity(
@@ -131,11 +128,13 @@ class _RewardShopPageState extends State<RewardShopPage> with ScrollViewPosition
   Widget _buildResult(BuildContext context, List<Reward> rewards) {
     return ListView.builder(
       itemCount: rewards.length,
-      padding: const EdgeInsets.all(8.0),
+      // padding: const EdgeInsets.all(8.0),
       controller: scrollController,
       itemBuilder: (BuildContext context, int index) {
         final reward = rewards[index];
-        return RewardCardWidget(reward, _totalCredit, _deleteReward, key: ObjectKey(reward));
+        return RewardCardWidget(reward, _totalCredit, _deleteReward,
+          key: ObjectKey(reward)
+        );
       }
     );
   }

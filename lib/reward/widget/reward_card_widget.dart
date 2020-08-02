@@ -8,7 +8,6 @@ import 'package:flutterapp/reward/model/reward_model.dart';
 import 'package:flutterapp/reward/page/reward_page.dart';
 import 'package:flutterapp/reward/service/reward_service.dart';
 import 'package:flutterapp/reward/widget/buy_reward_dialog.dart';
-import 'package:intl/date_symbol_data_local.dart';
 
 typedef RewardCallback = void Function(Reward reward, BuildContext context);
 
@@ -37,14 +36,13 @@ class _RewardCardWidgetState extends State<RewardCardWidget> with SingleTickerPr
       vsync: this,
       duration: new Duration(seconds: 4),
     );
-    initializeDateFormatting('de');
   }
 
   @override
   void didChangeDependencies() {
-    super.didChangeDependencies();
-    _rewardService ??= AppStateWidget.of(context).get<RewardService>();
+    _rewardService = AppStateWidget.of(context).get<RewardService>();
     _loadBoughtReward();
+    super.didChangeDependencies();
   }
 
   @override

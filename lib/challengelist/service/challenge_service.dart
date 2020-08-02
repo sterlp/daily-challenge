@@ -39,8 +39,14 @@ class ChallengeService {
     else return _creditService.credit;
   }
   
-  Future<List<Challenge>> load() async {
+  Future<List<Challenge>> loadAll() {
     return _challengeDao.loadAll(orderBy: 'dueAt ASC, createdAt DESC');
+  }
+
+  Future<List<Challenge>> listCompleted() {
+    return _challengeDao.loadAll(
+        where: 'status <> "open"',
+        orderBy: 'doneAt DESC');
   }
 
   /// Checks the given Challenges for any which are overdue, if found they will be failed.
@@ -58,12 +64,12 @@ class ChallengeService {
   }
 
   Future<int> complete(List<Challenge> values) async {
-    List<Challenge> changed = List();
+    final now = DateTime.now();
     for(Challenge challenge in values) {
       if (challenge.status != ChallengeStatus.done) {
         challenge.status = ChallengeStatus.done;
-        challenge.doneAt = DateTime.now();
-        changed.add(await _challengeDao.save(challenge));
+        challenge.doneAt = now;
+        await _challengeDao.save(challenge);
       }
     }
     return _creditService.calcTotal();
@@ -98,5 +104,9 @@ class ChallengeService {
 
   Future<Iterable<String>> completeChallengesName(String pattern) {
     return _challengeDao.loadNamesByPattern(pattern, limit: 5);
+  }
+
+  Future<int> countFinished() {
+    return _challengeDao.countFinished();
   }
 }

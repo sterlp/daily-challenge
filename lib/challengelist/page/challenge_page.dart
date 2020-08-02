@@ -150,11 +150,7 @@ class ChallengePageState extends FixedState<ChallengePage> {
               color: Theme.of(context).backgroundColor,
             ),
             noItemsFoundBuilder: (context) => null,
-            itemBuilder: (context, suggestion) {
-              return ListTile(
-                title: Text(suggestion),
-              );
-            },
+            itemBuilder: (context, suggestion) => ListTile(title: Text(suggestion)),
             onSuggestionSelected: (suggestion) {
               this._nameController.text = suggestion;
               FocusScope.of(context).nextFocus();

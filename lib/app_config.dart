@@ -4,6 +4,7 @@ import 'package:flutterapp/container/app_context.dart';
 import 'package:flutterapp/credit/service/credit_service.dart';
 import 'package:flutterapp/db/db_provider.dart';
 import 'package:flutterapp/db/test_data.dart';
+import 'package:flutterapp/history/service/history_service.dart';
 import 'package:flutterapp/reward/dao/bought_reward_dao.dart';
 import 'package:flutterapp/reward/dao/reward_dao.dart';
 import 'package:flutterapp/reward/service/reward_service.dart';
@@ -25,6 +26,8 @@ AppContext buildContext([Future<Database> database]) {
     ..addFactory((rattlinger) => RewardDao(rattlinger.get<Future<Database>>()))
     ..addFactory((rattlinger) => BoughtRewardDao(rattlinger.get<Future<Database>>()))
     ..addFactory((rattlinger) => RewardService(rattlinger.get<RewardDao>(), rattlinger.get<BoughtRewardDao>(), rattlinger.get<CreditService>()))
+
+    ..addFactory((rattlinger) => HistoryService(rattlinger.get<RewardService>(), rattlinger.get<ChallengeService>()))
 
     ..addFactory((rattlinger) => TestData.withContext(rattlinger));
 }

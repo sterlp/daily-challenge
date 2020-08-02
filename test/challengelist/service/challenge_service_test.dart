@@ -26,7 +26,7 @@ void main() {
 
   test("Test generateTestData", () async {
     await appContext.get<TestData>().generatePresentationData();
-    expect(6, (await challengeService.load()).length);
+    expect(6, (await challengeService.loadAll()).length);
   });
 
   test("Test complete", () async {
@@ -73,11 +73,25 @@ void main() {
 
     var result = await challengeService.complete([c]);
     expect(result, 20);
-    expect((await challengeService.load()).length, 1);
+    expect((await challengeService.loadAll()).length, 1);
 
     result = await challengeService.incomplete([c]);
     expect(result, 0);
 
-    expect((await challengeService.load()).length, 1);
+    expect((await challengeService.loadAll()).length, 1);
+  });
+
+  test("Test count complete", () async {
+
+    await challengeService.save(Challenge.of("Foo"));
+    await challengeService.save(Challenge.of("Bar"));
+
+    var c = await challengeService.save(Challenge.of("Test 1"));
+    await challengeService.complete([c]);
+    expect( (await challengeDao.countFinished()), 1);
+
+    c = await challengeService.save(Challenge.of("Test 2"));
+    await challengeService.complete([c]);
+    expect( (await challengeDao.countFinished()), 2);
   });
 }

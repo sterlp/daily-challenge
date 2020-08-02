@@ -10,7 +10,7 @@ class DateTimeUtil {
   static final Map<String, DateFormat> _formatterCache = Map();
 
   static DateTime midnight(DateTime dateTime) {
-    return DateTime(dateTime.year, dateTime.month, dateTime.day, 23, 59, 59, 999);
+    return DateTime(dateTime.year, dateTime.month, dateTime.day, 23, 59, 59);
   }
   static DateTime clearTime(DateTime dateTime) {
     return DateTime(dateTime.year, dateTime.month, dateTime.day);

@@ -19,7 +19,7 @@ class Logger {
   num _syncTime;
   String _syncString;
 
-  error(String message, Exception e) {
+  error(String message, dynamic e) {
     print('[ERROR]  $_name: $message -> $e');
   }
   warn(String message) {
