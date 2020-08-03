@@ -1,13 +1,13 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutterapp/common/common_types.dart';
-import 'package:flutterapp/common/widget/divider_with_label.dart';
-import 'package:flutterapp/common/widget/fixed_flutter_state.dart';
-import 'package:flutterapp/history/model/history_model.dart';
-import 'package:flutterapp/history/service/history_service.dart';
-import 'package:flutterapp/home/state/app_state_widget.dart';
-import 'package:flutterapp/home/widget/loading_widget.dart';
-import 'package:flutterapp/i18n/challenge_localization_delegate.dart';
+import 'package:challengeapp/common/common_types.dart';
+import 'package:challengeapp/common/widget/divider_with_label.dart';
+import 'package:challengeapp/common/widget/fixed_flutter_state.dart';
+import 'package:challengeapp/history/model/history_model.dart';
+import 'package:challengeapp/history/service/history_service.dart';
+import 'package:challengeapp/home/state/app_state_widget.dart';
+import 'package:challengeapp/home/widget/loading_widget.dart';
+import 'package:challengeapp/i18n/challenge_localization_delegate.dart';
 
 class HistoryPage extends StatefulWidget {
   @override

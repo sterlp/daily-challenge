@@ -1,9 +1,9 @@
 
-import 'package:flutterapp/credit/service/credit_service.dart';
-import 'package:flutterapp/reward/dao/bought_reward_dao.dart';
-import 'package:flutterapp/reward/dao/reward_dao.dart';
-import 'package:flutterapp/reward/model/bought_reward_model.dart';
-import 'package:flutterapp/reward/model/reward_model.dart';
+import 'package:challengeapp/credit/service/credit_service.dart';
+import 'package:challengeapp/reward/dao/bought_reward_dao.dart';
+import 'package:challengeapp/reward/dao/reward_dao.dart';
+import 'package:challengeapp/reward/model/bought_reward_model.dart';
+import 'package:challengeapp/reward/model/reward_model.dart';
 
 class RewardService {
   final RewardDao _rewardDao;

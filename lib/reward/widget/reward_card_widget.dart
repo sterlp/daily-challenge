@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:flutterapp/challengelist/i18n/challengelist_localization.dart';
-import 'package:flutterapp/common/common_types.dart';
-import 'package:flutterapp/home/state/app_state_widget.dart';
-import 'package:flutterapp/i18n/challenge_localization_delegate.dart';
-import 'package:flutterapp/reward/model/bought_reward_model.dart';
-import 'package:flutterapp/reward/model/reward_model.dart';
-import 'package:flutterapp/reward/page/reward_page.dart';
-import 'package:flutterapp/reward/service/reward_service.dart';
-import 'package:flutterapp/reward/widget/buy_reward_dialog.dart';
+import 'package:challengeapp/challengelist/i18n/challengelist_localization.dart';
+import 'package:challengeapp/common/common_types.dart';
+import 'package:challengeapp/home/state/app_state_widget.dart';
+import 'package:challengeapp/i18n/challenge_localization_delegate.dart';
+import 'package:challengeapp/reward/model/bought_reward_model.dart';
+import 'package:challengeapp/reward/model/reward_model.dart';
+import 'package:challengeapp/reward/page/reward_page.dart';
+import 'package:challengeapp/reward/service/reward_service.dart';
+import 'package:challengeapp/reward/widget/buy_reward_dialog.dart';
 
 typedef RewardCallback = void Function(Reward reward, BuildContext context);
 

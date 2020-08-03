@@ -1,4 +1,4 @@
-import 'package:flutterapp/log/logger.dart';
+import 'package:challengeapp/log/logger.dart';
 import 'package:sqflite/sqflite.dart';
 
 abstract class DbUpdate {

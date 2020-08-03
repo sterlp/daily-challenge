@@ -1,10 +1,10 @@
 import 'dart:async';
 
-import 'package:flutterapp/challengelist/model/challenge_model.dart';
-import 'package:flutterapp/challengelist/service/challenge_service.dart';
-import 'package:flutterapp/history/model/history_model.dart';
-import 'package:flutterapp/reward/model/bought_reward_model.dart';
-import 'package:flutterapp/reward/service/reward_service.dart';
+import 'package:challengeapp/challengelist/model/challenge_model.dart';
+import 'package:challengeapp/challengelist/service/challenge_service.dart';
+import 'package:challengeapp/history/model/history_model.dart';
+import 'package:challengeapp/reward/model/bought_reward_model.dart';
+import 'package:challengeapp/reward/service/reward_service.dart';
 
 class HistoryService {
   final RewardService _rewardService;

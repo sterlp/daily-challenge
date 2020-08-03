@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutterapp/container/app_context.dart';
-import 'package:flutterapp/reward/dao/bought_reward_dao.dart';
-import 'package:flutterapp/reward/model/bought_reward_model.dart';
+import 'package:challengeapp/container/app_context.dart';
+import 'package:challengeapp/reward/dao/bought_reward_dao.dart';
+import 'package:challengeapp/reward/model/bought_reward_model.dart';
 
 import '../../test_helper.dart';
 

@@ -18,7 +18,7 @@ class DividerWithLabel extends StatelessWidget {
         Expanded(
           child: Divider(thickness: thickness, indent: indent, endIndent: 8)
         ),
-        Text(label),
+        Text(label, style: Theme.of(context).textTheme.headline6),
         Expanded(
           child: Divider(thickness: thickness, indent: 8, endIndent: endIndent)
         ),

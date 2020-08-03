@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:flutterapp/common/widget/fixed_flutter_state.dart';
-import 'package:flutterapp/common/widget/scroll_view_position_listener.dart';
-import 'package:flutterapp/container/app_context.dart';
-import 'package:flutterapp/credit/service/credit_service.dart';
-import 'package:flutterapp/home/state/app_state_widget.dart';
-import 'package:flutterapp/home/widget/loading_widget.dart';
-import 'package:flutterapp/home/widget/total_points_widget.dart';
-import 'package:flutterapp/log/logger.dart';
-import 'package:flutterapp/reward/model/reward_model.dart';
-import 'package:flutterapp/reward/page/reward_page.dart';
-import 'package:flutterapp/reward/service/reward_service.dart';
-import 'package:flutterapp/reward/widget/reward_card_widget.dart';
+import 'package:challengeapp/common/widget/fixed_flutter_state.dart';
+import 'package:challengeapp/common/widget/scroll_view_position_listener.dart';
+import 'package:challengeapp/container/app_context.dart';
+import 'package:challengeapp/credit/service/credit_service.dart';
+import 'package:challengeapp/home/state/app_state_widget.dart';
+import 'package:challengeapp/home/widget/loading_widget.dart';
+import 'package:challengeapp/home/widget/total_points_widget.dart';
+import 'package:challengeapp/log/logger.dart';
+import 'package:challengeapp/reward/model/reward_model.dart';
+import 'package:challengeapp/reward/page/reward_page.dart';
+import 'package:challengeapp/reward/service/reward_service.dart';
+import 'package:challengeapp/reward/widget/reward_card_widget.dart';
 
 class RewardShopPage extends StatefulWidget {
   final AppContext appContext;

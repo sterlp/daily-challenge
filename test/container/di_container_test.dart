@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutterapp/container/app_context.dart';
-import 'package:flutterapp/container/app_context_model.dart';
+import 'package:challengeapp/container/app_context.dart';
+import 'package:challengeapp/container/app_context_model.dart';
 
 class CloseableBean with Closeable {
   bool closed = false;

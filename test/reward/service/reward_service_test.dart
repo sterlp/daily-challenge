@@ -1,9 +1,9 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutterapp/credit/service/credit_service.dart';
-import 'package:flutterapp/reward/dao/bought_reward_dao.dart';
-import 'package:flutterapp/reward/model/bought_reward_model.dart';
-import 'package:flutterapp/reward/model/reward_model.dart';
-import 'package:flutterapp/reward/service/reward_service.dart';
+import 'package:challengeapp/credit/service/credit_service.dart';
+import 'package:challengeapp/reward/dao/bought_reward_dao.dart';
+import 'package:challengeapp/reward/model/bought_reward_model.dart';
+import 'package:challengeapp/reward/model/reward_model.dart';
+import 'package:challengeapp/reward/service/reward_service.dart';
 import 'package:mockito/mockito.dart';
 
 class BoughtRewardDaoMock extends Mock implements BoughtRewardDao {}

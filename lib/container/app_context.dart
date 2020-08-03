@@ -1,6 +1,6 @@
 import 'package:flutter/widgets.dart';
-import 'package:flutterapp/container/app_context_model.dart';
-import 'package:flutterapp/log/logger.dart';
+import 'package:challengeapp/container/app_context_model.dart';
+import 'package:challengeapp/log/logger.dart';
 
 typedef BeanFactory<T> = T Function(AppContext container);
 

@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutterapp/util/data.dart';
+import 'package:challengeapp/util/data.dart';
 
 enum Foo {
   one, two

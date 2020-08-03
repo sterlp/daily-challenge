@@ -1,8 +1,8 @@
-import 'package:flutterapp/challengelist/model/challenge_model.dart';
-import 'package:flutterapp/log/logger.dart';
-import 'package:flutterapp/util/dao/abstract_dao.dart';
-import 'package:flutterapp/util/data.dart';
-import 'package:flutterapp/util/date.dart';
+import 'package:challengeapp/challengelist/model/challenge_model.dart';
+import 'package:challengeapp/log/logger.dart';
+import 'package:challengeapp/util/dao/abstract_dao.dart';
+import 'package:challengeapp/util/data.dart';
+import 'package:challengeapp/util/date.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:sqflite_common/sqlite_api.dart';
 

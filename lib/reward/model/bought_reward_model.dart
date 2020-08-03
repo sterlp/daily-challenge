@@ -1,4 +1,4 @@
-import 'package:flutterapp/reward/model/reward_model.dart';
+import 'package:challengeapp/reward/model/reward_model.dart';
 
 class BoughtReward extends Reward {
   BoughtReward();

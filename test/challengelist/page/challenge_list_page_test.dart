@@ -1,8 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutterapp/challengelist/model/challenge_model.dart';
-import 'package:flutterapp/challengelist/service/challenge_service.dart';
-import 'package:flutterapp/main.dart';
+import 'package:challengeapp/challengelist/model/challenge_model.dart';
+import 'package:challengeapp/challengelist/service/challenge_service.dart';
+import 'package:challengeapp/main.dart';
 import 'package:mockito/mockito.dart';
 
 import '../../mock_appcontext.dart';

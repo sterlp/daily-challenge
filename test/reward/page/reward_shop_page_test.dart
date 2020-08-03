@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutterapp/reward/model/reward_model.dart';
-import 'package:flutterapp/reward/page/reward_shop_page.dart';
+import 'package:challengeapp/reward/model/reward_model.dart';
+import 'package:challengeapp/reward/page/reward_shop_page.dart';
 import '../../mock_appcontext.dart';
 import '../../test_helper.dart';
 

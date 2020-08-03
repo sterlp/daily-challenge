@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutterapp/challengelist/i18n/challengelist_localization.dart';
-import 'package:flutterapp/i18n/challenge_localization_delegate.dart';
-import 'package:flutterapp/main.dart';
+import 'package:challengeapp/challengelist/i18n/challengelist_localization.dart';
+import 'package:challengeapp/i18n/challenge_localization_delegate.dart';
+import 'package:challengeapp/main.dart';
 import 'mock_appcontext.dart';
 
 void main() async {

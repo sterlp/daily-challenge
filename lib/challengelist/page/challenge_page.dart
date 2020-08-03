@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
-import 'package:flutterapp/challengelist/i18n/challengelist_localization.dart';
-import 'package:flutterapp/challengelist/model/challenge_model.dart';
-import 'package:flutterapp/challengelist/service/challenge_service.dart';
-import 'package:flutterapp/common/widget/fixed_flutter_state.dart';
-import 'package:flutterapp/common/widget/input_form.dart';
-import 'package:flutterapp/db/test_data.dart';
-import 'package:flutterapp/home/state/app_state_widget.dart';
-import 'package:flutterapp/i18n/challenge_localization_delegate.dart';
-import 'package:flutterapp/log/logger.dart';
-import 'package:flutterapp/util/date.dart';
-import 'package:flutterapp/util/strings.dart';
+import 'package:challengeapp/challengelist/i18n/challengelist_localization.dart';
+import 'package:challengeapp/challengelist/model/challenge_model.dart';
+import 'package:challengeapp/challengelist/service/challenge_service.dart';
+import 'package:challengeapp/common/widget/fixed_flutter_state.dart';
+import 'package:challengeapp/common/widget/input_form.dart';
+import 'package:challengeapp/db/test_data.dart';
+import 'package:challengeapp/home/state/app_state_widget.dart';
+import 'package:challengeapp/i18n/challenge_localization_delegate.dart';
+import 'package:challengeapp/log/logger.dart';
+import 'package:challengeapp/util/date.dart';
+import 'package:challengeapp/util/strings.dart';
 
 class ChallengePage extends StatefulWidget {
   final Challenge challenge;

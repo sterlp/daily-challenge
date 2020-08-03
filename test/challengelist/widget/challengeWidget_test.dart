@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutterapp/challengelist/model/challenge_model.dart';
-import 'package:flutterapp/challengelist/widget/challenge_widget.dart';
-import 'package:flutterapp/common/common_types.dart';
+import 'package:challengeapp/challengelist/model/challenge_model.dart';
+import 'package:challengeapp/challengelist/widget/challenge_widget.dart';
+import 'package:challengeapp/common/common_types.dart';
 
 import '../../test_helper.dart';
 

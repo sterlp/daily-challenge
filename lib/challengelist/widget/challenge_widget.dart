@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:flutterapp/challengelist/i18n/challengelist_localization.dart';
-import 'package:flutterapp/challengelist/model/challenge_model.dart';
-import 'package:flutterapp/challengelist/page/challenge_page.dart';
-import 'package:flutterapp/challengelist/service/challenge_service.dart';
-import 'package:flutterapp/challengelist/widget/reward_widget.dart';
-import 'package:flutterapp/home/state/app_state_widget.dart';
-import 'package:flutterapp/i18n/challenge_localization_delegate.dart';
+import 'package:challengeapp/challengelist/i18n/challengelist_localization.dart';
+import 'package:challengeapp/challengelist/model/challenge_model.dart';
+import 'package:challengeapp/challengelist/page/challenge_page.dart';
+import 'package:challengeapp/challengelist/service/challenge_service.dart';
+import 'package:challengeapp/challengelist/widget/reward_widget.dart';
+import 'package:challengeapp/home/state/app_state_widget.dart';
+import 'package:challengeapp/i18n/challenge_localization_delegate.dart';
 
 typedef ChallengeChecked = void Function(Challenge challenge, bool checked);
 typedef ChallengeDelete = void Function(Challenge challenge, BuildContext context);

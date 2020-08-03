@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:flutterapp/challengelist/i18n/challengelist_localization.dart';
-import 'package:flutterapp/challengelist/model/challenge_model.dart';
-import 'package:flutterapp/challengelist/page/challenge_page.dart';
-import 'package:flutterapp/challengelist/service/challenge_service.dart';
-import 'package:flutterapp/challengelist/widget/challenge_widget.dart';
-import 'package:flutterapp/common/widget/scroll_view_position_listener.dart';
-import 'package:flutterapp/credit/service/credit_service.dart';
-import 'package:flutterapp/home/state/app_state_widget.dart';
-import 'package:flutterapp/home/widget/loading_widget.dart';
-import 'package:flutterapp/home/widget/total_points_widget.dart';
-import 'package:flutterapp/i18n/challenge_localization_delegate.dart';
-import 'package:flutterapp/log/logger.dart';
-import 'package:flutterapp/util/date.dart';
+import 'package:challengeapp/challengelist/i18n/challengelist_localization.dart';
+import 'package:challengeapp/challengelist/model/challenge_model.dart';
+import 'package:challengeapp/challengelist/page/challenge_page.dart';
+import 'package:challengeapp/challengelist/service/challenge_service.dart';
+import 'package:challengeapp/challengelist/widget/challenge_widget.dart';
+import 'package:challengeapp/common/widget/scroll_view_position_listener.dart';
+import 'package:challengeapp/credit/service/credit_service.dart';
+import 'package:challengeapp/home/state/app_state_widget.dart';
+import 'package:challengeapp/home/widget/loading_widget.dart';
+import 'package:challengeapp/home/widget/total_points_widget.dart';
+import 'package:challengeapp/i18n/challenge_localization_delegate.dart';
+import 'package:challengeapp/log/logger.dart';
+import 'package:challengeapp/util/date.dart';
 
 class ChallengeListPage extends StatefulWidget {
   @override

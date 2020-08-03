@@ -1,4 +1,4 @@
-import 'package:flutterapp/db/update/db_update.dart';
+import 'package:challengeapp/db/update/db_update.dart';
 import 'package:sqflite_common/sqlite_api.dart';
 
 class DbV1 extends DbUpdate {

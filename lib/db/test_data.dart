@@ -1,13 +1,13 @@
-import 'package:flutterapp/challengelist/dao/challenge_dao.dart';
-import 'package:flutterapp/challengelist/model/challenge_model.dart';
-import 'package:flutterapp/challengelist/service/challenge_service.dart';
-import 'package:flutterapp/container/app_context.dart';
-import 'package:flutterapp/credit/service/credit_service.dart';
-import 'package:flutterapp/reward/dao/bought_reward_dao.dart';
-import 'package:flutterapp/reward/dao/reward_dao.dart';
-import 'package:flutterapp/reward/model/reward_model.dart';
-import 'package:flutterapp/reward/service/reward_service.dart';
-import 'package:flutterapp/util/random_util.dart';
+import 'package:challengeapp/challengelist/dao/challenge_dao.dart';
+import 'package:challengeapp/challengelist/model/challenge_model.dart';
+import 'package:challengeapp/challengelist/service/challenge_service.dart';
+import 'package:challengeapp/container/app_context.dart';
+import 'package:challengeapp/credit/service/credit_service.dart';
+import 'package:challengeapp/reward/dao/bought_reward_dao.dart';
+import 'package:challengeapp/reward/dao/reward_dao.dart';
+import 'package:challengeapp/reward/model/reward_model.dart';
+import 'package:challengeapp/reward/service/reward_service.dart';
+import 'package:challengeapp/util/random_util.dart';
 
 class TestData {
   final ChallengeService _challengeService;

@@ -1,5 +1,5 @@
-import 'package:flutterapp/util/dao/abstract_dao.dart';
-import 'package:flutterapp/util/date.dart';
+import 'package:challengeapp/util/dao/abstract_dao.dart';
+import 'package:challengeapp/util/date.dart';
 
 enum ChallengeStatus {
   open,

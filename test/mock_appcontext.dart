@@ -1,11 +1,11 @@
 
 import 'package:flutter/cupertino.dart';
-import 'package:flutterapp/challengelist/model/challenge_model.dart';
-import 'package:flutterapp/challengelist/service/challenge_service.dart';
-import 'package:flutterapp/container/app_context.dart';
-import 'package:flutterapp/credit/service/credit_service.dart';
-import 'package:flutterapp/reward/model/reward_model.dart';
-import 'package:flutterapp/reward/service/reward_service.dart';
+import 'package:challengeapp/challengelist/model/challenge_model.dart';
+import 'package:challengeapp/challengelist/service/challenge_service.dart';
+import 'package:challengeapp/container/app_context.dart';
+import 'package:challengeapp/credit/service/credit_service.dart';
+import 'package:challengeapp/reward/model/reward_model.dart';
+import 'package:challengeapp/reward/service/reward_service.dart';
 import 'package:mockito/mockito.dart';
 
 class CreditServiceMock with Mock implements CreditService {}

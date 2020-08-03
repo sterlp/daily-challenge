@@ -1,8 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutterapp/challengelist/dao/challenge_dao.dart';
-import 'package:flutterapp/challengelist/model/challenge_model.dart';
-import 'package:flutterapp/container/app_context.dart';
-import 'package:flutterapp/util/random_util.dart';
+import 'package:challengeapp/challengelist/dao/challenge_dao.dart';
+import 'package:challengeapp/challengelist/model/challenge_model.dart';
+import 'package:challengeapp/container/app_context.dart';
+import 'package:challengeapp/util/random_util.dart';
 
 import '../../test_helper.dart';
 

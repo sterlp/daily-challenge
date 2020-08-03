@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutterapp/common/common_types.dart';
-import 'package:flutterapp/common/widget/input_form.dart';
-import 'package:flutterapp/home/state/app_state_widget.dart';
-import 'package:flutterapp/reward/model/reward_model.dart';
-import 'package:flutterapp/reward/service/reward_service.dart';
-import 'package:flutterapp/util/strings.dart';
+import 'package:challengeapp/common/common_types.dart';
+import 'package:challengeapp/common/widget/input_form.dart';
+import 'package:challengeapp/home/state/app_state_widget.dart';
+import 'package:challengeapp/reward/model/reward_model.dart';
+import 'package:challengeapp/reward/service/reward_service.dart';
+import 'package:challengeapp/util/strings.dart';
 
 /// https://dartpad.dev/embed-flutter.html?id=7a32619ce3c99711dc7e2fb8d235a635
 class RewardPage extends StatefulWidget {

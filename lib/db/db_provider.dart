@@ -1,8 +1,8 @@
 import 'dart:async';
-import 'package:flutterapp/container/app_context_model.dart';
-import 'package:flutterapp/db/update/db_v1.dart';
-import 'package:flutterapp/db/update/db_v2.dart';
-import 'package:flutterapp/log/logger.dart';
+import 'package:challengeapp/container/app_context_model.dart';
+import 'package:challengeapp/db/update/db_v1.dart';
+import 'package:challengeapp/db/update/db_v2.dart';
+import 'package:challengeapp/log/logger.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 

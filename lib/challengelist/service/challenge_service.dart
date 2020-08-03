@@ -1,11 +1,11 @@
 import 'dart:async';
-import 'package:flutterapp/challengelist/dao/challenge_dao.dart';
-import 'package:flutterapp/challengelist/model/challenge_model.dart';
-import 'package:flutterapp/credit/service/credit_service.dart';
-import 'package:flutterapp/log/logger.dart';
+import 'package:challengeapp/challengelist/dao/challenge_dao.dart';
+import 'package:challengeapp/challengelist/model/challenge_model.dart';
+import 'package:challengeapp/credit/service/credit_service.dart';
+import 'package:challengeapp/log/logger.dart';
 import 'dart:developer';
 
-import 'package:flutterapp/util/date.dart';
+import 'package:challengeapp/util/date.dart';
 
 ///
 /// https://www.sqlite.org/datatype3.html

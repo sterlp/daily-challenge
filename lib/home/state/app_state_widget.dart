@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutterapp/container/app_context.dart';
-import 'package:flutterapp/log/logger.dart';
+import 'package:challengeapp/container/app_context.dart';
+import 'package:challengeapp/log/logger.dart';
 
 ///
 /// Provides the AppContext

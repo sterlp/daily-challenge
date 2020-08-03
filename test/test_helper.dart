@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutterapp/app_config.dart';
-import 'package:flutterapp/container/app_context.dart';
-import 'package:flutterapp/home/state/app_state_widget.dart';
-import 'package:flutterapp/i18n/app_localizations_delegate.dart';
+import 'package:challengeapp/app_config.dart';
+import 'package:challengeapp/container/app_context.dart';
+import 'package:challengeapp/home/state/app_state_widget.dart';
+import 'package:challengeapp/i18n/app_localizations_delegate.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 

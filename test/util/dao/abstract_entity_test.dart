@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutterapp/util/dao/abstract_dao.dart';
+import 'package:challengeapp/util/dao/abstract_dao.dart';
 
 class _Foo extends AbstractEntity {}
 class _Bar extends AbstractEntity {}
