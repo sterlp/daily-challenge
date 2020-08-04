@@ -37,6 +37,7 @@ dependencies:
   flutter_typeahead: 1.8.7
   url_launcher: 5.5.0
   package_info: 0.4.1
+  shared_preferences: '>=0.5.8 <2.0.0'
 
 dev_dependencies:
   flutter_test:

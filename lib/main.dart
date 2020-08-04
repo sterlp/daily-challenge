@@ -1,3 +1,5 @@
+import 'package:challengeapp/config/service/config_service.dart';
+import 'package:challengeapp/home/widget/loading_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:challengeapp/app_config.dart';
 import 'package:challengeapp/container/app_context.dart';
@@ -11,7 +13,6 @@ void main() {
 
 class MyApp extends StatelessWidget {
   final AppContext _appContext;
-  final ValueNotifier<bool> _darkTheme = ValueNotifier(true);
 
   final ThemeData dark = ThemeData.dark().copyWith(
     accentColor: Colors.blue,
@@ -38,18 +39,26 @@ class MyApp extends StatelessWidget {
     // wrap the MaterialApp to ensure that all pages opened with the navigator also see the AppStateWidget
     return AppStateWidget(
       context: _appContext,
-      darkTheme: _darkTheme,
-      child: ValueListenableBuilder(
-        valueListenable: _darkTheme,
-        builder: (context, value, child) => MaterialApp(
-          // https://flutter.dev/docs/development/accessibility-and-localization/internationalization
-          localizationsDelegates: AppLocalizationsDelegate.delegates,
-          supportedLocales: AppLocalizationsDelegate.locales,
-          theme: value ? dark : light,
-          home: child
-        ),
-        child: ChallengeHomePage()
-      ),
+      child: FutureBuilder(
+        future: _appContext.get<ConfigService>().init(),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            return ValueListenableBuilder(
+                valueListenable: _appContext.get<ConfigService>().isDarkMode,
+                builder: (context, value, child) => MaterialApp(
+                  // https://flutter.dev/docs/development/accessibility-and-localization/internationalization
+                    localizationsDelegates: AppLocalizationsDelegate.delegates,
+                    supportedLocales: AppLocalizationsDelegate.locales,
+                    theme: value ? dark : light,
+                    home: child
+                ),
+                child: ChallengeHomePage()
+            );
+          } else {
+            return MaterialApp(home: LoadingWidget());
+          }
+        }
+      )
     );
   }
 }

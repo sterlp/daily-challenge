@@ -1,3 +1,4 @@
+import 'package:challengeapp/config/service/config_service.dart';
 import 'package:challengeapp/home/state/app_state_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
@@ -9,7 +10,7 @@ class AppMenu extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final darkTheme = AppStateWidget.getDarkTheme(context);
+    final darkTheme = AppStateWidget.of(context).get<ConfigService>().isDarkMode;
     return Drawer(
       child: Column(
         // padding: EdgeInsets.zero,

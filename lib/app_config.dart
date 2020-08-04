@@ -1,5 +1,6 @@
 import 'package:challengeapp/challengelist/dao/challenge_dao.dart';
 import 'package:challengeapp/challengelist/service/challenge_service.dart';
+import 'package:challengeapp/config/service/config_service.dart';
 import 'package:challengeapp/container/app_context.dart';
 import 'package:challengeapp/credit/service/credit_service.dart';
 import 'package:challengeapp/db/db_provider.dart';
@@ -16,6 +17,7 @@ AppContext buildContext([Future<Database> database]) {
     // Unhandled Exception: ServicesBinding.defaultBinaryMessenger was accessed before the binding was initialized.
     ..addFactory((_) => database == null ? DbProvider() : DbProvider.withDb(database))
 
+    ..addFactory((rattlinger) => ConfigService())
     ..addFactory<Future<Database>>((rattlinger) => rattlinger.get<DbProvider>().db)
 
     ..addFactory((rattlinger) => CreditService(rattlinger.get<ChallengeDao>(), rattlinger.get<BoughtRewardDao>()))
@@ -30,4 +32,5 @@ AppContext buildContext([Future<Database> database]) {
     ..addFactory((rattlinger) => HistoryService(rattlinger.get<RewardService>(), rattlinger.get<ChallengeService>()))
 
     ..addFactory((rattlinger) => TestData.withContext(rattlinger));
+
 }

@@ -1,3 +1,4 @@
+import 'package:challengeapp/util/date.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:challengeapp/challengelist/i18n/challengelist_localization.dart';
@@ -80,7 +81,7 @@ class _ChallengeWidgetState extends State<ChallengeWidget> {
       if (challenge.latestAt == null) {
         return Text('Was due ' + _commonI18n.formatDate(challenge.dueAt), style: _overDueStyle);
       } else {
-        Duration failIn = challenge.latestAt.difference(DateTime.now());
+        Duration failIn = challenge.latestAt.difference(DateTimeUtil.midnight(DateTime.now()));
         return Text(_i18n.challengeWillFail(failIn), style: _overDueStyle);
       }
     } else {

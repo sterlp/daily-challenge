@@ -1,4 +1,5 @@
 
+import 'package:challengeapp/config/service/config_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:challengeapp/challengelist/model/challenge_model.dart';
 import 'package:challengeapp/challengelist/service/challenge_service.dart';
@@ -6,11 +7,19 @@ import 'package:challengeapp/container/app_context.dart';
 import 'package:challengeapp/credit/service/credit_service.dart';
 import 'package:challengeapp/reward/model/reward_model.dart';
 import 'package:challengeapp/reward/service/reward_service.dart';
+import 'package:flutter/foundation.dart';
 import 'package:mockito/mockito.dart';
 
 class CreditServiceMock with Mock implements CreditService {}
 class RewardServiceMock with Mock implements RewardService {}
 class ChallengeServiceMock with Mock implements ChallengeService {}
+class ConfigStub extends ConfigService {
+  @override
+  Future<ConfigService> init() {
+    // nothing ...
+    return SynchronousFuture(this);
+  }
+}
 
 class AppContextMock {
   final AppContext appContext = AppContext();
@@ -25,6 +34,8 @@ class AppContextMock {
   final challenges = <Challenge>[];
   final overdueChallenges = <Challenge>[];
 
+  final ConfigStub configStub = ConfigStub();
+
   AppContextMock() {
     when(creditServiceMock.creditNotifier).thenReturn(credits);
     when(creditServiceMock.credit).thenAnswer((realInvocation) => Future.value(credits.value));
@@ -37,6 +48,7 @@ class AppContextMock {
     appContext.add<RewardService>(rewardServiceMock);
     appContext.add<CreditService>(creditServiceMock);
     appContext.add<ChallengeService>(challengeServiceMock);
+    appContext.add<ConfigService>(configStub);
   }
 }
 

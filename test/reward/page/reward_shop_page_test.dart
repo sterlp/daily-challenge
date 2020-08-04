@@ -13,7 +13,6 @@ void main() {
     appContextMock = AppContextMock();
   });
 
-
   testWidgets('RewardShopPage no rewards', (WidgetTester tester) async {
     await pumpTestApp(tester, RewardShopPage(), appContextMock.appContext);
     await tester.pumpAndSettle();

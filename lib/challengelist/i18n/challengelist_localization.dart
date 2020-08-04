@@ -20,7 +20,9 @@ class ChallengeListLocalizations {
 
   String get newChallengeButton => 'New Challenge';
 
-  String challengeWillFail(Duration duration) => 'Will fail in ${duration.inDays} day(s).';
+  String challengeWillFail(Duration duration) => duration.inDays == 0
+      ? 'Today is your last chance to finish this challenge.'
+      : 'Will fail in ${duration.inDays} day(s).';
   String dueUntil(String date) => 'Due on $date';
   String doneAt(String date) => 'Done on $date';
   String failedSince(String date) => 'Failed since $date';
@@ -46,7 +48,10 @@ class ChallengeListLocalizationsDE extends ChallengeListLocalizations {
   @override
   String get newChallengeButton => 'Neue Challenge';
   @override
-  String challengeWillFail(Duration duration) => 'Wird in ${duration.inDays} Tagen fehlschlagen.';
+  String challengeWillFail(Duration duration) => duration.inDays == 0
+    ? 'Heute ist die letzte Chance diese Challenge zu beenden!'
+    : 'Wird in ${duration.inDays} Tagen fehlschlagen.';
+
   @override
   String dueUntil(String date) => 'Am $date fällig';
   @override
