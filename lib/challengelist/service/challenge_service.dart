@@ -6,6 +6,7 @@ import 'package:challengeapp/log/logger.dart';
 import 'dart:developer';
 
 import 'package:challengeapp/util/date.dart';
+import 'package:flutter/foundation.dart';
 
 ///
 /// https://www.sqlite.org/datatype3.html
@@ -51,8 +52,8 @@ class ChallengeService {
 
   /// Checks the given Challenges for any which are overdue, if found they will be failed.
   Future<int> failOverDue(List<Challenge> values) async {
-    var now = DateTimeUtil.clearTime(DateTime.now());
-    var overDue = values.where((c) => c.status == ChallengeStatus.open && DateTimeUtil.clearTime(c.latestAt).isBefore(now));
+    final now = DateTimeUtil.clearTime(DateTime.now());
+    final overDue = values.where((c) => c.status == ChallengeStatus.open && c.latestAt.isBefore(now));
     if (overDue.length > 0) return _fail(overDue.toList());
     else return _creditService.credit;
   }

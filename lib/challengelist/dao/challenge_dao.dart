@@ -32,7 +32,7 @@ class ChallengeDao extends AbstractDao<Challenge> {
     final DateTime now = DateTimeUtil.midnight(DateTime.now());
     for(Challenge c in values) {
       c.status = ChallengeStatus.failed;
-      c.doneAt = now;
+      c.doneAt = c.latestAt == null ? now : DateTimeUtil.midnight(c.latestAt);
       result += c.reward;
       await update(c);
     }

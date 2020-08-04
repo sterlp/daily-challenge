@@ -1,3 +1,4 @@
+import 'package:challengeapp/util/date.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:challengeapp/challengelist/dao/challenge_dao.dart';
 import 'package:challengeapp/challengelist/model/challenge_model.dart';
@@ -40,7 +41,7 @@ void main() {
     expect( (await challengeDao.getById(c.id)).status, ChallengeStatus.done);
   });
 
-  test("Test fail", () async {
+  test("Test fail calculation of points", () async {
     await challengeService.save(Challenge.of("Test 1")
       ..status = ChallengeStatus.done
       ..reward = 9);
@@ -53,7 +54,16 @@ void main() {
     expect(ChallengeStatus.failed, (await challengeService.getById(c.id)).status);
   });
 
-  test("Test not fail challenge same day today", () async {
+  test("Test fail date", () async {
+    var c = await challengeService.save(Challenge.of("Test 1")
+      ..latestAt = DateTime.now().add(Duration(days: -2))
+      ..reward = 15);
+
+    await challengeService.failOverDue([c]);
+    expect( DateTimeUtil.midnight(c.latestAt), (await challengeService.getById(c.id)).doneAt);
+  });
+
+  test("Do not fail challenge same day today", () async {
     var c = await challengeService.save(Challenge.of("Test 1")
       ..latestAt = DateTime.now().add(Duration(minutes: -1))
       ..reward = 15);
