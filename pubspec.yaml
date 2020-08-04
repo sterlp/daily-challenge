@@ -35,6 +35,8 @@ dependencies:
   # use MdiIcons
   material_design_icons_flutter: ^4.0.5345
   flutter_typeahead: 1.8.7
+  url_launcher: 5.5.0
+  package_info: 0.4.1
 
 dev_dependencies:
   flutter_test:

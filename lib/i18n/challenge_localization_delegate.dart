@@ -22,7 +22,7 @@ class ChallengeLocalizations {
   String get buttonCreate => 'CREATE';
   String buttonSave(bool newRecord) => newRecord ? buttonCreate : buttonUpdate;
 
-  String get dateFormat => "EEEEE, LLLL dd";
+  String get dateFormat => "EEEEE, dd LLLL";
   String get dateFormatTime => "EEEE, dd.MM 'at' h:mm a";
 
   String formatDate(DateTime date) => DateTimeUtil.formatWithString(date, dateFormat, locale);

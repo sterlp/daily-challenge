@@ -12,4 +12,6 @@ class MyStyle {
   static const ICON_FAILED_CHALLENGE = MdiIcons.starOff;
 
   static const POSITIVE_BUDGET_COLOR = Colors.green;
+
+  static const EdgeInsets LIST_PADDING = EdgeInsets.all(4);
 }

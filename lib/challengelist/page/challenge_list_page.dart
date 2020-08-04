@@ -12,6 +12,7 @@ import 'package:challengeapp/home/widget/total_points_widget.dart';
 import 'package:challengeapp/i18n/challenge_localization_delegate.dart';
 import 'package:challengeapp/log/logger.dart';
 import 'package:challengeapp/util/date.dart';
+import 'package:challengeapp/common/common_types.dart';
 
 class ChallengeListPage extends StatefulWidget {
   @override
@@ -83,7 +84,7 @@ class ChallengeListPageState extends State<ChallengeListPage> with ScrollViewPos
     );
     if (result != null) {
       _data = _doReload();
-      setState(() {});
+      if (mounted) setState(() {});
     }
   }
 
@@ -101,6 +102,7 @@ class ChallengeListPageState extends State<ChallengeListPage> with ScrollViewPos
       );
     } else {
       return ListView.builder(
+        padding: MyStyle.LIST_PADDING,
         controller: scrollController,
         itemCount: _challenges.length,
         itemBuilder: (context, index) {

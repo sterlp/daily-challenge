@@ -1,3 +1,4 @@
+import 'package:challengeapp/home/widget/app_menu.dart';
 import 'package:flutter/material.dart';
 import 'package:challengeapp/challengelist/page/challenge_list_page.dart';
 import 'package:challengeapp/history/page/history_page.dart';
@@ -20,6 +21,7 @@ class _ChallengeHomePageState extends State<ChallengeHomePage> {
     return DefaultTabController(
       length: 3,
       child: Scaffold(
+        drawer: AppMenu(),
         appBar: AppBar(
           bottom: TabBar(
             tabs: [

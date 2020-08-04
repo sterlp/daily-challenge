@@ -11,6 +11,7 @@ import 'package:challengeapp/reward/model/reward_model.dart';
 import 'package:challengeapp/reward/page/reward_page.dart';
 import 'package:challengeapp/reward/service/reward_service.dart';
 import 'package:challengeapp/reward/widget/reward_card_widget.dart';
+import 'package:challengeapp/common/common_types.dart';
 
 class RewardShopPage extends StatefulWidget {
   final AppContext appContext;
@@ -127,6 +128,7 @@ class _RewardShopPageState extends FixedState<RewardShopPage> with ScrollViewPos
 
   Widget _buildResult(BuildContext context, List<Reward> rewards) {
     return ListView.builder(
+      padding: MyStyle.LIST_PADDING,
       itemCount: rewards.length,
       // padding: const EdgeInsets.all(8.0),
       controller: scrollController,

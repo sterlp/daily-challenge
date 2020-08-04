@@ -10,34 +10,45 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-  final AppContext appContext;
+  final AppContext _appContext;
+  final ValueNotifier<bool> _darkTheme = ValueNotifier(true);
+
+  final ThemeData dark = ThemeData.dark().copyWith(
+    accentColor: Colors.blue,
+    indicatorColor: Colors.blue,
+    textSelectionHandleColor: Colors.blue,
+    textSelectionColor: Colors.blue,
+    toggleableActiveColor: Colors.blue,
+    floatingActionButtonTheme: FloatingActionButtonThemeData(
+      backgroundColor: Colors.blue,
+    )
+  );
+  final ThemeData light = ThemeData.light().copyWith(
+    buttonTheme: ButtonThemeData(
+      buttonColor: Colors.blue
+    )
+  );
 
   MyApp({Key key, AppContext container}) :
-        appContext = container == null ? buildContext() : container,
+        _appContext = container == null ? buildContext() : container,
         super(key: key);
 
   @override
   Widget build(BuildContext context) {
     // wrap the MaterialApp to ensure that all pages opened with the navigator also see the AppStateWidget
-    final darkThemeData = ThemeData.dark();
-
     return AppStateWidget(
-      context: appContext,
-      child: MaterialApp(
-        // https://flutter.dev/docs/development/accessibility-and-localization/internationalization
-        localizationsDelegates: AppLocalizationsDelegate.delegates,
-        supportedLocales: AppLocalizationsDelegate.locales,
-        theme:  darkThemeData.copyWith(
-          accentColor: Colors.blue,
-          indicatorColor: Colors.blue,
-          textSelectionHandleColor: Colors.blue,
-          textSelectionColor: Colors.blue,
-          toggleableActiveColor: Colors.green,
-          floatingActionButtonTheme: FloatingActionButtonThemeData(
-              backgroundColor: Colors.blue,
-          )
+      context: _appContext,
+      darkTheme: _darkTheme,
+      child: ValueListenableBuilder(
+        valueListenable: _darkTheme,
+        builder: (context, value, child) => MaterialApp(
+          // https://flutter.dev/docs/development/accessibility-and-localization/internationalization
+          localizationsDelegates: AppLocalizationsDelegate.delegates,
+          supportedLocales: AppLocalizationsDelegate.locales,
+          theme: value ? dark : light,
+          home: child
         ),
-        home:  ChallengeHomePage()
+        child: ChallengeHomePage()
       ),
     );
   }

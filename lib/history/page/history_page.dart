@@ -53,6 +53,7 @@ class _HistoryPageState extends FixedState<HistoryPage> {
         if (value == null) return LoadingWidget();
 
         return ListView.builder(
+          padding: MyStyle.LIST_PADDING,
           itemCount: value.length,
           itemBuilder: (context, index) {
             final d = value[index];
