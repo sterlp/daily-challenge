@@ -6,7 +6,7 @@
 
 https://play.google.com/store/apps/details?id=org.sterl.challengeapp
 
-## Aplha Version Link
+## Alpha Version Link
 
 https://play.google.com/apps/testing/org.sterl.challengeapp
 
