@@ -10,9 +10,11 @@ class DateTimeUtil {
   static final Map<String, DateFormat> _formatterCache = Map();
 
   static DateTime midnight(DateTime dateTime) {
+    if (dateTime == null) return null;
     return DateTime(dateTime.year, dateTime.month, dateTime.day, 23, 59, 59);
   }
   static DateTime clearTime(DateTime dateTime) {
+    if (dateTime == null) return null;
     return DateTime(dateTime.year, dateTime.month, dateTime.day);
   }
   static String format(DateTime d, DateFormat f) {
