@@ -81,8 +81,7 @@ class _ChallengeWidgetState extends State<ChallengeWidget> {
       if (challenge.latestAt == null) {
         return Text('Was due ' + _commonI18n.formatDate(challenge.dueAt), style: _overDueStyle);
       } else {
-        Duration failIn = challenge.latestAt.difference(DateTimeUtil.midnight(DateTime.now()));
-        return Text(_i18n.challengeWillFail(failIn), style: _overDueStyle);
+        return Text(_i18n.challengeWillFail(challenge.latestDiff(DateTime.now())), style: _overDueStyle);
       }
     } else {
       return Text(_i18n.dueUntil(_commonI18n.formatDate(challenge.dueAt)));

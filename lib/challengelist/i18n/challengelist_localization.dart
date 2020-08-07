@@ -23,6 +23,7 @@ class ChallengeListLocalizations {
   String challengeWillFail(Duration duration) => duration.inDays == 0
       ? 'Today is your last chance to finish this challenge.'
       : 'Will fail in ${duration.inDays} day(s).';
+
   String dueUntil(String date) => 'Due on $date';
   String doneAt(String date) => 'Done on $date';
   String failedSince(String date) => 'Failed since $date';

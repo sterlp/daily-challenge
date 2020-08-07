@@ -81,6 +81,7 @@ void main() {
   test('Query loadByDate', () async {
     var now = DateTime.now();
     await subject.save(Challenge.of('Test 1'));
+    await new Future.delayed(const Duration(milliseconds : 1));
     await subject.save(Challenge.of('Test 2'));
     await subject.save(Challenge.of('Test 3', now.add(Duration(days: -1))));
     await subject.save(Challenge.of('Test 4', now.add(Duration(days: -2))));
@@ -88,8 +89,8 @@ void main() {
 
     var results = await subject.loadByDate(now);
     expect(results.length, 2);
-    expect(results[0].name, 'Test 1');
-    expect(results[1].name, 'Test 2');
+    expect(results[0].name, 'Test 2');
+    expect(results[1].name, 'Test 1');
 
     results = await subject.loadByDate(now.add(Duration(days: 1)));
     expect(results.length, 1);
