@@ -26,7 +26,8 @@ class ChallengeListPageState extends State<ChallengeListPage> with ScrollViewPos
   ChallengeService _challengeService;
   ValueNotifier<int> _credit;
   DateTime _selectedDay = DateTime.now();
-  Future<List<Challenge>> _data;
+
+  final ValueNotifier<List<Challenge>> _data = ValueNotifier(null);
 
   ChallengeListLocalizations i18n;
   ChallengeLocalizations commonI18n;
@@ -41,7 +42,7 @@ class ChallengeListPageState extends State<ChallengeListPage> with ScrollViewPos
     super.didChangeDependencies();
   }
 
-  Future<List<Challenge>> _doReload() async {
+  Future<void> _doReload() async {
     List<Challenge> result = [];
     try {
       final isToday = DateTimeUtil.clearTime(_selectedDay).millisecondsSinceEpoch == DateTimeUtil.clearTime(DateTime.now()).millisecondsSinceEpoch;
@@ -73,7 +74,7 @@ class ChallengeListPageState extends State<ChallengeListPage> with ScrollViewPos
     } finally {
       _log.finishSync();
     }
-    return result;
+    _data.value = result;
   }
 
   void _createChallenge() async {
@@ -82,10 +83,7 @@ class ChallengeListPageState extends State<ChallengeListPage> with ScrollViewPos
         MaterialPageRoute<dynamic>(builder: (BuildContext context) =>
             ChallengePage(challenge: Challenge()..dueAt = _selectedDay), fullscreenDialog: true)
     );
-    if (result != null) {
-      _data = _doReload();
-      if (mounted) setState(() {});
-    }
+    if (result != null) _doReload();
   }
 
   Widget _buildChallenges(List<Challenge> _challenges) {
@@ -107,9 +105,9 @@ class ChallengeListPageState extends State<ChallengeListPage> with ScrollViewPos
         itemCount: _challenges.length,
         itemBuilder: (context, index) {
           final e = _challenges[index];
-          return ChallengeWidget(
-            challenge: e,
-            onDelete: _onDeleteChallenge,
+          return ChallengeWidget(e,
+            deleteCallback: _onDeleteChallenge,
+            undoDeleteCallback: (e) => _doReload(),
             key: ObjectKey(e),
           );
         }
@@ -117,27 +115,16 @@ class ChallengeListPageState extends State<ChallengeListPage> with ScrollViewPos
     }
   }
 
-  _onDeleteChallenge(Challenge c, BuildContext context) async {
-    await _challengeService.delete(c);
-    _data = _doReload();
-    setState(() { });
-    Scaffold.of(context).showSnackBar(
-      SnackBar(
-        behavior: SnackBarBehavior.floating,
-        content: Text("'${c.name}' was deleted."),
-        action: SnackBarAction(label: 'Undo', onPressed: () async {
-          _log.info('Undo delete of $c');
-          await _challengeService.insert(c);
-          _data = _doReload();
-          setState(() {});
-        }),
-      )
-    );
+  _onDeleteChallenge(Challenge c) {
+    final newData = List<Challenge>.from(_data.value);
+    if (newData.remove(c)) {
+      _data.value = newData;
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    _data ??= _doReload();
+    if (_data.value == null) _doReload();
 
     return Scaffold(
       bottomNavigationBar: BottomAppBar(
@@ -153,8 +140,7 @@ class ChallengeListPageState extends State<ChallengeListPage> with ScrollViewPos
                 if (newDate != null && newDate.millisecondsSinceEpoch != _selectedDay.millisecondsSinceEpoch) {
                   _log.debug('date $newDate selected.');
                   _selectedDay = newDate;
-                  _data = _doReload();
-                  setState(() {});
+                  _doReload();
                 }
               },
               icon: Icon(Icons.arrow_drop_down),
@@ -191,11 +177,11 @@ class ChallengeListPageState extends State<ChallengeListPage> with ScrollViewPos
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      body: FutureBuilder(
-        future: _data,
-        builder: (context, snapshot) {
-          _log.debug('build has data ${snapshot.hasData}...');
-          if (snapshot.hasData) return _buildChallenges(snapshot.data);
+      body: ValueListenableBuilder(
+        valueListenable: _data,
+        builder: (context, value, child) {
+          _log.debug('build has data ${value != null}...');
+          if (value != null) return _buildChallenges(value);
           else return LoadingWidget();
         },
       )

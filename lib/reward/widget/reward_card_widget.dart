@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:challengeapp/common/model/attached_entity.dart';
+import 'package:challengeapp/common/widget/delete_list_action.dart';
 import 'package:challengeapp/challengelist/i18n/challengelist_localization.dart';
 import 'package:challengeapp/common/common_types.dart';
 import 'package:challengeapp/home/state/app_state_widget.dart';
@@ -9,15 +9,17 @@ import 'package:challengeapp/reward/model/reward_model.dart';
 import 'package:challengeapp/reward/page/reward_page.dart';
 import 'package:challengeapp/reward/service/reward_service.dart';
 import 'package:challengeapp/reward/widget/buy_reward_dialog.dart';
-
-typedef RewardCallback = void Function(Reward reward, BuildContext context);
+import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 
 class RewardCardWidget extends StatefulWidget {
   final Reward _reward;
   final ValueNotifier _credit;
-  final RewardCallback deleteRewardCallback;
+  final ValueChanged<Reward> deleteCallback;
+  final ValueChanged<Reward> undoDeleteCallback;
 
-  RewardCardWidget(this._reward, this._credit, this.deleteRewardCallback, {Key key}) : super(key: key);
+  RewardCardWidget(this._reward, this._credit, this.deleteCallback, this.undoDeleteCallback,
+      {Key key}) : super(key: key);
 
   @override
   _RewardCardWidgetState createState() => _RewardCardWidgetState();
@@ -31,6 +33,7 @@ class _RewardCardWidgetState extends State<RewardCardWidget> with SingleTickerPr
   BoughtReward _boughtReward;
   ChallengeLocalizations _commonI18n;
   ChallengeListLocalizations _i18n;
+  AttachedEntity<Reward> _attached;
 
   @override
   void initState() {
@@ -52,12 +55,17 @@ class _RewardCardWidgetState extends State<RewardCardWidget> with SingleTickerPr
     _commonI18n = Localizations.of<ChallengeLocalizations>(context, ChallengeLocalizations);
     _i18n = Localizations.of<ChallengeListLocalizations>(context, ChallengeListLocalizations);
     _loadBoughtReward();
+    if (_attached != null) {
+      _attached.close();
+      _attached = null;
+    }
     super.didChangeDependencies();
   }
 
   @override
   void dispose() {
     _animationController.dispose();
+    if (_attached != null) _attached.close();
     super.dispose();
   }
 
@@ -89,6 +97,7 @@ class _RewardCardWidgetState extends State<RewardCardWidget> with SingleTickerPr
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final _reward = widget._reward;
+    _attached ??= _rewardService.attach(_reward);
 
     return Slidable(
       actionPane: SlidableDrawerActionPane(),
@@ -138,11 +147,10 @@ class _RewardCardWidgetState extends State<RewardCardWidget> with SingleTickerPr
       secondaryActions: <Widget>[
         Padding(
           padding: ACTION_PADDING,
-          child: IconSlideAction(
-              caption: 'DELETE',
-              color: theme.errorColor,
-              icon: Icons.delete,
-              onTap: () => widget.deleteRewardCallback(_reward, context)),
+          child: DeleteListAction(
+            _attached, "Reward deleted.",
+            deleteCallback: widget.deleteCallback, undoDeleteCallback: widget.undoDeleteCallback,
+          ),
         ),
         Padding(
           padding: ACTION_PADDING,

@@ -1,5 +1,6 @@
 import 'package:challengeapp/common/model/abstract_entity.dart';
 import 'package:challengeapp/common/model/attached_entity.dart';
+import 'package:flutter/foundation.dart';
 import 'package:sqflite/sqflite.dart';
 
 abstract class AbstractDao<T extends AbstractEntity> {
@@ -11,14 +12,23 @@ abstract class AbstractDao<T extends AbstractEntity> {
   Future<DatabaseExecutor> get dbExecutor => _db;
 
   AttachedEntity<T> attach(T entity) {
-    return AttachedEntity<T>(entity.id, entity, this);
+    return AttachedEntity<T>(entity.id, entity,
+        reload, save, deleteEntity, insert
+    );
   }
 
   Future<AttachedEntity<T>> getAttached(int id) async {
-    return AttachedEntity<T>(id, await getById(id), this);
+    return AttachedEntity<T>(id, await getById(id),
+        reload, save, deleteEntity, insert);
+  }
+
+  Future<T> reload(T e) async {
+    return getById(e.id);
   }
 
   Future<T> getById(int id) async {
+    assert(id != null);
+
     final Database db = await dbExecutor;
     final List<Map<String, dynamic>> results = await db.query(
         tableName,
@@ -55,6 +65,13 @@ abstract class AbstractDao<T extends AbstractEntity> {
 
     final Database db = await dbExecutor;
     return db.delete(tableName, where: "id = ?", whereArgs: [id]);
+  }
+
+  Future<T> deleteEntity(T e) async {
+    if (e == null || e.id == null) return SynchronousFuture(e);
+
+    await delete(e.id);
+    return e;
   }
 
   Future<List<T>> saveAll(List<T> entities) async {

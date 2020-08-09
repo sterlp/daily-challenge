@@ -1,4 +1,5 @@
 
+import 'package:challengeapp/common/model/attached_entity.dart';
 import 'package:challengeapp/credit/service/credit_service.dart';
 import 'package:challengeapp/reward/dao/bought_reward_dao.dart';
 import 'package:challengeapp/reward/dao/reward_dao.dart';
@@ -13,6 +14,10 @@ class RewardService {
   final Map<int, Future<BoughtReward>> _cache = new Map();
 
   RewardService(this._rewardDao, this._boughtRewardDao, this._creditService);
+
+  AttachedEntity<Reward> attach(Reward r) {
+    return _rewardDao.attach(r);
+  }
 
   Future<Reward> save(Reward reward) {
     return _rewardDao.save(reward);

@@ -1,4 +1,3 @@
-import 'package:challengeapp/util/date.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:challengeapp/challengelist/model/challenge_model.dart';
 

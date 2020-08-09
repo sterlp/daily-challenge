@@ -3,20 +3,27 @@ import 'package:challengeapp/common/model/abstract_entity.dart';
 import 'package:flutter/foundation.dart';
 import 'package:challengeapp/container/app_context_model.dart';
 
+typedef AttachedEntityAction<T> = Future<T> Function(T value);
 
 class AttachedEntity<Entity extends AbstractEntity> extends ValueNotifier<Entity> with Closeable {
-  final AbstractDao<Entity> _dao;
   final int id;
-  Entity _deleteUndoSave;
+  final AttachedEntityAction<Entity> doReloadCallback;
+  final AttachedEntityAction<Entity> doSaveCallback;
+  final AttachedEntityAction<Entity> doDeleteCallback;
+  final AttachedEntityAction<Entity> doUnDeleteCallback;
 
-  AttachedEntity(this.id, Entity entity, this._dao) : super(entity) {
+  Entity _deleteUndoSave;
+  bool _closed = false;
+  get isClosed => _closed;
+
+  AttachedEntity(this.id, Entity entity, this.doReloadCallback, this.doSaveCallback, this.doDeleteCallback, this.doUnDeleteCallback) : super(entity) {
     assert(this.id != null);
     assert(entity != null);
   }
 
   Future<Entity> reload() async {
     final needsEvent = value != null;
-    value = await _dao.getById(id);
+    value = await doReloadCallback(value);
     if (needsEvent) notifyListeners();
     return value;
   }
@@ -24,27 +31,30 @@ class AttachedEntity<Entity extends AbstractEntity> extends ValueNotifier<Entity
   Future<Entity> update() async {
     assert(value != null);
 
-    await _dao.update(value);
+    value = await doSaveCallback(value);
     notifyListeners();
     return value;
   }
 
-  Future<void> delete() async {
+  Future<Entity> delete() async {
     _deleteUndoSave = value;
-    await _dao.delete(this.id);
+    await doDeleteCallback(value);
     value = null;
-    return value;
+    return _deleteUndoSave;
   }
 
   Future<Entity> undoDelete() async {
     assert(_deleteUndoSave != null);
-    if (_deleteUndoSave != null) {
-      value = await _dao.insert(_deleteUndoSave);
-      _deleteUndoSave = null;
-    }
-    return value;
+    final v = await doUnDeleteCallback(_deleteUndoSave);
+    _deleteUndoSave = null;
+    if (!_closed) value = v;
+    return v;
   }
 
+  dispose() {
+    _closed = true;
+    super.dispose();
+  }
   Future<void> close() {
     this.dispose();
     return SynchronousFuture(null);

@@ -46,11 +46,13 @@ class _RewardShopPageState extends FixedState<RewardShopPage> with ScrollViewPos
     }
   }
 
-  void _deleteReward(Reward r, BuildContext context) async {
+  void _deleteReward(Reward r) {
     _log.debug('delete reward $r');
-    await _rewardService.deleteReward(r);
-    _rewards.remove(r);
-    setState(() {});
+    setState(() => _rewards.remove(r));
+  }
+  void _undoDeleteReward(Reward r) {
+    _log.debug('undo delete reward $r');
+    _reload();
   }
 
   void _createReward() async {
@@ -139,8 +141,9 @@ class _RewardShopPageState extends FixedState<RewardShopPage> with ScrollViewPos
       controller: scrollController,
       itemBuilder: (BuildContext context, int index) {
         final reward = rewards[index];
-        return RewardCardWidget(reward, _totalCredit, _deleteReward,
-          key: ObjectKey(reward)
+        return RewardCardWidget(reward, _totalCredit,
+            _deleteReward, _undoDeleteReward,
+            key: ObjectKey(reward)
         );
       }
     );

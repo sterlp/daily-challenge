@@ -1,3 +1,5 @@
+import 'package:challengeapp/common/model/attached_entity.dart';
+import 'package:challengeapp/common/widget/delete_list_action.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:challengeapp/challengelist/i18n/challengelist_localization.dart';
@@ -8,15 +10,13 @@ import 'package:challengeapp/challengelist/widget/reward_widget.dart';
 import 'package:challengeapp/home/state/app_state_widget.dart';
 import 'package:challengeapp/i18n/challenge_localization_delegate.dart';
 
-typedef ChallengeChecked = void Function(Challenge challenge, bool checked);
-typedef ChallengeDelete = void Function(Challenge challenge, BuildContext context);
-typedef ChallengeEdit = void Function(Challenge challenge, BuildContext context);
-
 class ChallengeWidget extends StatefulWidget {
   final Challenge challenge;
-  final ChallengeDelete onDelete;
+  final ValueChanged<Challenge> deleteCallback;
+  final ValueChanged<Challenge> undoDeleteCallback;
 
-  ChallengeWidget({Key key, @required this.challenge, this.onDelete}) : super(key: key);
+  ChallengeWidget(this.challenge,
+      {Key key, this.deleteCallback, this.undoDeleteCallback}) : super(key: key);
 
   @override
   _ChallengeWidgetState createState() => _ChallengeWidgetState();
@@ -26,6 +26,8 @@ class _ChallengeWidgetState extends State<ChallengeWidget> {
   static const _notOpenTextStyle = TextStyle(decoration: TextDecoration.lineThrough);
   static const _edge = EdgeInsets.all(4.0);
 
+  ChallengeService _challengeService;
+  AttachedEntity<Challenge> _attached;
   TextStyle _overDueStyle;
 
   ChallengeListLocalizations _i18n;
@@ -37,6 +39,18 @@ class _ChallengeWidgetState extends State<ChallengeWidget> {
     _i18n = Localizations.of<ChallengeListLocalizations>(context, ChallengeListLocalizations);
     _commonI18n = Localizations.of<ChallengeLocalizations>(context, ChallengeLocalizations);
     _overDueStyle = TextStyle(color: Theme.of(context).errorColor);
+    _challengeService = AppStateWidget.of(context).get<ChallengeService>();
+    if (_attached != null) {
+      _attached.close();
+      _attached = null;
+    }
+  }
+  void dispose() {
+    if (_attached != null) {
+      _attached.close();
+      _attached = null;
+    }
+    super.dispose();
   }
 
   _onEditChallenge() async {
@@ -89,21 +103,24 @@ class _ChallengeWidgetState extends State<ChallengeWidget> {
 
   @override
   Widget build(BuildContext context) {
+    assert(_challengeService != null);
+
     final challenge = widget.challenge;
     final done = challenge.isDone;
     final failed = challenge.isFailed;
     final theme = Theme.of(context);
+    _attached ??= _challengeService.attach(challenge);
+    assert(_attached != null);
 
     var actions = <Widget>[];
-    if (widget.onDelete != null) {
+    if (widget.deleteCallback != null) {
       actions.add(
         Padding(
           padding: _edge,
-          child: IconSlideAction(
-              caption: 'Delete',
-              color: theme.errorColor,
-              icon: Icons.delete,
-              onTap: () => widget.onDelete(challenge, context)
+          child: DeleteListAction(
+            _attached, "Challenge deleted.",
+            deleteCallback: widget.deleteCallback,
+            undoDeleteCallback: widget.undoDeleteCallback,
           ),
         )
       );
@@ -114,10 +131,10 @@ class _ChallengeWidgetState extends State<ChallengeWidget> {
         Padding(
           padding: _edge,
           child: IconSlideAction(
-              caption: 'Edit',
-              color: theme.primaryColor,
-              icon: Icons.edit,
-              onTap: _onEditChallenge
+            caption: 'Edit',
+            color: theme.primaryColor,
+            icon: Icons.edit,
+            onTap: _onEditChallenge
           ),
         )
       );
@@ -128,15 +145,13 @@ class _ChallengeWidgetState extends State<ChallengeWidget> {
       actionExtentRatio: 0.25,
       child: Card(
         child: ListTile(
-          //onChanged: (v) => _onChallengeChecked(v, context),
-          //value: done,
           leading: AnimatedSwitcher(
             duration: const Duration(milliseconds: 800),
             // transitionBuilder: (child, animation) => ScaleTransition(child: child, scale: animation),
             child: RewardWidget(
-                reward: widget.challenge.reward,
-                status: widget.challenge.status,
-                key: ValueKey('${widget.challenge.id}_${widget.challenge.status}'),
+              reward: widget.challenge.reward,
+              status: widget.challenge.status,
+              key: ValueKey('${widget.challenge.id}_${widget.challenge.status}'),
             )
           ),
           title: Text(challenge.name, style: done || failed ? _notOpenTextStyle : null),

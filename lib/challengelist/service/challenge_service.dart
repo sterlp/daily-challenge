@@ -1,12 +1,12 @@
 import 'dart:async';
 import 'package:challengeapp/challengelist/dao/challenge_dao.dart';
 import 'package:challengeapp/challengelist/model/challenge_model.dart';
+import 'package:challengeapp/common/model/attached_entity.dart';
 import 'package:challengeapp/credit/service/credit_service.dart';
 import 'package:challengeapp/log/logger.dart';
 import 'dart:developer';
 
 import 'package:challengeapp/util/date.dart';
-import 'package:flutter/foundation.dart';
 
 ///
 /// https://www.sqlite.org/datatype3.html
@@ -18,6 +18,13 @@ class ChallengeService {
   final CreditService _creditService;
 
   ChallengeService(this._challengeDao, this._creditService);
+
+  attach(Challenge challenge) {
+    return AttachedEntity<Challenge>(
+      challenge.id, challenge, _challengeDao.reload,
+      this.save, this.delete, this.insert
+    );
+  }
 
   Future<Challenge> getById(int id) async {
     return _challengeDao.getById(id);
@@ -33,11 +40,11 @@ class ChallengeService {
     return result;
   }
 
-  Future<int> delete(Challenge c) async {
+  Future<Challenge> delete(Challenge c) async {
     var deleted = await _challengeDao.delete(c.id);
     log('Deleted ${c.name}');
-    if (deleted > 0) return _creditService.calcTotal();
-    else return _creditService.credit;
+    if (deleted > 0 && c.status != ChallengeStatus.open) _creditService.calcTotal();
+    return c;
   }
   
   Future<List<Challenge>> loadAll() {
@@ -99,8 +106,12 @@ class ChallengeService {
     _creditService.calcTotal();
   }
 
-  Future<Challenge> insert(Challenge challenge) {
-    return _challengeDao.insert(challenge);
+  Future<Challenge> insert(Challenge challenge) async {
+    final result = await _challengeDao.insert(challenge);
+    if (result.status != ChallengeStatus.open) {
+      _creditService.calcTotal();
+    }
+    return result;
   }
 
   Future<Iterable<String>> completeChallengesName(String pattern) {

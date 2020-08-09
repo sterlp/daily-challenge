@@ -1,4 +1,6 @@
 
+import 'package:challengeapp/common/model/abstract_entity.dart';
+import 'package:challengeapp/common/model/attached_entity.dart';
 import 'package:challengeapp/config/service/config_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:challengeapp/challengelist/model/challenge_model.dart';
@@ -21,6 +23,9 @@ class ConfigStub extends ConfigService {
   }
 }
 
+class AttachedEntityMock<Entity extends AbstractEntity>
+    with Mock implements AttachedEntity<Entity> {}
+
 class AppContextMock {
   final AppContext appContext = AppContext();
 
@@ -41,9 +46,11 @@ class AppContextMock {
     when(creditServiceMock.credit).thenAnswer((realInvocation) => Future.value(credits.value));
 
     when(rewardServiceMock.listRewards(any, any)).thenAnswer((realInvocation) => Future.value(rewards));
+    when(rewardServiceMock.attach(any)).thenReturn(AttachedEntityMock<Reward>());
 
     when(challengeServiceMock.loadByDate(any)).thenAnswer((realInvocation) => Future.value(challenges));
     when(challengeServiceMock.loadOverDue()).thenAnswer((realInvocation) => Future.value(overdueChallenges));
+    when(challengeServiceMock.attach(any)).thenReturn(AttachedEntityMock<Challenge>());
 
     appContext.add<RewardService>(rewardServiceMock);
     appContext.add<CreditService>(creditServiceMock);
