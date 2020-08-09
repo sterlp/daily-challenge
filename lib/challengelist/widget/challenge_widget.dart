@@ -1,4 +1,3 @@
-import 'package:challengeapp/util/date.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:challengeapp/challengelist/i18n/challengelist_localization.dart';
@@ -40,11 +39,11 @@ class _ChallengeWidgetState extends State<ChallengeWidget> {
     _overDueStyle = TextStyle(color: Theme.of(context).errorColor);
   }
 
-  _onEditChallenge(Challenge c, BuildContext context) async {
+  _onEditChallenge() async {
     var result = await Navigator.push(
         context,
         MaterialPageRoute<dynamic>(
-          builder: (BuildContext context) => ChallengePage(challenge: c),
+          builder: (BuildContext context) => ChallengePage(challenge: widget.challenge),
           fullscreenDialog: true
         )
     );
@@ -118,7 +117,7 @@ class _ChallengeWidgetState extends State<ChallengeWidget> {
               caption: 'Edit',
               color: theme.primaryColor,
               icon: Icons.edit,
-              onTap: () => _onEditChallenge(challenge, context)
+              onTap: _onEditChallenge
           ),
         )
       );
@@ -128,10 +127,10 @@ class _ChallengeWidgetState extends State<ChallengeWidget> {
       actionPane: SlidableDrawerActionPane(),
       actionExtentRatio: 0.25,
       child: Card(
-        child: CheckboxListTile(
-          onChanged: (v) => _onChallengeChecked(v, context),
-          value: done,
-          secondary: AnimatedSwitcher(
+        child: ListTile(
+          //onChanged: (v) => _onChallengeChecked(v, context),
+          //value: done,
+          leading: AnimatedSwitcher(
             duration: const Duration(milliseconds: 800),
             // transitionBuilder: (child, animation) => ScaleTransition(child: child, scale: animation),
             child: RewardWidget(
@@ -140,9 +139,17 @@ class _ChallengeWidgetState extends State<ChallengeWidget> {
                 key: ValueKey('${widget.challenge.id}_${widget.challenge.status}'),
             )
           ),
+          title: Text(challenge.name, style: done || failed ? _notOpenTextStyle : null),
           subtitle: _dueText(),
           isThreeLine: true,
-          title: Text(challenge.name, style: done || failed ? _notOpenTextStyle : null)
+          onLongPress: _onEditChallenge,
+          trailing: SizedBox(
+            height: 64,
+            child: Checkbox(
+              value: done,
+              onChanged: (v) => _onChallengeChecked(v, context),
+            ),
+          ),
         ),
       ),
       secondaryActions: actions

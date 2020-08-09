@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 
 mixin ScrollViewPositionListener<T extends StatefulWidget> on State<T> {
   final ScrollController scrollController = ScrollController();
-  bool scrolledToBottom = false;
-  bool scrolledToTop = true;
-  bool showFab = true;
+  final ValueNotifier<bool> scrolledToBottom = ValueNotifier(false);
+  final ValueNotifier<bool> scrolledToTop = ValueNotifier(true);
+  final ValueNotifier<bool> showFab = ValueNotifier(true);
 
   @mustCallSuper
   @override
@@ -36,12 +36,11 @@ mixin ScrollViewPositionListener<T extends StatefulWidget> on State<T> {
   }
 
   void onChangeScroll(bool newScrolledToBottom, bool newScrolledToTop) {
-    if (!newScrolledToBottom) showFab = true;
-    if (scrolledToBottom != newScrolledToBottom || scrolledToTop != newScrolledToTop) {
-      setState(() {
-        scrolledToBottom = newScrolledToBottom;
-        scrolledToTop = newScrolledToTop;
-      });
+    if (!newScrolledToBottom) showFab.value = true;
+    if (scrolledToBottom.value != newScrolledToBottom
+        || scrolledToTop.value != newScrolledToTop) {
+      scrolledToBottom.value = newScrolledToBottom;
+      scrolledToTop.value = newScrolledToTop;
     }
   }
 }

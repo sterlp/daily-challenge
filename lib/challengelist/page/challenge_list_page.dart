@@ -105,7 +105,6 @@ class ChallengeListPageState extends State<ChallengeListPage> with ScrollViewPos
         padding: MyStyle.LIST_PADDING,
         controller: scrollController,
         itemCount: _challenges.length,
-        //separatorBuilder: (context, index) => MyStyle.LIST_DIVIDER,
         itemBuilder: (context, index) {
           final e = _challenges[index];
           return ChallengeWidget(
@@ -169,20 +168,27 @@ class ChallengeListPageState extends State<ChallengeListPage> with ScrollViewPos
           ],
         ),
       ),
-      floatingActionButton: AnimatedOpacity(
-        opacity: scrolledToBottom ? 0.0 : 1.0,
-        duration: Duration(milliseconds: 600),
-        child: Visibility(
-          visible: showFab,
-          child: FloatingActionButton.extended(
-            onPressed: _createChallenge,
-            icon: Icon(Icons.add),
-            label: Text(i18n.newChallengeButton),
+      floatingActionButton: ValueListenableBuilder(
+        valueListenable: scrolledToBottom,
+        builder: (context, value, child) => AnimatedOpacity(
+          opacity: value ? 0.0 : 1.0,
+          duration: Duration(milliseconds: 600),
+          child: ValueListenableBuilder(
+            valueListenable: showFab,
+              child: FloatingActionButton.extended(
+              onPressed: _createChallenge,
+              icon: Icon(Icons.add),
+              label: Text(i18n.newChallengeButton),
+            ),
+            builder: (context, value, child) => Visibility(
+              visible: value,
+              child: child
+            ),
           ),
+          onEnd: () {
+            if (value && showFab.value) showFab.value = false;
+          },
         ),
-        onEnd: () {
-          if (scrolledToBottom && showFab) setState(() { showFab = false; });
-        },
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       body: FutureBuilder(

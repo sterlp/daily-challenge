@@ -93,21 +93,27 @@ class _RewardShopPageState extends FixedState<RewardShopPage> with ScrollViewPos
 
     return Scaffold(
       body: _buildBody(context),
-      floatingActionButton: AnimatedOpacity(
-        opacity: scrolledToBottom ? 0.0 : 1.0,
-        duration: Duration(milliseconds: 500),
-        child: Visibility(
-          visible: showFab,
-          child: FloatingActionButton.extended(
-            onPressed: _createReward,
-            tooltip: 'New Reward',
-            icon: Icon(Icons.add),
-            label: Text('Create Reward'),
+      floatingActionButton: ValueListenableBuilder(
+        valueListenable: scrolledToBottom,
+        builder: (context, value, child) => AnimatedOpacity(
+          opacity: value ? 0.0 : 1.0,
+          duration: Duration(milliseconds: 500),
+          child: ValueListenableBuilder(
+            valueListenable: showFab,
+            builder: (context, value, child) => Visibility(
+              visible: value,
+              child: FloatingActionButton.extended(
+                onPressed: _createReward,
+                tooltip: 'New Reward',
+                icon: Icon(Icons.add),
+                label: Text('Create Reward'),
+              ),
+            ),
           ),
+          onEnd: () {
+            if (value && showFab.value) showFab.value = false;
+          },
         ),
-        onEnd: () {
-          if (scrolledToBottom && showFab) setState(() { showFab = false; });
-        },
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       bottomNavigationBar: BottomAppBar(
