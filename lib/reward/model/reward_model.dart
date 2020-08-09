@@ -1,4 +1,4 @@
-import 'package:challengeapp/util/dao/abstract_dao.dart';
+import 'package:challengeapp/common/model/abstract_entity.dart';
 
 class Reward extends AbstractEntity {
   static const NAME_LENGTH = 50;

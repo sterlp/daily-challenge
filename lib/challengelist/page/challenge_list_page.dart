@@ -105,6 +105,7 @@ class ChallengeListPageState extends State<ChallengeListPage> with ScrollViewPos
         padding: MyStyle.LIST_PADDING,
         controller: scrollController,
         itemCount: _challenges.length,
+        //separatorBuilder: (context, index) => MyStyle.LIST_DIVIDER,
         itemBuilder: (context, index) {
           final e = _challenges[index];
           return ChallengeWidget(

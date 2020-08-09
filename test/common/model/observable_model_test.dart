@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:challengeapp/util/model/observable_model.dart';
+import 'package:challengeapp/common/model/observable_model.dart';
 
 import '../../test_helper.dart';
 

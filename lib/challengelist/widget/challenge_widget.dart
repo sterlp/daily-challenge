@@ -112,36 +112,38 @@ class _ChallengeWidgetState extends State<ChallengeWidget> {
     // allow edit only for non completed challenges
     if (challenge.status == ChallengeStatus.open) {
       actions.add(
-          Padding(
-            padding: _edge,
-            child: IconSlideAction(
-                caption: 'Edit',
-                color: theme.primaryColor,
-                icon: Icons.edit,
-                onTap: () => _onEditChallenge(challenge, context)
-            ),
-          )
+        Padding(
+          padding: _edge,
+          child: IconSlideAction(
+              caption: 'Edit',
+              color: theme.primaryColor,
+              icon: Icons.edit,
+              onTap: () => _onEditChallenge(challenge, context)
+          ),
+        )
       );
     }
 
     return Slidable(
-        actionPane: SlidableDrawerActionPane(),
-        actionExtentRatio: 0.25,
-        child: Card(
-          child: CheckboxListTile(
-            onChanged: (v) => _onChallengeChecked(v, context),
-            value: done,
-            secondary: AnimatedSwitcher(
-                duration: const Duration(milliseconds: 800),
-                // transitionBuilder: (child, animation) => ScaleTransition(child: child, scale: animation),
-                child: RewardWidget(
-                    reward: widget.challenge.reward,
-                    status: widget.challenge.status,
-                    key: ValueKey('${widget.challenge.id}_${widget.challenge.status}'),
-                )
-            ),
-            subtitle: _dueText(),
-            title: Text(challenge.name, style: done || failed ? _notOpenTextStyle : null))
+      actionPane: SlidableDrawerActionPane(),
+      actionExtentRatio: 0.25,
+      child: Card(
+        child: CheckboxListTile(
+          onChanged: (v) => _onChallengeChecked(v, context),
+          value: done,
+          secondary: AnimatedSwitcher(
+            duration: const Duration(milliseconds: 800),
+            // transitionBuilder: (child, animation) => ScaleTransition(child: child, scale: animation),
+            child: RewardWidget(
+                reward: widget.challenge.reward,
+                status: widget.challenge.status,
+                key: ValueKey('${widget.challenge.id}_${widget.challenge.status}'),
+            )
+          ),
+          subtitle: _dueText(),
+          isThreeLine: true,
+          title: Text(challenge.name, style: done || failed ? _notOpenTextStyle : null)
+        ),
       ),
       secondaryActions: actions
     );

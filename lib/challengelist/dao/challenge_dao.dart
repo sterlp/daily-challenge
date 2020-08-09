@@ -1,6 +1,6 @@
 import 'package:challengeapp/challengelist/model/challenge_model.dart';
 import 'package:challengeapp/log/logger.dart';
-import 'package:challengeapp/util/dao/abstract_dao.dart';
+import 'package:challengeapp/common/dao/abstract_dao.dart';
 import 'package:challengeapp/util/data.dart';
 import 'package:challengeapp/util/date.dart';
 import 'package:sqflite/sqflite.dart';

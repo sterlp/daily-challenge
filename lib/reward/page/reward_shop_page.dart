@@ -130,7 +130,6 @@ class _RewardShopPageState extends FixedState<RewardShopPage> with ScrollViewPos
     return ListView.builder(
       padding: MyStyle.LIST_PADDING,
       itemCount: rewards.length,
-      // padding: const EdgeInsets.all(8.0),
       controller: scrollController,
       itemBuilder: (BuildContext context, int index) {
         final reward = rewards[index];

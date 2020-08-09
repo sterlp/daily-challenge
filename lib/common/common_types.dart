@@ -13,5 +13,6 @@ class MyStyle {
 
   static const POSITIVE_BUDGET_COLOR = Colors.green;
 
-  static const EdgeInsets LIST_PADDING = EdgeInsets.all(4);
+  static const EdgeInsets LIST_PADDING = const EdgeInsets.all(4);
+  static const Divider LIST_DIVIDER = const Divider(height: 1, thickness: 1.5,);
 }

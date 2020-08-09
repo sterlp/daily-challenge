@@ -1,26 +1,6 @@
+import 'package:challengeapp/common/model/abstract_entity.dart';
+import 'package:challengeapp/common/model/attached_entity.dart';
 import 'package:sqflite/sqflite.dart';
-
-abstract class AbstractEntity {
-  int id;
-
-  @override
-  bool operator == (other) {
-    if (id == null) {
-      return super == other;
-    } else {
-      return id == other.id && this.runtimeType == other.runtimeType;
-    }
-  }
-
-  @override
-  int get hashCode {
-    if (id == null) {
-      return super.hashCode;
-    } else {
-      return id.hashCode;
-    }
-  }
-}
 
 abstract class AbstractDao<T extends AbstractEntity> {
   final Future<Database> _db;
@@ -29,6 +9,14 @@ abstract class AbstractDao<T extends AbstractEntity> {
   AbstractDao(this._db, this.tableName);
 
   Future<DatabaseExecutor> get dbExecutor => _db;
+
+  AttachedEntity<T> attach(T entity) {
+    return AttachedEntity<T>(entity.id, entity, this);
+  }
+
+  Future<AttachedEntity<T>> getAttached(int id) async {
+    return AttachedEntity<T>(id, await getById(id), this);
+  }
 
   Future<T> getById(int id) async {
     final Database db = await dbExecutor;

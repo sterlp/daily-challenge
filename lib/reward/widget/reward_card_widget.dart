@@ -93,48 +93,46 @@ class _RewardCardWidgetState extends State<RewardCardWidget> with SingleTickerPr
     return Slidable(
       actionPane: SlidableDrawerActionPane(),
       child: Card(
-        child: Column(mainAxisSize: MainAxisSize.min,
-          children: [
-            ListTile(
-              leading: Padding(
-                padding: EdgeInsets.fromLTRB(0, 4, 0, 0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    AnimatedBuilder(
-                      child: MyStyle.COST_ICON,
-                      animation: _animationController,
-                      builder: (BuildContext context, Widget _widget) {
-                        return Transform.scale(
-                          scale: 1 + _animationController.value,
-                          child: _widget,
-                        );
-                      }
-                    ),
-                    Text('${_reward.cost}', style: TextStyle(color: theme.errorColor), textScaleFactor: 1.2), // text
-                  ],
+        child: ListTile(
+          onLongPress: _editReward,
+          leading: Padding(
+            padding: EdgeInsets.fromLTRB(0, 4, 0, 0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                AnimatedBuilder(
+                  child: MyStyle.COST_ICON,
+                  animation: _animationController,
+                  builder: (BuildContext context, Widget _widget) {
+                    return Transform.scale(
+                      scale: 1 + _animationController.value,
+                      child: _widget,
+                    );
+                  }
                 ),
-              ),
-              title: Text(_reward.name),
-              subtitle: _boughtReward == null
-                  ? null
-                  : Text(_i18n.lastPurchase(_commonI18n.formatDateTime(_boughtReward.boughtAt))),
-              trailing: ValueListenableBuilder(
-                valueListenable: widget._credit,
-                builder: (context, credit, child) {
-                  // TODO this is called twice by Flutter but why?
-                  // _log.debug('Building reward action button for reward ${_reward.id} with value $credit ...');
-                  return SizedBox(
-                    width: 64,
-                    child: RaisedButton(
-                      child: MyStyle.GOAL_ICON,
-                      onPressed: (_reward.cost <= credit ? () => _buyReward() : null)),
-                  );
-                },
-              ),
+                Text('${_reward.cost}', style: TextStyle(color: theme.errorColor), textScaleFactor: 1.2), // text
+              ],
             ),
-          ]
+          ),
+          title: Text(_reward.name),
+          subtitle: _boughtReward == null
+              ? null
+              : Text(_i18n.lastPurchase(_commonI18n.formatDateTime(_boughtReward.boughtAt))),
+          isThreeLine: _boughtReward != null,
+          trailing: ValueListenableBuilder(
+            valueListenable: widget._credit,
+            builder: (context, credit, child) {
+              // TODO this is called twice by Flutter but why?
+              // _log.debug('Building reward action button for reward ${_reward.id} with value $credit ...');
+              return SizedBox(
+                width: 64,
+                child: RaisedButton(
+                  child: MyStyle.GOAL_ICON,
+                  onPressed: (_reward.cost <= credit ? () => _buyReward() : null)),
+              );
+            },
+          ),
         ),
       ),
       secondaryActions: <Widget>[

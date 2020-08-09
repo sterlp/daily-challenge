@@ -1,5 +1,5 @@
 import 'package:challengeapp/reward/model/reward_model.dart';
-import 'package:challengeapp/util/dao/abstract_dao.dart';
+import 'package:challengeapp/common/dao/abstract_dao.dart';
 import 'package:sqflite_common/sqlite_api.dart';
 
 class RewardDao extends AbstractDao<Reward> {
