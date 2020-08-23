@@ -35,19 +35,21 @@ class TestData {
 
   Future<void> generatePresentationData() async {
     var now = DateTime.now();
+
     await this._challengeService.save(Challenge.full('Rasen mähen', now.add(Duration(days: -1)), ChallengeStatus.open, 10));
+    await this._challengeService.save(Challenge.full('Staubsaugen', now, ChallengeStatus.done, 5));
 
-    await this._challengeService.save(Challenge.full('Staubsaugen', DateTime.now(), ChallengeStatus.done, 5, now));
-
-    await this._challengeService.save(Challenge.full('Staubsaugen', DateTime.now(), ChallengeStatus.done, 5, now.add(Duration(days: -5))));
-
-    await this._challengeService.save(Challenge.full('Katzenklo machen', DateTime.now(), ChallengeStatus.done, 3, now));
+    await this._challengeService.save(Challenge.full('Staubsaugen', now.add(Duration(days: -5)), ChallengeStatus.done, 5, now.add(Duration(days: -5))));
+    await this._challengeService.save(Challenge.full('Katzenklo machen', now, ChallengeStatus.done, 3, now));
 
     // should auto fail on first load
     await this._challengeService.save(Challenge.full('Müll raustragen', now.add(Duration(days: -8)), ChallengeStatus.open, 1));
+    await this._challengeService.save(Challenge.full('Fitness', now.add(Duration(days: -10)), ChallengeStatus.open, 8));
+    await this._challengeService.save(Challenge.full('Fitness', now.add(Duration(days: -10)), ChallengeStatus.done, 8, now.add(Duration(days: -10))));
 
     await this._challengeService.save(Challenge.full('10km laufen', now, ChallengeStatus.open, 3)
       ..latestAt = now);
+
 
     var schoki = await this._rewardDao.save(Reward()
       ..name = 'Ein Schokoriegel'

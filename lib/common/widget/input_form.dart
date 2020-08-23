@@ -45,26 +45,20 @@ class InputForm extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: Shortcuts(
-        shortcuts:  {
-          // Pressing enter on the field will now move to the next field.
-          LogicalKeySet(LogicalKeyboardKey.enter): Intent(NextFocusAction.key),
-        },
-        child: FocusTraversalGroup(
-            child: Form(
-                key: formKey,
-                autovalidate: true,
-                onChanged: () {
-                  var form = Form.of(primaryFocus.context);
-                  if (form == null) form = formKey.currentState;
-                  if (form != null) form.save();
-                  // print('Save form $form ${formKey.currentState}');
-                },
-                child: ListView(
-                  padding: EdgeInsets.symmetric(horizontal: 16.0),
-                  children: children,
-                )
-            )
+      child: FocusTraversalGroup(
+        child: Form(
+          key: formKey,
+          autovalidate: true,
+          onChanged: () {
+            var form = Form.of(primaryFocus.context);
+            if (form == null) form = formKey.currentState;
+            if (form != null) form.save();
+            // print('Save form $form ${formKey.currentState}');
+          },
+          child: ListView(
+            padding: EdgeInsets.symmetric(horizontal: 16.0),
+            children: children,
+          )
         )
       )
     );

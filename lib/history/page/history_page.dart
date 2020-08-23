@@ -57,7 +57,7 @@ class _HistoryPageState extends FixedState<HistoryPage> {
           itemCount: value.length,
           itemBuilder: (context, index) {
             final d = value[index];
-            if (_lastMonth == null || _lastMonth != d.at.month) {
+            if (d.at != null && (_lastMonth == null || _lastMonth != d.at.month)) {
               _lastMonth = d.at.month;
               return Column(
                 children: <Widget>[
