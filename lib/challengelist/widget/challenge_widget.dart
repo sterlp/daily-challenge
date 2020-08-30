@@ -157,7 +157,7 @@ class _ChallengeWidgetState extends State<ChallengeWidget> {
           title: Text(challenge.name, style: done || failed ? _notOpenTextStyle : null),
           subtitle: _dueText(),
           isThreeLine: true,
-          onLongPress: _onEditChallenge,
+          onLongPress: (challenge.status == ChallengeStatus.open ? _onEditChallenge : null),
           trailing: SizedBox(
             height: 64,
             child: Checkbox(
