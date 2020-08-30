@@ -27,7 +27,7 @@ void main() {
 
   test("Test generateTestData", () async {
     await appContext.get<TestData>().generatePresentationData();
-    expect(6, (await challengeService.loadAll()).length);
+    expect(8, (await challengeService.loadAll()).length);
   });
 
   test("Test complete", () async {
