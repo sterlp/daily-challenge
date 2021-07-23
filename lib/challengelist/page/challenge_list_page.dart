@@ -43,34 +43,20 @@ class ChallengeListPageState extends State<ChallengeListPage> with ScrollViewPos
   }
 
   Future<void> _doReload() async {
-    final result = <Challenge>[];
+    var result = <Challenge>[];
     try {
-      final isToday = DateTimeUtil.clearTime(_selectedDay).millisecondsSinceEpoch == DateTimeUtil.clearTime(DateTime.now()).millisecondsSinceEpoch;
+      final isToday = DateTimeUtil.clearTime(_selectedDay).millisecondsSinceEpoch
+          == DateTimeUtil.clearTime(DateTime.now()).millisecondsSinceEpoch;
 
       _log.startSync('ChallengeListPage._doReload, ${isToday ? "today" : "not today"}.');
 
+      result = await _challengeService.loadByDate(_selectedDay, isToday);
+
       await _creditService.credit;
 
-      final current = await _challengeService.loadByDate(_selectedDay);
-      var overDue = <Challenge>[];
-
-      // TODO just for now, business logic in view
-      if (isToday) {
-        overDue = await _challengeService.loadOverDue();
-        if (overDue.length > 0) await _challengeService.failOverDue(overDue);
-      }
-
-      result.clear();
-      result.addAll(overDue);
-      if (result.length > 0) {
-        for (Challenge c in current) {
-          if (!result.contains(c)) result.add(c);
-        }
-      } else {
-        result.addAll(current);
-      }
     } catch (e) {
       _log.error('_doReload failed!', e);
+      rethrow;
     } finally {
       _log.finishSync();
     }

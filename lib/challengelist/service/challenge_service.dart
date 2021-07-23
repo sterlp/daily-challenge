@@ -83,7 +83,7 @@ class ChallengeService {
     return _creditService.calcTotal();
   }
   Future<int> incomplete(List<Challenge> values) async {
-    List<Challenge> changed = List();
+    final changed = <Challenge>[];
     for(Challenge challenge in values) {
       if (challenge.status == ChallengeStatus.done) {
         challenge.status = ChallengeStatus.open;
@@ -94,11 +94,28 @@ class ChallengeService {
     return _creditService.calcTotal();
   }
 
-  Future<List<Challenge>> loadOverDue() async {
-    return _challengeDao.loadOverDue();
-  }
-  Future<List<Challenge>> loadByDate(DateTime dateTime) async {
-    return _challengeDao.loadByDate(dateTime);
+  Future<List<Challenge>> loadByDate(DateTime dateTime, bool includeOverdue) async {
+    List<Challenge> result;
+
+    final challenges = _challengeDao.loadByDate(dateTime);
+
+    if (includeOverdue) {
+      result = await _challengeDao.loadOverDue();
+      if (result.length > 0) await failOverDue(result);
+    } else {
+      result = [];
+    }
+
+    final current = await challenges;
+    if (result.length > 0) {
+      for (Challenge c in current) {
+        if (!result.contains(c)) result.add(c);
+      }
+    } else {
+      result.addAll(current);
+    }
+
+    return result;
   }
 
   Future<void> deleteAll() async {

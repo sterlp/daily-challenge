@@ -37,7 +37,6 @@ class AppContextMock {
 
   final ChallengeServiceMock challengeServiceMock = ChallengeServiceMock();
   final challenges = <Challenge>[];
-  final overdueChallenges = <Challenge>[];
 
   final ConfigStub configStub = ConfigStub();
 
@@ -48,8 +47,7 @@ class AppContextMock {
     when(rewardServiceMock.listRewards(any, any)).thenAnswer((realInvocation) => Future.value(rewards));
     when(rewardServiceMock.attach(any)).thenReturn(AttachedEntityMock<Reward>());
 
-    when(challengeServiceMock.loadByDate(any)).thenAnswer((realInvocation) => Future.value(challenges));
-    when(challengeServiceMock.loadOverDue()).thenAnswer((realInvocation) => Future.value(overdueChallenges));
+    when(challengeServiceMock.loadByDate(any, any)).thenAnswer((realInvocation) => Future.value(challenges));
     when(challengeServiceMock.attach(any)).thenReturn(AttachedEntityMock<Challenge>());
 
     appContext.add<RewardService>(rewardServiceMock);

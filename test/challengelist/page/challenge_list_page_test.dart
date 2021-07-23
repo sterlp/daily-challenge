@@ -1,3 +1,4 @@
+import 'package:challengeapp/challengelist/dao/challenge_dao.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:challengeapp/challengelist/model/challenge_model.dart';
@@ -18,7 +19,7 @@ void main() {
   testWidgets('Simple show challenges', (WidgetTester tester) async {
     final challengeService = appContextMock.appContext.get<ChallengeService>();
 
-    when(challengeService.loadByDate(any)).thenAnswer((realInvocation) =>
+    when(challengeService.loadByDate(any, true)).thenAnswer((realInvocation) =>
       SynchronousFuture([
         Challenge.full('C1')..reward = 8,
         Challenge.full('C2', DateTime.now().add(Duration(days: -1))),
@@ -36,8 +37,7 @@ void main() {
     expect(find.text('C3 Failed'), findsOneWidget);
     expect(find.text('C4 Done'), findsOneWidget);
 
-    verify(challengeService.loadByDate(any)).called(1);
-    verify(challengeService.loadOverDue()).called(1);
+    verify(challengeService.loadByDate(any, true)).called(1);
     verifyNever(challengeService.failOverDue(any));
   });
 

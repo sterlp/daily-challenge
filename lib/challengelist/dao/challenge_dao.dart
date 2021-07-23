@@ -38,6 +38,7 @@ class ChallengeDao extends AbstractDao<Challenge> {
     }
     return result;
   }
+
   Future<List<Challenge>> loadOverDue() async {
     var now = DateTimeUtil.clearTime(DateTime.now());
     List<Challenge> results = await loadAll(
@@ -48,17 +49,21 @@ class ChallengeDao extends AbstractDao<Challenge> {
     _log.debug('loadOverDue ${results.length}');
     return results;
   }
+
   Future<List<Challenge>> loadByDate(DateTime dateTime) async {
-    var from = DateTime(dateTime.year, dateTime.month, dateTime.day);
-    var to = DateTime(dateTime.year, dateTime.month, dateTime.day, 23, 59, 59, 999);
+    final from = DateTime(dateTime.year, dateTime.month, dateTime.day);
+    final to = DateTime(dateTime.year, dateTime.month, dateTime.day, 23, 59, 59, 999);
 
     List<Challenge> results = await loadAll(
         where: "(dueAt >= ? AND dueAt <= ?) OR (doneAt >= ? AND doneAt <= ?)",
         whereArgs: [from.millisecondsSinceEpoch, to.millisecondsSinceEpoch, from.millisecondsSinceEpoch, to.millisecondsSinceEpoch],
         orderBy: 'dueAt ASC, latestAt ASC, createdAt DESC');
+
     _log.debug('loadByDate from $from to $to results ${results.length}');
+
     return results;
   }
+
   Future<int> countFinished() async {
     final Database db = await dbExecutor;
 
