@@ -45,6 +45,7 @@ class Challenge extends AbstractEntity {
 
   @override
   String toString() {
-    return 'Challenge[id=$id, name=$name, reward=$reward, status=$status]';
+    return 'Challenge[id=$id, name=$name, reward=$reward, status=$status'
+        ', dueAt=$dueAt, latestAt=$latestAt]';
   }
 }

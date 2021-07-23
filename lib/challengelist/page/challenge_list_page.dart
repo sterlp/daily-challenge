@@ -43,7 +43,7 @@ class ChallengeListPageState extends State<ChallengeListPage> with ScrollViewPos
   }
 
   Future<void> _doReload() async {
-    List<Challenge> result = [];
+    final result = <Challenge>[];
     try {
       final isToday = DateTimeUtil.clearTime(_selectedDay).millisecondsSinceEpoch == DateTimeUtil.clearTime(DateTime.now()).millisecondsSinceEpoch;
 

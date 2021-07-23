@@ -43,7 +43,7 @@ class ChallengeDao extends AbstractDao<Challenge> {
     List<Challenge> results = await loadAll(
         where: "dueAt < ? AND status = 'open'",
         whereArgs: [now.millisecondsSinceEpoch],
-        orderBy: 'dueAt ASC, createdAt DESC');
+        orderBy: 'latestAt ASC, dueAt ASC, createdAt DESC');
 
     _log.debug('loadOverDue ${results.length}');
     return results;

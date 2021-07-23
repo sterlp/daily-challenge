@@ -1,4 +1,5 @@
 import 'package:dependency_container/dependency_container.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:challengeapp/challengelist/dao/challenge_dao.dart';
 import 'package:challengeapp/challengelist/model/challenge_model.dart';
@@ -76,6 +77,51 @@ void main() {
     expect(c.name, newC.name);
     expect(c.status, newC.status);
     expect(c.dueAt.millisecondsSinceEpoch, newC.dueAt.millisecondsSinceEpoch);
+  });
+
+  test('Sorting first using latestAt for overdue', () async {
+    var now = DateTime.now();
+    await subject.save(Challenge.of('In 5 days')
+      ..dueAt = now.add(Duration(days: -6))
+      ..latestAt = now.add(Duration(days: 5)));
+    await subject.save(Challenge.of('In 2 days')
+      ..dueAt = now.add(Duration(days: -12))
+      ..latestAt = now.add(Duration(days: 2)));
+    await subject.save(Challenge.of('In 1 day')
+      ..dueAt = now.add(Duration(days: -11))
+      ..latestAt = now.add(Duration(days: 1)));
+    await subject.save(Challenge.of('In 10 days')
+      ..dueAt = now
+      ..latestAt = now.add(Duration(days: 10)));
+
+    var results = await subject.loadOverDue();
+    expect(results.length, 3);
+
+    expect(results[0].latestAt, isNotNull);
+    expect(results[0].name, 'In 1 day');
+    expect(results[1].name, 'In 2 days');
+    expect(results[2].name, 'In 5 days');
+  });
+
+  test('Failing soon showed first', () async {
+    var now = DateTime.now();
+    await subject.save(Challenge.of('In 5 days')
+      ..latestAt = now.add(Duration(days: 5)));
+    await subject.save(Challenge.of('In 2 days')
+      ..latestAt = now.add(Duration(days: 2)));
+    await subject.save(Challenge.of('In 1 day')
+      ..latestAt = now.add(Duration(days: 1)));
+    await subject.save(Challenge.of('In 10 days')
+      ..latestAt = now.add(Duration(days: 10)));
+
+    var results = await subject.loadByDate(now);
+    expect(results.length, 4);
+
+    expect(results[0].latestAt, isNotNull);
+    expect(results[0].name, 'In 1 day');
+    expect(results[1].name, 'In 2 days');
+    expect(results[2].name, 'In 5 days');
+    expect(results[3].name, 'In 10 days');
   });
 
   test('Query loadByDate', () async {
