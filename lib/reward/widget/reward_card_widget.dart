@@ -14,7 +14,7 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 
 class RewardCardWidget extends StatefulWidget {
   final Reward _reward;
-  final ValueNotifier _credit;
+  final ValueNotifier<int> _credit;
   final ValueChanged<Reward> deleteCallback;
   final ValueChanged<Reward> undoDeleteCallback;
 
@@ -37,9 +37,9 @@ class _RewardCardWidgetState extends State<RewardCardWidget> with SingleTickerPr
 
   @override
   void initState() {
-    _animationController = new AnimationController(
+    _animationController = AnimationController(
       vsync: this,
-      duration: new Duration(seconds: 1),
+      duration: const Duration(seconds: 1),
       lowerBound: 0.0,
       upperBound: 1.0,
     );
@@ -77,7 +77,7 @@ class _RewardCardWidgetState extends State<RewardCardWidget> with SingleTickerPr
   }
 
   void _buyReward() async {
-    bool buy = await showBuyRewardDialog(context, widget._reward, widget._credit.value);
+    final buy = await showBuyRewardDialog(context, widget._reward, widget._credit.value);
     if (buy) {
       _boughtReward = await _rewardService.buyReward(widget._reward);
       _animationController.forward();
@@ -129,7 +129,7 @@ class _RewardCardWidgetState extends State<RewardCardWidget> with SingleTickerPr
               ? null
               : Text(_i18n.lastPurchase(_commonI18n.formatDateTime(_boughtReward.boughtAt))),
           isThreeLine: _boughtReward != null,
-          trailing: ValueListenableBuilder(
+          trailing: ValueListenableBuilder<int>(
             valueListenable: widget._credit,
             builder: (context, credit, child) {
               // TODO this is called twice by Flutter but why?

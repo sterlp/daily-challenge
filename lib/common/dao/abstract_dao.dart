@@ -29,7 +29,7 @@ abstract class AbstractDao<T extends AbstractEntity> {
   Future<T> getById(int id) async {
     assert(id != null);
 
-    final Database db = await dbExecutor;
+    final db = await dbExecutor;
     final List<Map<String, dynamic>> results = await db.query(
         tableName,
         where: "id = ?",
@@ -47,7 +47,7 @@ abstract class AbstractDao<T extends AbstractEntity> {
       int limit,
       int offset}) async {
 
-    final Database db = await dbExecutor;
+    final db = await dbExecutor;
     final List<Map<String, dynamic>> results = await db.query(tableName,
         where: where, whereArgs: whereArgs, groupBy: groupBy, having: having,
         orderBy: orderBy, limit: limit, offset: offset);
@@ -56,14 +56,14 @@ abstract class AbstractDao<T extends AbstractEntity> {
   }
 
   Future<int> deleteAll() async {
-    final Database db = await dbExecutor;
+    final db = await dbExecutor;
     return db.delete(tableName);
   }
 
   Future<int> delete(int id) async {
     if (id == null) return 0;
 
-    final Database db = await dbExecutor;
+    final db = await dbExecutor;
     return db.delete(tableName, where: "id = ?", whereArgs: [id]);
   }
 
@@ -86,18 +86,18 @@ abstract class AbstractDao<T extends AbstractEntity> {
   ///
   Future<T> save(T entity) async {
     assert(entity != null);
-
+    T result;
     if (entity.id == null) {
-      entity = await insert(entity);
+      result = await insert(entity);
     } else {
-      entity = await update(entity);
+      result = await update(entity);
     }
-    return entity;
+    return result;
   }
   Future<T> insert(T entity) async {
     assert(entity != null);
 
-    final Database db = await dbExecutor;
+    final db = await dbExecutor;
     entity.id = await db.insert(tableName, toMap(entity));
     return entity;
   }
@@ -105,14 +105,14 @@ abstract class AbstractDao<T extends AbstractEntity> {
     assert(entity != null);
     assert(entity.id != null);
 
-    final Database db = await dbExecutor;
+    final db = await dbExecutor;
     await db.update(tableName, toMap(entity), where: "id = ?", whereArgs: [entity.id]);
     // if (count == 0) _log.warn('Record not found anymore to update $entity');
     return entity;
   }
 
   Future<int> countAll() async {
-    final Database db = await dbExecutor;
+    final db = await dbExecutor;
 
     final r = await db.rawQuery("SELECT COUNT(*) as result FROM $tableName");
     return Sqflite.firstIntValue(r) ?? 0;

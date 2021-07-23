@@ -19,8 +19,8 @@ mixin ScrollViewPositionListener<T extends StatefulWidget> on State<T> {
     super.dispose();
   }
   void calculateScrollStatus() {
-    var newScrolledToBottom;
-    var newScrolledToTop;
+    bool newScrolledToBottom;
+    bool newScrolledToTop;
     // https://medium.com/@diegoveloper/flutter-lets-know-the-scrollcontroller-and-scrollnotification-652b2685a4ac
     if (scrollController.offset >= scrollController.position.maxScrollExtent) {
       newScrolledToBottom = true;

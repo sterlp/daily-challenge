@@ -13,8 +13,8 @@ class TestDao extends AbstractDao<TestEntity> {
   @override
   TestEntity fromMap(Map<String, dynamic> values) {
     final result = TestEntity();
-    result.id = values['id'];
-    result.name = values['name'];
+    result.id = values['id'] as int;
+    result.name = values['name'] as String;
     return result;
   }
   @override

@@ -54,7 +54,7 @@ void main() {
     // enter reward
     await challengePageModel.enterReward(6);
 
-    Challenge c = verify(challengeService.save(captureAny)).captured.single;
+    Challenge c = verify(challengeService.save(captureAny)).captured.single as Challenge;
     expect(c.name, 'Test Challenge');
     expect(c.reward, 6);
     expect(c.createdAt, isNotNull);

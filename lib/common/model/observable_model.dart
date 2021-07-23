@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:dependency_container/dependency_container.dart';
 
 class ObservableModel<T> with Closeable {
-  final StreamController<T> _controller = new StreamController<T>();
+  final StreamController<T> _controller = StreamController<T>();
   Stream<T> _stream;
   T _value;
 
@@ -13,7 +13,7 @@ class ObservableModel<T> with Closeable {
   }
 
   Stream<T> get stream => _stream;
-  get value => _value;
+  T get value => _value;
 
   set value(T newVal) {
     if (_value != newVal) {

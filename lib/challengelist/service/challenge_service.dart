@@ -19,7 +19,7 @@ class ChallengeService {
 
   ChallengeService(this._challengeDao, this._creditService);
 
-  attach(Challenge challenge) {
+  AttachedEntity<Challenge> attach(Challenge challenge) {
     return AttachedEntity<Challenge>(
       challenge.id, challenge, _challengeDao.reload,
       this.save, this.delete, this.insert

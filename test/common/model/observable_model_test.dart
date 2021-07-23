@@ -5,7 +5,7 @@ import 'package:challengeapp/common/model/observable_model.dart';
 import '../../test_helper.dart';
 
 void main() {
-  ObservableModel subject;
+  ObservableModel<int> subject;
 
   setUp(() {
     if (subject != null) subject.close();
@@ -22,7 +22,7 @@ void main() {
   testWidgets('ObservableModel test StreamBuilder update', (WidgetTester tester) async {
     int value;
     await pumpTestApp(tester,
-      StreamBuilder(
+      StreamBuilder<int>(
         stream: subject.stream,
         initialData: subject.value,
         builder: (context, snapshot) {
@@ -42,7 +42,7 @@ void main() {
     int value;
     subject.value = 7;
     await pumpTestApp(tester,
-        StreamBuilder(
+        StreamBuilder<int>(
           stream: subject.stream,
           initialData: subject.value,
           builder: (context, snapshot) {

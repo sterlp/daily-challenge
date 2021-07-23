@@ -16,7 +16,7 @@ import 'package:flutter_typeahead/flutter_typeahead.dart';
 class ChallengePage extends StatefulWidget {
   final Challenge challenge;
 
-  ChallengePage({Key key, @required this.challenge}) : super(key: key);
+  const ChallengePage({Key key, @required this.challenge}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => ChallengePageState();

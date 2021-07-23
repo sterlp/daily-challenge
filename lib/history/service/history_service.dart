@@ -26,10 +26,10 @@ class HistoryService {
       _challengeService.listCompleted()])
         .then((values) {
 
-          final List<BoughtReward> rewards = values[0].reversed.toList();
-          final List<Challenge> challenges = values[1].reversed.toList();
+          final List<BoughtReward> rewards = values[0].reversed.toList() as List<BoughtReward>;
+          final List<Challenge> challenges = values[1].reversed.toList() as List<Challenge>;
 
-          final result = List<HistoryChallengeOrBoughtReward>();
+          final result = <HistoryChallengeOrBoughtReward>[];
           BoughtReward r; Challenge c;
 
           while(rewards.isNotEmpty || challenges.isNotEmpty) {

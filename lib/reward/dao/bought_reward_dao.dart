@@ -18,7 +18,7 @@ class BoughtRewardDao extends AbstractDao<BoughtReward> {
   }
 
   Future<int> sum() async {
-    final Database db = await dbExecutor;
+    final db = await dbExecutor;
     final r = await db.rawQuery("SELECT SUM(cost) as rewardSum FROM " + tableName);
     return Sqflite.firstIntValue(r) ?? 0;
   }
@@ -26,11 +26,11 @@ class BoughtRewardDao extends AbstractDao<BoughtReward> {
   @override
   BoughtReward fromMap(Map<String, dynamic> values) {
     final result = BoughtReward();
-    result.id = values['id'];
-    result.name = values['name'];
-    result.cost = values['cost'];
+    result.id = values['id'] as int;
+    result.name = values['name'] as String;
+    result.cost = values['cost'] as int;
     result.boughtAt = ParserUtil.parseDate(values['boughtAt']);
-    result.rewardId = values['rewardId'];
+    result.rewardId = values['rewardId'] as int;
     return result;
   }
 

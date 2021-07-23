@@ -12,7 +12,7 @@ class ParserUtil {
     } else if (v is DateTime) {
       result = v;
     } else {
-      result = DateTime.fromMillisecondsSinceEpoch(v);
+      result = DateTime.fromMillisecondsSinceEpoch(v as int);
     }
     return result;
   }
@@ -25,15 +25,15 @@ class ParserUtil {
   }
   /// Returns the first matching ENUM to the given String, otherwise the default value.
   static T parseEnumStringWithDefault<T>(List<T> enumValues, String v, T defaultValue) {
-    if (v == null || enumValues == null || enumValues.length == 0) return defaultValue;
+    if (v == null || enumValues == null || enumValues.isEmpty) return defaultValue;
 
     return enumValues.firstWhere((e) => valueOfEnum(e) == v, orElse: () => defaultValue);
   }
 
 
   static List<T> mapDbResult<T>(List<Map<String, dynamic>> dbValues, DbRowMapper<T> converter) {
-    List<T> result = [];
-    for (Map<String, dynamic> values in dbValues) {
+    final result = <T>[];
+    for (final values in dbValues) {
       result.add(converter(values));
     }
     return result;

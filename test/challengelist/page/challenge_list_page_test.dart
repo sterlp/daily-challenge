@@ -22,7 +22,7 @@ void main() {
     when(challengeService.loadByDate(any, true)).thenAnswer((realInvocation) =>
       SynchronousFuture([
         Challenge.full('C1')..reward = 8,
-        Challenge.full('C2', DateTime.now().add(Duration(days: -1))),
+        Challenge.full('C2', DateTime.now().add(const Duration(days: -1))),
         Challenge.full('C3 Failed', null, ChallengeStatus.failed),
         Challenge.full('C4 Done', null, ChallengeStatus.done),
       ])

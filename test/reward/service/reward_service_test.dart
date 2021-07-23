@@ -23,7 +23,7 @@ main() {
     creditServiceMock = CreditServiceMock();
 
     when(daoMock.getMostRecentByRewardId(1)).thenAnswer((_) => Future.value(bReward));
-    when(daoMock.save(any)).thenAnswer((v) => Future.value(v.positionalArguments[0]));
+    when(daoMock.save(any)).thenAnswer((v) => Future.value(v.positionalArguments[0] as BoughtReward));
 
     subject = RewardService(null, daoMock, creditServiceMock);
   });

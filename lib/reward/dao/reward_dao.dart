@@ -12,9 +12,9 @@ class RewardDao extends AbstractDao<Reward> {
   @override
   Reward fromMap(Map<String, dynamic> values) {
     final result = Reward();
-    result.id = values['id'];
-    result.name = values['name'];
-    result.cost = values['cost'];
+    result.id = values['id'] as int;
+    result.name = values['name'] as String;
+    result.cost = values['cost'] as int;
     return result;
   }
 

@@ -20,12 +20,12 @@ class MyApp extends StatelessWidget {
     textSelectionHandleColor: Colors.blue,
     textSelectionColor: Colors.blue,
     toggleableActiveColor: Colors.blue,
-    floatingActionButtonTheme: FloatingActionButtonThemeData(
+    floatingActionButtonTheme: const FloatingActionButtonThemeData(
       backgroundColor: Colors.blue,
     )
   );
   final ThemeData light = ThemeData.light().copyWith(
-    buttonTheme: ButtonThemeData(
+    buttonTheme: const ButtonThemeData(
       buttonColor: Colors.blue
     )
   );
@@ -43,7 +43,7 @@ class MyApp extends StatelessWidget {
         future: _appContext.get<ConfigService>().init(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            return ValueListenableBuilder(
+            return ValueListenableBuilder<bool>(
                 valueListenable: _appContext.get<ConfigService>().isDarkMode,
                 builder: (context, value, child) => MaterialApp(
                   // https://flutter.dev/docs/development/accessibility-and-localization/internationalization
@@ -55,7 +55,7 @@ class MyApp extends StatelessWidget {
                 child: ChallengeHomePage()
             );
           } else {
-            return MaterialApp(home: LoadingWidget());
+            return MaterialApp(home: const LoadingWidget());
           }
         }
       )

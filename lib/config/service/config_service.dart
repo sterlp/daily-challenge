@@ -4,7 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ConfigService with Closeable {
-  final ValueNotifier isDarkMode = ValueNotifier(true);
+  final ValueNotifier<bool> isDarkMode = ValueNotifier(true);
 
   Future<ConfigService> init() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -14,8 +14,9 @@ class ConfigService with Closeable {
     return this;
   }
 
-  void _newDarkModeValue() async {
-    SharedPreferences.getInstance().then((pref) => pref.setBool('challenge_app_isDarkMode', isDarkMode.value));
+  Future<void> _newDarkModeValue() async {
+    return SharedPreferences.getInstance().then(
+            (pref) => pref.setBool('challenge_app_isDarkMode', isDarkMode.value));
   }
 
   @override

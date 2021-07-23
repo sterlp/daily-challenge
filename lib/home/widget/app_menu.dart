@@ -47,13 +47,13 @@ class AppMenu extends StatelessWidget {
             onTap: () => launch("https://github.com/sterlp/daily-challenge/issues/new"),
           ),
           Expanded(child: Container()),
-          FutureBuilder(
+          FutureBuilder<PackageInfo>(
             future: PackageInfo.fromPlatform(),
             builder: (context, snapshot) {
               if (snapshot.hasData) {
                 PackageInfo packageInfo = snapshot.data;
                 return ListTile(
-                  leading: Icon(Icons.info),
+                  leading: const Icon(Icons.info),
                   title: Text('v${packageInfo.version} Beta'),
                 );
               } else {

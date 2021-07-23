@@ -95,20 +95,20 @@ class _RewardShopPageState extends FixedState<RewardShopPage> with ScrollViewPos
 
     return Scaffold(
       body: _buildBody(context),
-      floatingActionButton: ValueListenableBuilder(
+      floatingActionButton: ValueListenableBuilder<bool>(
         valueListenable: scrolledToBottom,
         builder: (context, value, child) => AnimatedOpacity(
           opacity: value ? 0.0 : 1.0,
-          duration: Duration(milliseconds: 500),
-          child: ValueListenableBuilder(
+          duration: const Duration(milliseconds: 500),
+          child: ValueListenableBuilder<bool>(
             valueListenable: showFab,
             builder: (context, value, child) => Visibility(
               visible: value,
               child: FloatingActionButton.extended(
                 onPressed: _createReward,
                 tooltip: 'New Reward',
-                icon: Icon(Icons.add),
-                label: Text('Create Reward'),
+                icon: const Icon(Icons.add),
+                label: const Text('Create Reward'),
               ),
             ),
           ),
@@ -123,7 +123,7 @@ class _RewardShopPageState extends FixedState<RewardShopPage> with ScrollViewPos
         clipBehavior: Clip.antiAlias,
         child: Row(
           children: <Widget>[
-            Spacer(),
+            const Spacer(),
             Padding(
               padding: EdgeInsets.fromLTRB(16, 8, 16, 8),
               child: TotalPointsWidget(_totalCredit),
