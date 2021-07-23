@@ -140,12 +140,12 @@ class ChallengeListPageState extends State<ChallengeListPage> with ScrollViewPos
           ],
         ),
       ),
-      floatingActionButton: ValueListenableBuilder(
+      floatingActionButton: ValueListenableBuilder<bool>(
         valueListenable: scrolledToBottom,
         builder: (context, value, child) => AnimatedOpacity(
           opacity: value ? 0.0 : 1.0,
           duration: Duration(milliseconds: 600),
-          child: ValueListenableBuilder(
+          child: ValueListenableBuilder<bool>(
             valueListenable: showFab,
               child: FloatingActionButton.extended(
               onPressed: _createChallenge,
@@ -163,7 +163,7 @@ class ChallengeListPageState extends State<ChallengeListPage> with ScrollViewPos
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      body: ValueListenableBuilder(
+      body: ValueListenableBuilder<List<Challenge>>(
         valueListenable: _data,
         builder: (context, value, child) {
           _log.debug('build has data ${value != null}...');

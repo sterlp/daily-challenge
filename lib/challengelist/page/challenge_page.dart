@@ -84,7 +84,7 @@ class ChallengePageState extends FixedState<ChallengePage> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            content: Text('Replace data with presentation data?'),
+            content: const Text('Replace data with presentation data?'),
             actions: <Widget>[
               FlatButton(child: const Text('CANCEL'), onPressed: () => Navigator.of(context).pop()),
               FlatButton(child: const Text('REPLACE ALL DATA'), onPressed: () => Navigator.of(context).pop(true))
@@ -128,8 +128,8 @@ class ChallengePageState extends FixedState<ChallengePage> {
       body: InputForm(
         formKey: _formKey,
         children: <Widget>[
-          TypeAheadFormField(
-            key: ValueKey('challenge_name'),
+          TypeAheadFormField<String>(
+            key: const ValueKey('challenge_name'),
             textFieldConfiguration: TextFieldConfiguration (
               autofocus: true,
               inputFormatters: [LengthLimitingTextInputFormatter(Challenge.NAME_LENGTH)],
@@ -162,10 +162,10 @@ class ChallengePageState extends FixedState<ChallengePage> {
             onTap: () => _pickDueAt(c, context),
             readOnly: true,
             decoration: InputDecoration(
-              icon: Icon(Icons.today),
+              icon: const Icon(Icons.today),
               labelText: _i18n.challengeDueAt.label,
               hintText: _i18n.challengeDueAt.hint,
-              suffixIcon: Icon(Icons.arrow_drop_down),
+              suffixIcon: const Icon(Icons.arrow_drop_down),
             ),
           ),
 
@@ -173,11 +173,11 @@ class ChallengePageState extends FixedState<ChallengePage> {
             controller: _latestAtController,
             onTap: () => _pickLatestAt(c, context),
             readOnly: true,
-            decoration: new InputDecoration(
-              icon: Icon(Icons.date_range),
+            decoration: InputDecoration(
+              icon: const Icon(Icons.date_range),
               labelText: _i18n.challengeLatestAt.label,
               hintText: _i18n.challengeLatestAt.hint,
-              suffixIcon: Icon(Icons.arrow_drop_down),
+              suffixIcon: const Icon(Icons.arrow_drop_down),
             ),
           ),
 
@@ -197,7 +197,7 @@ class ChallengePageState extends FixedState<ChallengePage> {
 
   void _pickLatestAt(Challenge c, BuildContext context) {
     showDatePicker(context: context, initialDate: _latestAt, firstDate: _dueAt,
-        lastDate: DateTime.now().add(Duration(days: 365)),
+        lastDate: DateTime.now().add(const Duration(days: 365)),
         helpText:_i18n.challengeLatestAt.hint,
     ).then((date) {
       if (date != null) {
@@ -209,21 +209,21 @@ class ChallengePageState extends FixedState<ChallengePage> {
   }
 
   void _pickDueAt(Challenge c, BuildContext context) {
-    var now = DateTime.now();
+    final now = DateTime.now();
     showDatePicker(context: context, initialDate: _dueAt,
         firstDate: now.isAfter(_dueAt) ? _dueAt : now,
-        lastDate: now.add(Duration(days: 365)),
+        lastDate: now.add(const Duration(days: 365)),
         helpText: _i18n.challengeDueAt.hint
       ).then((date) {
-      if (date != null) {
-        _dueAt = date;
-        _dueAtController.text = _commonI18n.formatDate(_dueAt);
-        if (date.isAfter(_latestAt)) {
-          _latestAt = _dueAt;
-          _latestAtController.text = _commonI18n.formatDate(date);
+        if (date != null) {
+          _dueAt = date;
+          _dueAtController.text = _commonI18n.formatDate(_dueAt);
+          if (date.isAfter(_latestAt)) {
+            _latestAt = _dueAt;
+            _latestAtController.text = _commonI18n.formatDate(date);
+          }
+          FocusScope.of(context).nextFocus();
         }
-        FocusScope.of(context).nextFocus();
-      }
     });
   }
 }
