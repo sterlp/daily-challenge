@@ -63,23 +63,24 @@ class ChallengeListPageState extends State<ChallengeListPage> with ScrollViewPos
     _data.value = result;
   }
 
-  void _createChallenge() async {
-    var result = await Navigator.push(
+  Future<void> _createChallenge() async {
+    final result = await Navigator.push(
         context,
         MaterialPageRoute<dynamic>(builder: (BuildContext context) =>
             ChallengePage(challenge: Challenge()..dueAt = _selectedDay), fullscreenDialog: true)
     );
-    if (result != null) _doReload();
+    if (result != null) return _doReload();
+    return;
   }
 
   Widget _buildChallenges(List<Challenge> _challenges) {
-    if (_challenges.length == 0) {
+    if (_challenges.isEmpty) {
       return Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             Text('No challenges today!', style: Theme.of(context).textTheme.headline5),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             Text('${commonI18n.formatDate(_selectedDay)}', style: Theme.of(context).textTheme.headline6)
           ]
         )
@@ -101,7 +102,7 @@ class ChallengeListPageState extends State<ChallengeListPage> with ScrollViewPos
     }
   }
 
-  _onDeleteChallenge(Challenge c) {
+  void _onDeleteChallenge(Challenge c) {
     final newData = List<Challenge>.from(_data.value);
     if (newData.remove(c)) {
       _data.value = newData;
@@ -119,20 +120,22 @@ class ChallengeListPageState extends State<ChallengeListPage> with ScrollViewPos
         child: Row(
           children: <Widget>[
             FlatButton.icon(
-              key: ValueKey('home_day_select'),
+              key: const ValueKey('home_day_select'),
               onPressed: () async {
                 var newDate = await showDatePicker(context: context, initialDate: _selectedDay,
-                    firstDate: _selectedDay.add(Duration(days: -60)), lastDate: _selectedDay.add(Duration(days: 60)));
+                    firstDate: _selectedDay.add(const Duration(days: -60)),
+                    lastDate: _selectedDay.add(const Duration(days: 60)));
                 if (newDate != null && newDate.millisecondsSinceEpoch != _selectedDay.millisecondsSinceEpoch) {
                   _log.debug('date $newDate selected.');
                   _selectedDay = newDate;
                   _doReload();
                 }
               },
-              icon: Icon(Icons.arrow_drop_down),
-              label: Text(commonI18n.formatDate(_selectedDay), style: TextStyle(fontWeight: FontWeight.w600))
+              icon: const Icon(Icons.arrow_drop_down),
+              label: Text(commonI18n.formatDate(_selectedDay),
+                  style: const TextStyle(fontWeight: FontWeight.w600))
             ),
-            Spacer(),
+            const Spacer(),
             Padding(
               padding: EdgeInsets.fromLTRB(16, 8, 16, 8),
               child: TotalPointsWidget(_credit),
@@ -144,14 +147,14 @@ class ChallengeListPageState extends State<ChallengeListPage> with ScrollViewPos
         valueListenable: scrolledToBottom,
         builder: (context, value, child) => AnimatedOpacity(
           opacity: value ? 0.0 : 1.0,
-          duration: Duration(milliseconds: 600),
+          duration: const Duration(milliseconds: 600),
           child: ValueListenableBuilder<bool>(
             valueListenable: showFab,
               child: FloatingActionButton.extended(
-              onPressed: _createChallenge,
-              icon: Icon(Icons.add),
-              label: Text(i18n.newChallengeButton),
-            ),
+                onPressed: _createChallenge,
+                icon: const Icon(Icons.add),
+                label: Text(i18n.newChallengeButton),
+              ),
             builder: (context, value, child) => Visibility(
               visible: value,
               child: child
