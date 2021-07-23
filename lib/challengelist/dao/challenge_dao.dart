@@ -1,6 +1,6 @@
 import 'package:challengeapp/challengelist/model/challenge_model.dart';
-import 'package:challengeapp/log/logger.dart';
 import 'package:challengeapp/common/dao/abstract_dao.dart';
+import 'package:challengeapp/log/logger.dart';
 import 'package:challengeapp/util/data.dart';
 import 'package:challengeapp/util/date.dart';
 import 'package:sqflite/sqflite.dart';
@@ -55,7 +55,7 @@ class ChallengeDao extends AbstractDao<Challenge> {
     List<Challenge> results = await loadAll(
         where: "(dueAt >= ? AND dueAt <= ?) OR (doneAt >= ? AND doneAt <= ?)",
         whereArgs: [from.millisecondsSinceEpoch, to.millisecondsSinceEpoch, from.millisecondsSinceEpoch, to.millisecondsSinceEpoch],
-        orderBy: 'dueAt ASC, createdAt DESC');
+        orderBy: 'dueAt ASC, latestAt ASC, createdAt DESC');
     _log.debug('loadByDate from $from to $to results ${results.length}');
     return results;
   }

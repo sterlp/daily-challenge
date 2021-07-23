@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:challengeapp/common/common_types.dart';
+import 'package:flutter/material.dart';
 
 /// Show the total earned points
 class TotalPointsWidget extends StatefulWidget {

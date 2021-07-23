@@ -1,7 +1,7 @@
+import 'package:dependency_container/dependency_container.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:challengeapp/challengelist/dao/challenge_dao.dart';
 import 'package:challengeapp/challengelist/model/challenge_model.dart';
-import 'package:challengeapp/container/app_context.dart';
 import 'package:challengeapp/credit/service/credit_service.dart';
 import 'package:challengeapp/db/db_provider.dart';
 import 'package:challengeapp/reward/dao/bought_reward_dao.dart';
@@ -10,7 +10,7 @@ import 'package:challengeapp/reward/model/bought_reward_model.dart';
 import '../../test_helper.dart';
 
 void main() {
-  AppContext appContext;
+  AppContainer appContext;
   ChallengeDao challengeDao;
   BoughtRewardDao boughtRewardDao;
   CreditService creditService;

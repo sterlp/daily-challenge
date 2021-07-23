@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:challengeapp/container/app_context_model.dart';
+import 'package:dependency_container/dependency_container.dart';
 
 class ObservableModel<T> with Closeable {
   final StreamController<T> _controller = new StreamController<T>();

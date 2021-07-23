@@ -1,12 +1,12 @@
+import 'package:dependency_container/dependency_container.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:challengeapp/container/app_context.dart';
 import 'package:challengeapp/reward/dao/bought_reward_dao.dart';
 import 'package:challengeapp/reward/model/bought_reward_model.dart';
 
 import '../../test_helper.dart';
 
 void main() {
-  AppContext context;
+  AppContainer context;
   BoughtRewardDao subject;
 
   setUp(() {

@@ -1,6 +1,3 @@
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:challengeapp/challengelist/i18n/challengelist_localization.dart';
 import 'package:challengeapp/challengelist/model/challenge_model.dart';
 import 'package:challengeapp/challengelist/service/challenge_service.dart';
@@ -12,6 +9,9 @@ import 'package:challengeapp/i18n/challenge_localization_delegate.dart';
 import 'package:challengeapp/log/logger.dart';
 import 'package:challengeapp/util/date.dart';
 import 'package:challengeapp/util/strings.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
 
 class ChallengePage extends StatefulWidget {
   final Challenge challenge;

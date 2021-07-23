@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart';
 import 'package:challengeapp/i18n/app_localizations_delegate.dart';
 import 'package:challengeapp/util/date.dart';
+import 'package:flutter/material.dart';
 
 class _ChallengeLocalizationsDelegate extends AppLocalizationsDelegate<ChallengeLocalizations> {
   const _ChallengeLocalizationsDelegate();

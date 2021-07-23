@@ -1,8 +1,9 @@
 import 'dart:async';
-import 'package:challengeapp/container/app_context_model.dart';
+
 import 'package:challengeapp/db/update/db_v1.dart';
 import 'package:challengeapp/db/update/db_v2.dart';
 import 'package:challengeapp/log/logger.dart';
+import 'package:dependency_container/dependency_container.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 

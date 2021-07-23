@@ -1,10 +1,10 @@
 import 'dart:async';
 
-import 'package:flutter/cupertino.dart';
 import 'package:challengeapp/challengelist/dao/challenge_dao.dart';
 import 'package:challengeapp/challengelist/model/challenge_model.dart';
 import 'package:challengeapp/log/logger.dart';
 import 'package:challengeapp/reward/dao/bought_reward_dao.dart';
+import 'package:flutter/cupertino.dart';
 
 ///
 /// Responsible to manage the total credits and any calculation to it.

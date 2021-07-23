@@ -1,8 +1,9 @@
 import 'dart:ui';
-import 'package:flutter/material.dart';
+
 import 'package:challengeapp/common/common_types.dart';
 import 'package:challengeapp/i18n/app_localizations_delegate.dart';
 import 'package:challengeapp/i18n/i18n_types.dart';
+import 'package:flutter/material.dart';
 
 class _ChallengeListLocalizationDelegate extends AppLocalizationsDelegate<ChallengeListLocalizations> {
   const _ChallengeListLocalizationDelegate();

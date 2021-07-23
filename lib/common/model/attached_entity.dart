@@ -1,7 +1,6 @@
-import 'package:challengeapp/common/dao/abstract_dao.dart';
 import 'package:challengeapp/common/model/abstract_entity.dart';
+import 'package:dependency_container/dependency_container.dart';
 import 'package:flutter/foundation.dart';
-import 'package:challengeapp/container/app_context_model.dart';
 
 typedef AttachedEntityAction<T> = Future<T> Function(T value);
 

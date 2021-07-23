@@ -1,5 +1,3 @@
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:challengeapp/common/common_types.dart';
 import 'package:challengeapp/common/widget/divider_with_label.dart';
 import 'package:challengeapp/common/widget/fixed_flutter_state.dart';
@@ -8,6 +6,8 @@ import 'package:challengeapp/history/service/history_service.dart';
 import 'package:challengeapp/home/state/app_state_widget.dart';
 import 'package:challengeapp/home/widget/loading_widget.dart';
 import 'package:challengeapp/i18n/challenge_localization_delegate.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 
 class HistoryPage extends StatefulWidget {
   @override

@@ -1,18 +1,18 @@
-import 'package:challengeapp/config/service/config_service.dart';
-import 'package:challengeapp/home/widget/loading_widget.dart';
-import 'package:flutter/material.dart';
 import 'package:challengeapp/app_config.dart';
-import 'package:challengeapp/container/app_context.dart';
+import 'package:challengeapp/config/service/config_service.dart';
 import 'package:challengeapp/home/page/challenge_home_page.dart';
 import 'package:challengeapp/home/state/app_state_widget.dart';
+import 'package:challengeapp/home/widget/loading_widget.dart';
 import 'package:challengeapp/i18n/app_localizations_delegate.dart';
+import 'package:dependency_container/dependency_container.dart';
+import 'package:flutter/material.dart';
 
 void main() {
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  final AppContext _appContext;
+  final AppContainer _appContext;
 
   final ThemeData dark = ThemeData.dark().copyWith(
     accentColor: Colors.blue,
@@ -30,7 +30,7 @@ class MyApp extends StatelessWidget {
     )
   );
 
-  MyApp({Key key, AppContext container}) :
+  MyApp({Key key, AppContainer container}) :
         _appContext = container == null ? buildContext() : container,
         super(key: key);
 

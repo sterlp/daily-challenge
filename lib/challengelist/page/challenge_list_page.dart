@@ -1,9 +1,9 @@
-import 'package:flutter/material.dart';
 import 'package:challengeapp/challengelist/i18n/challengelist_localization.dart';
 import 'package:challengeapp/challengelist/model/challenge_model.dart';
 import 'package:challengeapp/challengelist/page/challenge_page.dart';
 import 'package:challengeapp/challengelist/service/challenge_service.dart';
 import 'package:challengeapp/challengelist/widget/challenge_widget.dart';
+import 'package:challengeapp/common/common_types.dart';
 import 'package:challengeapp/common/widget/scroll_view_position_listener.dart';
 import 'package:challengeapp/credit/service/credit_service.dart';
 import 'package:challengeapp/home/state/app_state_widget.dart';
@@ -12,7 +12,7 @@ import 'package:challengeapp/home/widget/total_points_widget.dart';
 import 'package:challengeapp/i18n/challenge_localization_delegate.dart';
 import 'package:challengeapp/log/logger.dart';
 import 'package:challengeapp/util/date.dart';
-import 'package:challengeapp/common/common_types.dart';
+import 'package:flutter/material.dart';
 
 class ChallengeListPage extends StatefulWidget {
   @override

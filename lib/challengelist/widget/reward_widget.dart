@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart';
 import 'package:challengeapp/challengelist/model/challenge_model.dart';
 import 'package:challengeapp/common/common_types.dart';
+import 'package:flutter/material.dart';
 
 // TODO rename me
 class RewardWidget extends StatelessWidget {

@@ -1,15 +1,15 @@
 import 'package:challengeapp/util/date.dart';
+import 'package:dependency_container/dependency_container.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:challengeapp/challengelist/dao/challenge_dao.dart';
 import 'package:challengeapp/challengelist/model/challenge_model.dart';
 import 'package:challengeapp/challengelist/service/challenge_service.dart';
-import 'package:challengeapp/container/app_context.dart';
 import 'package:challengeapp/db/test_data.dart';
 
 import '../../test_helper.dart';
 
 void main() {
-  AppContext appContext;
+  AppContainer appContext;
   ChallengeDao challengeDao;
   ChallengeService challengeService;
 

@@ -1,7 +1,6 @@
 import 'package:challengeapp/challengelist/dao/challenge_dao.dart';
 import 'package:challengeapp/challengelist/service/challenge_service.dart';
 import 'package:challengeapp/config/service/config_service.dart';
-import 'package:challengeapp/container/app_context.dart';
 import 'package:challengeapp/credit/service/credit_service.dart';
 import 'package:challengeapp/db/db_provider.dart';
 import 'package:challengeapp/db/test_data.dart';
@@ -9,10 +8,11 @@ import 'package:challengeapp/history/service/history_service.dart';
 import 'package:challengeapp/reward/dao/bought_reward_dao.dart';
 import 'package:challengeapp/reward/dao/reward_dao.dart';
 import 'package:challengeapp/reward/service/reward_service.dart';
+import 'package:dependency_container/dependency_container.dart';
 import 'package:sqflite/sqflite.dart';
 
-AppContext buildContext([Future<Database> database]) {
-  return new AppContext()
+AppContainer buildContext([Future<Database> database]) {
+  return new AppContainer()
     // lazy init of the beans to give Flutter the time to start before we init the DB, otherwise we face:
     // Unhandled Exception: ServicesBinding.defaultBinaryMessenger was accessed before the binding was initialized.
     ..addFactory((_) => database == null ? DbProvider() : DbProvider.withDb(database))

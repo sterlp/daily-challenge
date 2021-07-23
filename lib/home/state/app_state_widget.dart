@@ -1,13 +1,13 @@
-import 'package:flutter/material.dart';
-import 'package:challengeapp/container/app_context.dart';
 import 'package:challengeapp/log/logger.dart';
+import 'package:dependency_container/dependency_container.dart';
+import 'package:flutter/material.dart';
 
 ///
 /// Provides the AppContext
 /// @see https://api.flutter.dev/flutter/widgets/InheritedWidget-class.html
 ///
 class AppStateWidget extends StatefulWidget {
-  final AppContext context;
+  final AppContainer context;
   final Widget child;
 
   AppStateWidget({Key key, @required this.context, @required this.child}) : super(key: key) {
@@ -15,7 +15,7 @@ class AppStateWidget extends StatefulWidget {
     assert(child != null);
   }
 
-  static AppContext of(BuildContext context) {
+  static AppContainer of(BuildContext context) {
     return context.dependOnInheritedWidgetOfExactType<_InheritedDiContainer>().context;
   }
 
@@ -37,7 +37,7 @@ class _AppStateWidgetState extends State<AppStateWidget> {
 
 class _InheritedDiContainer extends InheritedWidget {
   static final Logger _log = LoggerFactory.get<AppStateWidget>();
-  final AppContext context;
+  final AppContainer context;
 
   _InheritedDiContainer(this.context, {Key key, @required Widget child})
       : super(key: key, child: child);

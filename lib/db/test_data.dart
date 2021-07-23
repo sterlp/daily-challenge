@@ -1,13 +1,13 @@
 import 'package:challengeapp/challengelist/dao/challenge_dao.dart';
 import 'package:challengeapp/challengelist/model/challenge_model.dart';
 import 'package:challengeapp/challengelist/service/challenge_service.dart';
-import 'package:challengeapp/container/app_context.dart';
 import 'package:challengeapp/credit/service/credit_service.dart';
 import 'package:challengeapp/reward/dao/bought_reward_dao.dart';
 import 'package:challengeapp/reward/dao/reward_dao.dart';
 import 'package:challengeapp/reward/model/reward_model.dart';
 import 'package:challengeapp/reward/service/reward_service.dart';
 import 'package:challengeapp/util/random_util.dart';
+import 'package:dependency_container/dependency_container.dart';
 
 class TestData {
   final ChallengeService _challengeService;
@@ -17,7 +17,7 @@ class TestData {
   final RewardDao _rewardDao;
   final BoughtRewardDao _boughtRewardDao;
 
-  TestData.withContext(AppContext context) :
+  TestData.withContext(AppContainer context) :
     _challengeService = context.get<ChallengeService>(),
     _creditService = context.get<CreditService>(),
     _rewardService = context.get<RewardService>(),
@@ -85,7 +85,7 @@ class TestData {
   }
 
   Future<void> _newChallenges(int count, DateTime day) async {
-    var toSave = List<Challenge>();
+    var toSave = <Challenge>[];
     for(int i = 0; i < count; ++i) {
       toSave.add(Challenge.full(
           RandomUtil.randomString(7) + ' ${i + 1}',

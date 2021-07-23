@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart';
 import 'package:challengeapp/challengelist/model/challenge_model.dart';
 import 'package:challengeapp/reward/model/bought_reward_model.dart';
+import 'package:flutter/material.dart';
 
 class HistoryChallengeOrBoughtReward {
   final BoughtReward reward;

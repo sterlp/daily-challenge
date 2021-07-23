@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart';
 import 'package:challengeapp/common/common_types.dart';
 import 'package:challengeapp/reward/model/reward_model.dart';
+import 'package:flutter/material.dart';
 
 
 /// Shows a buy dialog and returns the reward

@@ -2,10 +2,10 @@
 import 'package:challengeapp/common/model/abstract_entity.dart';
 import 'package:challengeapp/common/model/attached_entity.dart';
 import 'package:challengeapp/config/service/config_service.dart';
+import 'package:dependency_container/dependency_container.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:challengeapp/challengelist/model/challenge_model.dart';
 import 'package:challengeapp/challengelist/service/challenge_service.dart';
-import 'package:challengeapp/container/app_context.dart';
 import 'package:challengeapp/credit/service/credit_service.dart';
 import 'package:challengeapp/reward/model/reward_model.dart';
 import 'package:challengeapp/reward/service/reward_service.dart';
@@ -27,7 +27,7 @@ class AttachedEntityMock<Entity extends AbstractEntity>
     with Mock implements AttachedEntity<Entity> {}
 
 class AppContextMock {
-  final AppContext appContext = AppContext();
+  final AppContainer appContext = AppContainer();
 
   final CreditServiceMock creditServiceMock = CreditServiceMock();
   final credits = ValueNotifier(0);

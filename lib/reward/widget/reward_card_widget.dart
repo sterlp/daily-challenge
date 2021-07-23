@@ -1,7 +1,7 @@
-import 'package:challengeapp/common/model/attached_entity.dart';
-import 'package:challengeapp/common/widget/delete_list_action.dart';
 import 'package:challengeapp/challengelist/i18n/challengelist_localization.dart';
 import 'package:challengeapp/common/common_types.dart';
+import 'package:challengeapp/common/model/attached_entity.dart';
+import 'package:challengeapp/common/widget/delete_list_action.dart';
 import 'package:challengeapp/home/state/app_state_widget.dart';
 import 'package:challengeapp/i18n/challenge_localization_delegate.dart';
 import 'package:challengeapp/reward/model/bought_reward_model.dart';
