@@ -22,7 +22,7 @@ class ChallengeService {
   AttachedEntity<Challenge> attach(Challenge challenge) {
     return AttachedEntity<Challenge>(
       challenge.id, challenge, _challengeDao.reload,
-      this.save, this.delete, this.insert
+      save, delete, insert
     );
   }
 
@@ -41,7 +41,7 @@ class ChallengeService {
   }
 
   Future<Challenge> delete(Challenge c) async {
-    var deleted = await _challengeDao.delete(c.id);
+    final deleted = await _challengeDao.delete(c.id);
     log('Deleted ${c.name}');
     if (deleted > 0 && c.status != ChallengeStatus.open) _creditService.calcTotal();
     return c;
@@ -73,7 +73,7 @@ class ChallengeService {
 
   Future<int> complete(List<Challenge> values) async {
     final now = DateTime.now();
-    for(Challenge challenge in values) {
+    for(final challenge in values) {
       if (challenge.status != ChallengeStatus.done) {
         challenge.status = ChallengeStatus.done;
         challenge.doneAt = now;
@@ -84,7 +84,7 @@ class ChallengeService {
   }
   Future<int> incomplete(List<Challenge> values) async {
     final changed = <Challenge>[];
-    for(Challenge challenge in values) {
+    for(final challenge in values) {
       if (challenge.status == ChallengeStatus.done) {
         challenge.status = ChallengeStatus.open;
         challenge.doneAt = null;
@@ -99,24 +99,27 @@ class ChallengeService {
     if (result.isNotEmpty) {
       final failedCount = await failOverDue(result);
       if (failedCount > 0) {
-        return _challengeDao.loadOverDue();
+        _log.debug('loadAndFailOverDue: Failed $failedCount challenges returning ${result.length}');
       }
     }
     return result;
   }
+
   Future<List<Challenge>> loadByDate(DateTime dateTime, bool includeOverdue) async {
     List<Challenge> result;
 
     if (includeOverdue) {
-      result = await loadAndFailOverDue();
+      final overdueAndFailed = await loadAndFailOverDue();
+      result = await _challengeDao.loadAllOpenUntil(dateTime);
+      for (final of in overdueAndFailed) {
+        if (!result.contains(of)) result.add(of);
+      }
+      overdueAndFailed.clear();
     } else {
-      result = [];
+      result = await _challengeDao.loadOpenByDueAt(dateTime);
     }
 
-    final openByDate = _challengeDao.loadOpenByDueAt(dateTime);
     final done = _challengeDao.loadDoneByDoneAt(dateTime);
-
-    result.addAll(await openByDate);
     result.addAll(await done);
 
     return result;
@@ -136,7 +139,7 @@ class ChallengeService {
   }
 
   Future<Iterable<String>> completeChallengesName(String pattern) {
-    return _challengeDao.loadNamesByPattern(pattern, limit: 5);
+    return _challengeDao.loadNamesByPattern(pattern, limit: 4);
   }
 
   Future<int> countFinished() {

@@ -29,7 +29,7 @@ main() {
   });
 
   test('Test cache buyReward', () async {
-    var boughtReward = await subject.buyReward(Reward()
+    final boughtReward = await subject.buyReward(Reward()
       ..id = 1
       ..cost=5);
     expect(boughtReward, isNotNull);
