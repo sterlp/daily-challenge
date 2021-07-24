@@ -13,12 +13,12 @@ class Challenge extends AbstractEntity {
 
   Challenge();
   Challenge.of(this.name, [this._dueAt, this.reward = 0]) {
-    this.dueAt ??= DateTime.now();
+    dueAt ??= DateTime.now();
   }
   Challenge.full(this.name, [this._dueAt, this.status = ChallengeStatus.open, this.reward = 0, this.doneAt]) {
-    this.dueAt ??= DateTime.now();
-    this.latestAt ??= this.dueAt.add(defaultChallengeWaitTime);
-    if (this.status != ChallengeStatus.open && this.dueAt == null) {
+    dueAt ??= DateTime.now();
+    latestAt ??= dueAt.add(defaultChallengeWaitTime);
+    if (status != ChallengeStatus.open && dueAt == null) {
       doneAt = DateTime.now();
     }
   }

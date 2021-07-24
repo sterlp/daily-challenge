@@ -55,7 +55,7 @@ void main() {
   });
 
   test("Test fail date", () async {
-    var c = await challengeService.save(Challenge.of("Test 1")
+    final c = await challengeService.save(Challenge.of("Test 1")
       ..latestAt = DateTime.now().add(Duration(days: -2))
       ..reward = 15);
 

@@ -51,18 +51,32 @@ class ChallengeDao extends AbstractDao<Challenge> {
     return results;
   }
 
-  Future<List<Challenge>> loadByDate(DateTime dateTime) async {
+  Future<List<Challenge>> loadOpenByDueAt(DateTime dateTime) async {
     final from = DateTime(dateTime.year, dateTime.month, dateTime.day);
     final to = DateTime(dateTime.year, dateTime.month, dateTime.day, 23, 59, 59, 999);
 
-    List<Challenge> results = await loadAll(
-        where: "(dueAt >= ? AND dueAt <= ?) OR (doneAt >= ? AND doneAt <= ?)",
-        whereArgs: [from.millisecondsSinceEpoch, to.millisecondsSinceEpoch, from.millisecondsSinceEpoch, to.millisecondsSinceEpoch],
+    final result = await loadAll(
+        where: "(dueAt >= ? AND dueAt <= ?) AND status = 'open'",
+        whereArgs: [from.millisecondsSinceEpoch, to.millisecondsSinceEpoch],
         orderBy: 'dueAt ASC, latestAt ASC, createdAt DESC');
 
-    _log.debug('loadByDate from $from to $to results ${results.length}');
+    _log.debug('loadOpenByDueAt from $from to $to results ${result.length}');
 
-    return results;
+    return result;
+  }
+
+  Future<List<Challenge>> loadDoneByDoneAt(DateTime dateTime) async {
+    final from = DateTime(dateTime.year, dateTime.month, dateTime.day);
+    final to = DateTime(dateTime.year, dateTime.month, dateTime.day, 23, 59, 59, 999);
+
+    final result = await loadAll(
+        where: "(doneAt >= ? AND doneAt <= ?) AND status <> 'open'",
+        whereArgs: [from.millisecondsSinceEpoch, to.millisecondsSinceEpoch],
+        orderBy: 'doneAt DESC');
+
+    _log.debug('loadByDoneAt from $from to $to results ${result.length}');
+
+    return result;
   }
 
   Future<int> countFinished() async {

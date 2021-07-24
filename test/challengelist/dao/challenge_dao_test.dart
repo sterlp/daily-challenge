@@ -15,9 +15,11 @@ void main() {
     context = testContainer();
     subject = context.get<ChallengeDao>();
   });
+
   setUp(() async {
     await subject.deleteAll();
   });
+
   tearDown(() async => await subject.deleteAll());
   tearDownAll(() async {
     if (context != null) await context.close();
@@ -28,7 +30,7 @@ void main() {
     final Challenge c = Challenge.of('test');
 
     c.dueAt = null;
-    var map = subject.toMap(c);
+    final map = subject.toMap(c);
     // Verify that our counter starts at 0.
     expect(map['id'], null);
     expect(map['name'], 'test');
@@ -38,7 +40,7 @@ void main() {
   });
 
   test('Challenge fromMap', () {
-    var d = DateTime.now().millisecondsSinceEpoch;
+    final d = DateTime.now().millisecondsSinceEpoch;
 
     final Challenge c = subject.fromMap({
       'id': 5,
@@ -80,21 +82,21 @@ void main() {
   });
 
   test('Sorting first using latestAt for overdue', () async {
-    var now = DateTime.now();
+    final now = DateTime.now();
     await subject.save(Challenge.of('In 5 days')
-      ..dueAt = now.add(Duration(days: -6))
-      ..latestAt = now.add(Duration(days: 5)));
+      ..dueAt = now.add(const Duration(days: -6))
+      ..latestAt = now.add(const Duration(days: 5)));
     await subject.save(Challenge.of('In 2 days')
-      ..dueAt = now.add(Duration(days: -12))
-      ..latestAt = now.add(Duration(days: 2)));
+      ..dueAt = now.add(const Duration(days: -12))
+      ..latestAt = now.add(const Duration(days: 2)));
     await subject.save(Challenge.of('In 1 day')
-      ..dueAt = now.add(Duration(days: -11))
-      ..latestAt = now.add(Duration(days: 1)));
+      ..dueAt = now.add(const Duration(days: -11))
+      ..latestAt = now.add(const Duration(days: 1)));
     await subject.save(Challenge.of('In 10 days')
       ..dueAt = now
-      ..latestAt = now.add(Duration(days: 10)));
+      ..latestAt = now.add(const Duration(days: 10)));
 
-    var results = await subject.loadOverDue();
+    final results = await subject.loadOverDue();
     expect(results.length, 3);
 
     expect(results[0].latestAt, isNotNull);
@@ -104,17 +106,17 @@ void main() {
   });
 
   test('Failing soon showed first', () async {
-    var now = DateTime.now();
+    final now = DateTime.now();
     await subject.save(Challenge.of('In 5 days')
-      ..latestAt = now.add(Duration(days: 5)));
+      ..latestAt = now.add(const Duration(days: 5)));
     await subject.save(Challenge.of('In 2 days')
-      ..latestAt = now.add(Duration(days: 2)));
+      ..latestAt = now.add(const Duration(days: 2)));
     await subject.save(Challenge.of('In 1 day')
-      ..latestAt = now.add(Duration(days: 1)));
+      ..latestAt = now.add(const Duration(days: 1)));
     await subject.save(Challenge.of('In 10 days')
-      ..latestAt = now.add(Duration(days: 10)));
+      ..latestAt = now.add(const Duration(days: 10)));
 
-    var results = await subject.loadByDate(now);
+    final results = await subject.loadOpenByDueAt(now);
     expect(results.length, 4);
 
     expect(results[0].latestAt, isNotNull);
@@ -125,42 +127,50 @@ void main() {
   });
 
   test('Query loadByDate', () async {
-    var now = DateTime.now();
+    final now = DateTime.now();
     await subject.save(Challenge.of('Test 1'));
-    await new Future.delayed(const Duration(milliseconds : 1));
+    await Future.delayed(const Duration(milliseconds : 1));
     await subject.save(Challenge.of('Test 2'));
-    await subject.save(Challenge.of('Test 3', now.add(Duration(days: -1))));
-    await subject.save(Challenge.of('Test 4', now.add(Duration(days: -2))));
-    await subject.save(Challenge.of('Test 5', now.add(Duration(days: 1))));
+    await subject.save(Challenge.of('Test 3', now.add(const Duration(days: -1))));
+    await subject.save(Challenge.of('Test 4', now.add(const Duration(days: -2))));
+    await subject.save(Challenge.of('Test 5', now.add(const Duration(days: 1))));
 
-    var results = await subject.loadByDate(now);
+    var results = await subject.loadOpenByDueAt(now);
     expect(results.length, 2);
     expect(results[0].name, 'Test 2');
     expect(results[1].name, 'Test 1');
 
-    results = await subject.loadByDate(now.add(Duration(days: 1)));
+    results = await subject.loadOpenByDueAt(now.add(const Duration(days: 1)));
     expect(results.length, 1);
     expect(results[0].name, 'Test 5');
 
-    results = await subject.loadByDate(now.add(Duration(days: -1)));
+    results = await subject.loadOpenByDueAt(now.add(const Duration(days: -1)));
     expect(results.length, 1);
     expect(results[0].name, 'Test 3');
   });
 
-  test('Query load one by date', () async {
-    var now = DateTime(2020, 5, 17);
-    await subject.save(Challenge.full('Test 1', now, ChallengeStatus.done));
-    var results = await subject.loadByDate(now);
-    expect(results.length, 1);
-    expect(results[0].name, 'Test 1');
+  test('Load done and failed tasks', () async {
+    final now = DateTime(2020, 5, 17);
+    await subject.save(Challenge.full('Done', now, ChallengeStatus.done)
+      ..doneAt = now);
+    await subject.save(Challenge.full('Failed', now, ChallengeStatus.failed)
+      ..doneAt = now);
+    await subject.save(Challenge.of('Open', now.add(const Duration(minutes: 10)))
+      ..dueAt = now);
+
+    final results = await subject.loadDoneByDoneAt(now);
+
+    expect(results.length, 2);
+    expect(results[0].name, 'Failed');
+    expect(results[1].name, 'Done');
   });
 
   test('Query loadOverDue and fail them', () async {
-    var now = DateTime.now();
-    await subject.save(Challenge.of('Test 1', now.add(Duration(minutes: 10))));
-    await subject.save(Challenge.of('Test 2', now.add(Duration(days: -1))));
-    await subject.save(Challenge.of('Test 3', now.add(Duration(days: -33))));
-    await subject.save(Challenge.full('Test 4', now.add(Duration(days: -2)), ChallengeStatus.done));
+    final now = DateTime.now();
+    await subject.save(Challenge.of('Test 1', now.add(const Duration(minutes: 10))));
+    await subject.save(Challenge.of('Test 2', now.add(const Duration(days: -1))));
+    await subject.save(Challenge.of('Test 3', now.add(const Duration(days: -33))));
+    await subject.save(Challenge.full('Test 4', now.add(const Duration(days: -2)), ChallengeStatus.done));
 
     var results = await subject.loadOverDue();
     expect(results.length, 2);
@@ -184,7 +194,7 @@ void main() {
   });
 
   test('Delete challenge count test', () async {
-    Challenge c = Challenge.of('Foo');
+    final c = Challenge.of('Foo');
     c.reward = 99;
     // delete no ID and not created
     int count = await subject.delete(c.id);

@@ -94,26 +94,30 @@ class ChallengeService {
     return _creditService.calcTotal();
   }
 
+  Future<List<Challenge>> loadAndFailOverDue() async {
+    final result = await _challengeDao.loadOverDue();
+    if (result.isNotEmpty) {
+      final failedCount = await failOverDue(result);
+      if (failedCount > 0) {
+        return _challengeDao.loadOverDue();
+      }
+    }
+    return result;
+  }
   Future<List<Challenge>> loadByDate(DateTime dateTime, bool includeOverdue) async {
     List<Challenge> result;
 
-    final challenges = _challengeDao.loadByDate(dateTime);
-
     if (includeOverdue) {
-      result = await _challengeDao.loadOverDue();
-      if (result.length > 0) await failOverDue(result);
+      result = await loadAndFailOverDue();
     } else {
       result = [];
     }
 
-    final current = await challenges;
-    if (result.length > 0) {
-      for (Challenge c in current) {
-        if (!result.contains(c)) result.add(c);
-      }
-    } else {
-      result.addAll(current);
-    }
+    final openByDate = _challengeDao.loadOpenByDueAt(dateTime);
+    final done = _challengeDao.loadDoneByDoneAt(dateTime);
+
+    result.addAll(await openByDate);
+    result.addAll(await done);
 
     return result;
   }
