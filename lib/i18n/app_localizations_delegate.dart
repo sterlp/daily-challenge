@@ -15,8 +15,8 @@ abstract class AppLocalizationsDelegate<T> extends LocalizationsDelegate<T> {
     ChallengeListLocalizations.delegate,
   ];
   static const List<Locale> locales = [
-    const Locale('en'),
-    const Locale('de'),
+    Locale('en'),
+    Locale('de'),
   ];
   const AppLocalizationsDelegate();
 

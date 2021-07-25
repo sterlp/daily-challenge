@@ -31,12 +31,12 @@ class ChallengeService {
   }
 
   Future<List<Challenge>> saveAll(List<Challenge> challenges) async {
-    var results = await _challengeDao.saveAll(challenges);
+    final results = await _challengeDao.saveAll(challenges);
     return results;
   }
 
   Future<Challenge> save(Challenge c) async {
-    var result = await _challengeDao.save(c);
+    final result = await _challengeDao.save(c);
     return result;
   }
 

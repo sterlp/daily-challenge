@@ -37,7 +37,8 @@ class Challenge extends AbstractEntity {
   DateTime get latestAt => DateTimeUtil.clearTime(_latestAt);
   set latestAt(DateTime v) => _latestAt = DateTimeUtil.clearTime(v);
 
-  Duration latestDiff(DateTime date) => latestAt == null ? const Duration(days: 0) : latestAt.difference(DateTimeUtil.clearTime(date));
+  Duration latestDiff(DateTime date) => latestAt == null ?
+    const Duration(days: 99) : latestAt.difference(DateTimeUtil.clearTime(date));
 
   bool get isOverdue => dueAt.isBefore(DateTimeUtil.clearTime(DateTime.now()));
   bool get isDone => status == ChallengeStatus.done;

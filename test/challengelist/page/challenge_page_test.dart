@@ -1,3 +1,4 @@
+import 'package:challengeapp/challengelist/i18n/challengelist_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -13,7 +14,8 @@ import 'challenge_page_model.dart';
 
 void main() {
   AppContextMock appContextMock;
-  final ChallengeLocalizations commonI18n = ChallengeLocalizations(Locale('en'));
+  final commonI18n = ChallengeLocalizations(const Locale('en'));
+  final challengeI18n = ChallengeListLocalizations(const Locale('en'));
 
   setUp(() async {
     appContextMock = AppContextMock();
@@ -54,13 +56,36 @@ void main() {
     // enter reward
     await challengePageModel.enterReward(6);
 
-    Challenge c = verify(challengeService.save(captureAny)).captured.single as Challenge;
+    final c = verify(challengeService.save(captureAny)).captured.single as Challenge;
     expect(c.name, 'Test Challenge');
     expect(c.reward, 6);
     expect(c.createdAt, isNotNull);
     expect(c.createdAt.day, DateTime.now().day);
     expect(c.dueAt, dateDue);
     expect(c.latestAt, dateLatest);
+  });
+
+  testWidgets('Shows info if only today left to finish challenge', (WidgetTester tester) async {
+    final now = DateTime.now();
+    appContextMock.challenges.add(Challenge.of('First')
+        ..dueAt = now
+        ..latestAt = now
+    );
+    appContextMock.challenges.add(Challenge.of('Second')
+      ..dueAt = now.add(const Duration(days: -1))
+      ..latestAt = now
+    );
+
+
+    final myApp = MyApp(container: appContextMock.appContext);
+    await tester.pumpWidget(myApp);
+    await tester.pumpAndSettle();
+
+    expect(find.text('First'), findsOneWidget);
+    expect(find.text('Second'), findsOneWidget);
+
+    expect(find.text(challengeI18n.challengeWillFail(const Duration())), findsNWidgets(2));
+
   });
 
 }

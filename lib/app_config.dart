@@ -12,12 +12,12 @@ import 'package:dependency_container/dependency_container.dart';
 import 'package:sqflite/sqflite.dart';
 
 AppContainer buildContext([Future<Database> database]) {
-  return new AppContainer()
+  return AppContainer()
     // lazy init of the beans to give Flutter the time to start before we init the DB, otherwise we face:
     // Unhandled Exception: ServicesBinding.defaultBinaryMessenger was accessed before the binding was initialized.
     ..addFactory((_) => database == null ? DbProvider() : DbProvider.withDb(database))
 
-    ..addFactory((rattlinger) => ConfigService())
+    ..addFactory((_) => ConfigService())
     ..addFactory<Future<Database>>((rattlinger) => rattlinger.get<DbProvider>().db)
 
     ..addFactory((rattlinger) => CreditService(rattlinger.get<ChallengeDao>(), rattlinger.get<BoughtRewardDao>()))
