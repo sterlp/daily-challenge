@@ -158,7 +158,7 @@ void main() {
     await subject.save(Challenge.of('Open', now.add(const Duration(minutes: 10)))
       ..dueAt = now);
 
-    final results = await subject.loadDoneByDoneAt(now);
+    final results = await subject.loadNotOpenFinishedAt(now);
 
     expect(results.length, 2);
     expect(results[0].name, 'Failed');

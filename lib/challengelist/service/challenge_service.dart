@@ -115,7 +115,7 @@ class ChallengeService {
       result = await _challengeDao.loadOpenByDueAt(dateTime);
     }
 
-    final done = _challengeDao.loadDoneByDoneAt(dateTime);
+    final done = _challengeDao.loadNotOpenFinishedAt(dateTime);
     result.addAll(await done);
 
     return result;

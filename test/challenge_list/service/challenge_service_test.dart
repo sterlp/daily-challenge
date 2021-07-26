@@ -60,7 +60,7 @@ void main() {
       ..reward = 15);
 
     await challengeService.failOverDue([c]);
-    expect( DateTimeUtil.midnight(c.latestAt), (await challengeService.getById(c.id)).doneAt);
+    expect( DateTimeUtil.midnight(DateTime.now()), (await challengeService.getById(c.id)).doneAt);
   });
 
   test("Do not fail challenge same day today", () async {
@@ -127,9 +127,9 @@ void main() {
     expect(result.length, 3);
 
     expect(result[0].name, 'Today');
-    expect(result[1].name, 'Day before yesterday');
+    expect(result[1].name, 'Yesterday');
     expect(result[1].status, ChallengeStatus.failed);
-    expect(result[2].name, 'Yesterday');
+    expect(result[2].name, 'Day before yesterday');
     expect(result[2].status, ChallengeStatus.failed);
   });
 

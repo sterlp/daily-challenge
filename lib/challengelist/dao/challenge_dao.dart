@@ -33,7 +33,7 @@ class ChallengeDao extends AbstractDao<Challenge> {
     final DateTime now = DateTimeUtil.midnight(DateTime.now());
     for(final c in values) {
       c.status = ChallengeStatus.failed;
-      c.doneAt = c.latestAt == null ? now : DateTimeUtil.midnight(c.latestAt);
+      c.doneAt = now;
       result += c.reward;
       await update(c);
     }
@@ -78,16 +78,16 @@ class ChallengeDao extends AbstractDao<Challenge> {
     return result;
   }
 
-  Future<List<Challenge>> loadDoneByDoneAt(DateTime dateTime) async {
+  Future<List<Challenge>> loadNotOpenFinishedAt(DateTime dateTime) async {
     final from = DateTime(dateTime.year, dateTime.month, dateTime.day);
     final to = DateTime(dateTime.year, dateTime.month, dateTime.day, 23, 59, 59, 999);
 
     final result = await loadAll(
         where: "(doneAt >= ? AND doneAt <= ?) AND status <> 'open'",
         whereArgs: [from.millisecondsSinceEpoch, to.millisecondsSinceEpoch],
-        orderBy: 'doneAt DESC');
+        orderBy: 'doneAt DESC, latestAt ASC');
 
-    _log.debug('loadByDoneAt from $from to $to results ${result.length}');
+    _log.debug('loadNotOpenFinishedAt from $from to $to results ${result.length}');
 
     return result;
   }
