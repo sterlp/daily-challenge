@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:challengeapp/reward/model/reward_model.dart';
 import 'package:challengeapp/reward/page/reward_shop_page.dart';
-import '../../mock_appcontext.dart';
+import '../../mock_app_context.dart';
 import '../../test_helper.dart';
 
 void main() {

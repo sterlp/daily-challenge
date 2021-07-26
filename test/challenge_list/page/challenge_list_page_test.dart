@@ -6,7 +6,7 @@ import 'package:challengeapp/challengelist/service/challenge_service.dart';
 import 'package:challengeapp/main.dart';
 import 'package:mockito/mockito.dart';
 
-import '../../mock_appcontext.dart';
+import '../../mock_app_context.dart';
 
 void main() {
   AppContextMock appContextMock;

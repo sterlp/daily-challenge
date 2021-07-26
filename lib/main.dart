@@ -55,7 +55,7 @@ class MyApp extends StatelessWidget {
                 child: ChallengeHomePage()
             );
           } else {
-            return MaterialApp(home: const LoadingWidget());
+            return const MaterialApp(home: const LoadingWidget());
           }
         }
       )

@@ -109,12 +109,8 @@ class ChallengeService {
     List<Challenge> result;
 
     if (includeOverdue) {
-      final overdueAndFailed = await loadAndFailOverDue();
+      await loadAndFailOverDue();
       result = await _challengeDao.loadAllOpenUntil(dateTime);
-      for (final of in overdueAndFailed) {
-        if (!result.contains(of)) result.add(of);
-      }
-      overdueAndFailed.clear();
     } else {
       result = await _challengeDao.loadOpenByDueAt(dateTime);
     }

@@ -66,11 +66,10 @@ class ChallengeDao extends AbstractDao<Challenge> {
   }
 
   Future<List<Challenge>> loadAllOpenUntil(DateTime dateTime) async {
-    final from = DateTime(dateTime.year, dateTime.month, dateTime.day);
     final to = DateTime(dateTime.year, dateTime.month, dateTime.day, 23, 59, 59, 999);
 
     final result = await loadAll(
-        where: "(dueAt <= ?) AND status = 'open'",
+        where: "dueAt <= ? AND status = 'open'",
         whereArgs: [to.millisecondsSinceEpoch],
         orderBy: 'latestAt ASC, dueAt ASC, createdAt DESC');
 

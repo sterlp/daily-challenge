@@ -5,17 +5,18 @@ import 'package:challengeapp/challengelist/service/challenge_service.dart';
 import 'package:challengeapp/challengelist/widget/reward_widget.dart';
 import 'package:challengeapp/common/model/attached_entity.dart';
 import 'package:challengeapp/common/widget/delete_list_action.dart';
-import 'package:challengeapp/home/state/app_state_widget.dart';
 import 'package:challengeapp/i18n/challenge_localization_delegate.dart';
+import 'package:dependency_container/dependency_container.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 
 class ChallengeWidget extends StatefulWidget {
+  final AppContainer appContainer;
   final Challenge challenge;
   final ValueChanged<Challenge> deleteCallback;
   final ValueChanged<Challenge> undoDeleteCallback;
 
-  ChallengeWidget(this.challenge,
+  const ChallengeWidget(this.appContainer, this.challenge,
       {Key key, this.deleteCallback, this.undoDeleteCallback}) : super(key: key);
 
   @override
@@ -26,7 +27,6 @@ class _ChallengeWidgetState extends State<ChallengeWidget> {
   static const _notOpenTextStyle = TextStyle(decoration: TextDecoration.lineThrough);
   static const _edge = EdgeInsets.all(4.0);
 
-  ChallengeService _challengeService;
   AttachedEntity<Challenge> _attached;
   TextStyle _overDueStyle;
 
@@ -39,12 +39,12 @@ class _ChallengeWidgetState extends State<ChallengeWidget> {
     _i18n = Localizations.of<ChallengeListLocalizations>(context, ChallengeListLocalizations);
     _commonI18n = Localizations.of<ChallengeLocalizations>(context, ChallengeLocalizations);
     _overDueStyle = TextStyle(color: Theme.of(context).errorColor);
-    _challengeService = AppStateWidget.of(context).get<ChallengeService>();
     if (_attached != null) {
       _attached.close();
       _attached = null;
     }
   }
+  @override
   void dispose() {
     if (_attached != null) {
       _attached.close();
@@ -53,8 +53,8 @@ class _ChallengeWidgetState extends State<ChallengeWidget> {
     super.dispose();
   }
 
-  _onEditChallenge() async {
-    var result = await Navigator.push(
+  Future<void> _onEditChallenge() async {
+    final result = await Navigator.push(
         context,
         MaterialPageRoute<dynamic>(
           builder: (BuildContext context) => ChallengePage(challenge: widget.challenge),
@@ -64,14 +64,14 @@ class _ChallengeWidgetState extends State<ChallengeWidget> {
     if (result != null) setState(() {});
   }
 
-  _onChallengeChecked(bool value, BuildContext context) async {
+  Future<void> _onChallengeChecked(bool value, BuildContext context) async {
     if (widget.challenge.isFailed) {
-      Scaffold.of(context).showSnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             behavior: SnackBarBehavior.floating,
             content: Text('Challenge ${widget.challenge.name} already failed.')));
     } else {
-      final _challengeService = AppStateWidget.of(context).get<ChallengeService>();
+      final _challengeService = widget.appContainer.get<ChallengeService>();
       if (value) {
         await _challengeService.complete([widget.challenge]);
       } else {
@@ -80,6 +80,7 @@ class _ChallengeWidgetState extends State<ChallengeWidget> {
       // update view
       setState(() { });
     }
+    return;
   }
 
   Widget _dueText() {
@@ -111,7 +112,7 @@ class _ChallengeWidgetState extends State<ChallengeWidget> {
 
   @override
   Widget build(BuildContext context) {
-    assert(_challengeService != null);
+    final _challengeService = widget.appContainer.get<ChallengeService>();
 
     final challenge = widget.challenge;
     final done = challenge.isDone;
@@ -120,7 +121,7 @@ class _ChallengeWidgetState extends State<ChallengeWidget> {
     _attached ??= _challengeService.attach(challenge);
     assert(_attached != null);
 
-    var actions = <Widget>[];
+    final actions = <Widget>[];
     if (widget.deleteCallback != null) {
       actions.add(
         Padding(
@@ -149,7 +150,7 @@ class _ChallengeWidgetState extends State<ChallengeWidget> {
     }
 
     return Slidable(
-      actionPane: SlidableDrawerActionPane(),
+      actionPane: const SlidableDrawerActionPane(),
       actionExtentRatio: 0.25,
       child: Card(
         child: ListTile(
@@ -165,17 +166,25 @@ class _ChallengeWidgetState extends State<ChallengeWidget> {
           title: Text(challenge.name, style: done || failed ? _notOpenTextStyle : null),
           subtitle: _dueText(),
           isThreeLine: true,
-          onLongPress: (challenge.status == ChallengeStatus.open ? _onEditChallenge : null),
-          trailing: SizedBox(
-            height: 64,
-            child: Checkbox(
-              value: done,
-              onChanged: (v) => _onChallengeChecked(v, context),
-            ),
-          ),
+          onLongPress: challenge.status == ChallengeStatus.open ? _onEditChallenge : null,
+          trailing: _buildCheckbox(),
         ),
       ),
       secondaryActions: actions
     );
+  }
+
+  Widget _buildCheckbox() {
+    if (widget.challenge.status == ChallengeStatus.failed) {
+      return null;
+    } else {
+      return  SizedBox(
+        height: 64,
+        child: Checkbox(
+          value: widget.challenge.isDone,
+          onChanged: (v) => _onChallengeChecked(v, context),
+        ),
+      );
+    }
   }
 }

@@ -5,7 +5,8 @@ import 'package:flutter/material.dart';
 ///
 /// Provides the AppContext
 /// @see https://api.flutter.dev/flutter/widgets/InheritedWidget-class.html
-///
+/// @deprecated
+@Deprecated('Using the Flutter AppState is harmful.')
 class AppStateWidget extends StatefulWidget {
   final AppContainer context;
   final Widget child;
@@ -39,7 +40,7 @@ class _InheritedDiContainer extends InheritedWidget {
   static final Logger _log = LoggerFactory.get<AppStateWidget>();
   final AppContainer context;
 
-  _InheritedDiContainer(this.context, {Key key, @required Widget child})
+  const _InheritedDiContainer(this.context, {Key key, @required Widget child})
       : super(key: key, child: child);
 
   @override

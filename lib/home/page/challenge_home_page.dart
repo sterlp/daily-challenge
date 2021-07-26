@@ -25,9 +25,9 @@ class _ChallengeHomePageState extends State<ChallengeHomePage> {
         appBar: AppBar(
           bottom: TabBar(
             tabs: [
-              Tab(icon: Icon(MdiIcons.calendarMultipleCheck), text: i18n.challengeTab),
-              Tab(icon: Icon(MdiIcons.trophy), text: i18n.rewardTab),
-              Tab(icon: Icon(Icons.access_time), text: i18n.historyTab),
+              Tab(icon: const Icon(MdiIcons.calendarMultipleCheck), text: i18n.challengeTab),
+              Tab(icon: const Icon(MdiIcons.trophy), text: i18n.rewardTab),
+              Tab(icon: const Icon(Icons.access_time), text: i18n.historyTab),
             ],
           ),
           title: Text(i18n.appName),

@@ -34,10 +34,11 @@ class ChallengeListPageState extends State<ChallengeListPage> with ScrollViewPos
 
   @override
   void didChangeDependencies() {
+    final ctx = AppStateWidget.of(context);
     i18n = Localizations.of<ChallengeListLocalizations>(context, ChallengeListLocalizations);
     commonI18n = Localizations.of<ChallengeLocalizations>(context, ChallengeLocalizations);
-    _challengeService = AppStateWidget.of(context).get<ChallengeService>();
-    _creditService = AppStateWidget.of(context).get<CreditService>();
+    _challengeService = ctx.get<ChallengeService>();
+    _creditService = ctx.get<CreditService>();
     _credit = _creditService.creditNotifier;
     super.didChangeDependencies();
   }
@@ -81,7 +82,7 @@ class ChallengeListPageState extends State<ChallengeListPage> with ScrollViewPos
           children: <Widget>[
             Text('No challenges today!', style: Theme.of(context).textTheme.headline5),
             const SizedBox(height: 8),
-            Text('${commonI18n.formatDate(_selectedDay)}', style: Theme.of(context).textTheme.headline6)
+            Text(commonI18n.formatDate(_selectedDay), style: Theme.of(context).textTheme.headline6)
           ]
         )
       );
@@ -92,7 +93,7 @@ class ChallengeListPageState extends State<ChallengeListPage> with ScrollViewPos
         itemCount: _challenges.length,
         itemBuilder: (context, index) {
           final e = _challenges[index];
-          return ChallengeWidget(e,
+          return ChallengeWidget(AppStateWidget.of(context), e,
             deleteCallback: _onDeleteChallenge,
             undoDeleteCallback: (e) => _doReload(),
             key: ObjectKey(e),
@@ -122,7 +123,7 @@ class ChallengeListPageState extends State<ChallengeListPage> with ScrollViewPos
             FlatButton.icon(
               key: const ValueKey('home_day_select'),
               onPressed: () async {
-                var newDate = await showDatePicker(context: context, initialDate: _selectedDay,
+                final newDate = await showDatePicker(context: context, initialDate: _selectedDay,
                     firstDate: _selectedDay.add(const Duration(days: -60)),
                     lastDate: _selectedDay.add(const Duration(days: 60)));
                 if (newDate != null && newDate.millisecondsSinceEpoch != _selectedDay.millisecondsSinceEpoch) {
