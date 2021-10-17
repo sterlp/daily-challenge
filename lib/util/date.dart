@@ -7,7 +7,7 @@ import 'package:intl/intl.dart';
 class DateTimeUtil {
   DateTimeUtil._();
 
-  static final Map<String, DateFormat> _formatterCache = Map();
+  static final Map<String, DateFormat> _formatterCache = {};
 
   static DateTime midnight(DateTime dateTime) {
     if (dateTime == null) return null;

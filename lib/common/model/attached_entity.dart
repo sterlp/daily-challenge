@@ -13,10 +13,10 @@ class AttachedEntity<Entity extends AbstractEntity> extends ValueNotifier<Entity
 
   Entity _deleteUndoSave;
   bool _closed = false;
-  get isClosed => _closed;
+  bool get isClosed => _closed;
 
   AttachedEntity(this.id, Entity entity, this.doReloadCallback, this.doSaveCallback, this.doDeleteCallback, this.doUnDeleteCallback) : super(entity) {
-    assert(this.id != null);
+    assert(id != null);
     assert(entity != null);
   }
 

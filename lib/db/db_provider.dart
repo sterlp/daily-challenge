@@ -9,7 +9,7 @@ import 'package:sqflite/sqflite.dart';
 
 class DbProvider with Closeable {
   static final Logger _log = LoggerFactory.get<DbProvider>();
-  Completer<Database> _completer = Completer();
+  final _completer = Completer<Database>();
   Future<Database> get db => _completer.future;
 
   DbProvider() {
@@ -48,7 +48,7 @@ class DbProvider with Closeable {
 
   @override
   Future<void> close() async {
-    var close = await (await db).close();
+    final close = await (await db).close();
     _log.debug('DB closed');
     return close;
   }

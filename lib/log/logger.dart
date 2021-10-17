@@ -19,20 +19,20 @@ class Logger {
   num _syncTime;
   String _syncString;
 
-  error(String message, dynamic e) {
+  void error(String message, dynamic e) {
     print('[ERROR]  $_name: $message -> $e');
   }
-  warn(String message) {
+  void warn(String message) {
     print('[WARN]  $_name: $message');
   }
-  info(String message) {
+  void info(String message) {
     if (kDebugMode) print('[INFO]  $_name: $message');
   }
-  debug(String message) {
+  void debug(String message) {
     if (kDebugMode) print('[DEBUG] $_name: $message');
   }
 
-  startSync(String name) {
+  void startSync(String name) {
     if (kDebugMode) {
       Timeline.startSync(name);
       _syncTime = DateTime.now().millisecondsSinceEpoch;
@@ -41,7 +41,7 @@ class Logger {
   }
 
   /// Finishes and logs the time, override the message with [message] if needed.
-  finishSync([String message]) {
+  void finishSync([String message]) {
     if (kDebugMode) {
       if (_syncString == null || _syncTime == null) {
         warn('finishSync without startSync!');

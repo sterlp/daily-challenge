@@ -44,7 +44,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   sqflite_common_ffi: ^2.0.0+1
-  mockito: ^5.0.12
+  mockito: ^5.0.16
   lint: ^1.5.3
 
 # For information on the generic Dart part of this file, see the
