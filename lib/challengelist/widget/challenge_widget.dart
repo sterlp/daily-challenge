@@ -184,8 +184,13 @@ class _ChallengeWidgetState extends State<ChallengeWidget> {
       child: Card(
         child: ListTile(
           leading: AnimatedSwitcher(
-            duration: const Duration(milliseconds: 800),
-            // transitionBuilder: (child, animation) => ScaleTransition(child: child, scale: animation),
+            duration: const Duration(milliseconds: 700),
+            switchInCurve: Curves.elasticOut,
+            switchOutCurve: Curves.easeInCubic,
+            transitionBuilder: (child, animation) => RotationTransition(
+              turns: Tween<double>(begin: -0.375, end: 0).animate(animation),
+              child: ScaleTransition(scale: animation, child: child),
+            ),
             child: RewardWidget(
               reward: widget.challenge.reward,
               status: widget.challenge.status,
