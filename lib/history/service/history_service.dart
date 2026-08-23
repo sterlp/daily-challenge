@@ -26,35 +26,26 @@ class HistoryService {
       _challengeService.listCompleted(),
     ]).then(
       (values) {
+        // both lists are sorted newest first
         final List<BoughtReward> rewards =
-            values[0].reversed.toList() as List<BoughtReward>;
+            values[0].toList() as List<BoughtReward>;
         final List<Challenge> challenges =
-            values[1].reversed.toList() as List<Challenge>;
+            values[1].toList() as List<Challenge>;
 
         final result = <HistoryChallengeOrBoughtReward>[];
-        BoughtReward? r;
-        Challenge? c;
+        var ri = 0;
+        var ci = 0;
 
-        while (rewards.isNotEmpty || challenges.isNotEmpty) {
-          if (rewards.isNotEmpty && r == null) r = rewards.removeLast();
-          if (challenges.isNotEmpty && c == null) c = challenges.removeLast();
+        while (ri < rewards.length || ci < challenges.length) {
+          final BoughtReward? r = ri < rewards.length ? rewards[ri] : null;
+          final Challenge? c = ci < challenges.length ? challenges[ci] : null;
 
-          if (c != null && r != null) {
-            if (r.boughtAt.isBefore(c.doneAt!)) {
-              result.add(HistoryChallengeOrBoughtReward(null, c));
-              c = null;
-            } else {
-              result.add(HistoryChallengeOrBoughtReward(r, null));
-              r = null;
-            }
-          } else if (c == null) {
-            // end of challenges
+          if (c == null || (r != null && !r.boughtAt.isBefore(c.doneAt!))) {
             result.add(HistoryChallengeOrBoughtReward(r, null));
-            r = null;
-          } else /* if (r == null)*/ {
-            // end of rewards
+            ri++;
+          } else {
             result.add(HistoryChallengeOrBoughtReward(null, c));
-            c = null;
+            ci++;
           }
         }
         resultCompleter.complete(result);

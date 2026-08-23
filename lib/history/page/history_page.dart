@@ -21,6 +21,7 @@ class _HistoryPageState extends FixedState<HistoryPage> {
 
   TextStyle? _negative;
   static const _positive = TextStyle(color: Colors.green);
+  TabController? _tabController;
 
   @override
   void didChangeDependencies() {
@@ -32,7 +33,25 @@ class _HistoryPageState extends FixedState<HistoryPage> {
 
     _negative = TextStyle(color: Theme.of(context).colorScheme.error);
 
+    _tabController ??= DefaultTabController.maybeOf(context);
+    _tabController?.addListener(_onTabChanged);
+
     super.didChangeDependencies();
+  }
+
+  void _onTabChanged() {
+    final controller = _tabController;
+    if (controller != null &&
+        !controller.indexIsChanging &&
+        controller.index == 2) {
+      _doReload();
+    }
+  }
+
+  @override
+  void dispose() {
+    _tabController?.removeListener(_onTabChanged);
+    super.dispose();
   }
 
   @override

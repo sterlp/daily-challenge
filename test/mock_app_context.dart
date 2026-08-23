@@ -4,6 +4,8 @@ import 'package:challengeapp/common/model/abstract_entity.dart';
 import 'package:challengeapp/common/model/attached_entity.dart';
 import 'package:challengeapp/config/service/config_service.dart';
 import 'package:challengeapp/credit/service/credit_service.dart';
+import 'package:challengeapp/history/service/history_service.dart';
+import 'package:challengeapp/reward/model/bought_reward_model.dart';
 import 'package:challengeapp/reward/model/reward_model.dart';
 import 'package:challengeapp/reward/service/reward_service.dart';
 import 'package:dependency_container/dependency_container.dart';
@@ -37,6 +39,12 @@ class RewardServiceMock with Mock implements RewardService {
     Invocation.method(#attach, [reward]),
     returnValue: AttachedEntityMock<Reward>(),
   ) as AttachedEntity<Reward>;
+
+  @override
+  Future<List<BoughtReward>> listBoughtRewards() => super.noSuchMethod(
+    Invocation.method(#listBoughtRewards, []),
+    returnValue: Future<List<BoughtReward>>.value(<BoughtReward>[]),
+  ) as Future<List<BoughtReward>>;
 }
 
 class ChallengeServiceMock with Mock implements ChallengeService {
@@ -73,6 +81,12 @@ class ChallengeServiceMock with Mock implements ChallengeService {
         Invocation.method(#completeChallengesName, [pattern]),
         returnValue: Future<Iterable<String>>.value(<String>[]),
       ) as Future<Iterable<String>>;
+
+  @override
+  Future<List<Challenge>> listCompleted() => super.noSuchMethod(
+    Invocation.method(#listCompleted, []),
+    returnValue: Future<List<Challenge>>.value(<Challenge>[]),
+  ) as Future<List<Challenge>>;
 }
 
 class ConfigStub extends ConfigService {
@@ -107,6 +121,8 @@ class AppContextMock {
   final ChallengeServiceMock challengeServiceMock = ChallengeServiceMock();
   final challenges = <Challenge>[];
 
+  late final HistoryService historyService;
+
   final ConfigStub configStub = ConfigStub();
 
   AppContextMock() {
@@ -127,6 +143,8 @@ class AppContextMock {
     appContext.add<RewardService>(rewardServiceMock);
     appContext.add<CreditService>(creditServiceMock);
     appContext.add<ChallengeService>(challengeServiceMock);
+    historyService = HistoryService(rewardServiceMock, challengeServiceMock);
+    appContext.add<HistoryService>(historyService);
     appContext.add<ConfigService>(configStub);
   }
 }
