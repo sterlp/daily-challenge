@@ -4,12 +4,12 @@ class BoughtReward extends Reward {
   BoughtReward();
   BoughtReward.fromReward(Reward r) {
     name = r.name;
-    rewardId = r.id;
+    rewardId = r.id!;
     cost = r.cost;
   }
 
   DateTime boughtAt = DateTime.now();
-  int rewardId;
+  late int rewardId;
 
   @override
   String toString() {

@@ -2,11 +2,11 @@ import 'package:challengeapp/log/logger.dart';
 import 'package:sqflite/sqflite.dart';
 
 abstract class DbUpdate {
-  Logger log;
+  late Logger log;
   final int version;
 
   DbUpdate(this.version) {
-    log = LoggerFactory.getWithName(this.runtimeType.toString());
+    log = LoggerFactory.getWithName(runtimeType.toString());
   }
 
   Future<int> execute(int currentVersion, Database db) async {
@@ -17,5 +17,6 @@ abstract class DbUpdate {
     }
     return currentVersion;
   }
+
   Future<void> update(Database db);
 }

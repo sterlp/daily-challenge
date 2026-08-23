@@ -10,7 +10,7 @@ import 'package:flutter/services.dart';
 /// https://dartpad.dev/embed-flutter.html?id=7a32619ce3c99711dc7e2fb8d235a635
 class RewardPage extends StatefulWidget {
   final Reward reward;
-  RewardPage({Key key, this.reward}) : super(key: key);
+  const RewardPage({super.key, required this.reward});
 
   @override
   _RewardPageState createState() => _RewardPageState();
@@ -22,13 +22,14 @@ class _RewardPageState extends State<RewardPage> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _costController = TextEditingController();
 
-  RewardService _rewardService;
+  late RewardService _rewardService;
 
-  void _save() async {
-    if (_formKey.currentState.validate()) {
+  Future<void> _save() async {
+    if (_formKey.currentState!.validate()) {
       widget.reward.cost = int.parse(_costController.text);
       widget.reward.name = _nameController.text;
-      var c = await _rewardService.save(widget.reward);
+      final c = await _rewardService.save(widget.reward);
+      if (!mounted) return;
       Navigator.pop(context, c);
     }
   }
@@ -43,51 +44,58 @@ class _RewardPageState extends State<RewardPage> {
   @override
   void initState() {
     super.initState();
-    _costController.text = widget.reward.cost == null ? null : widget.reward.cost.toString();
+    _costController.text = widget.reward.cost.toString();
     _nameController.text = widget.reward.name;
   }
 
   @override
   Widget build(BuildContext context) {
-    if (_rewardService == null) _rewardService = AppStateWidget.of(context).get<RewardService>();
+    _rewardService = AppStateWidget.of(context).get<RewardService>();
     final bool newReward = widget.reward.id == null;
     return Scaffold(
       appBar: AppBar(
         title: Text(newReward ? 'New Reward' : 'Edit Reward'),
         actions: <Widget>[
-          FlatButton(child: Text(newReward ? 'CREATE' : 'UPDATE'), onPressed: _save)
-        ]
+          TextButton(
+            child: Text(newReward ? 'CREATE' : 'UPDATE'),
+            onPressed: _save,
+          ),
+        ],
       ),
       body: InputForm(
         formKey: _formKey,
         children: <Widget>[
           TextFormField(
             autofocus: true,
-            inputFormatters: [LengthLimitingTextInputFormatter(Reward.NAME_LENGTH)],
+            inputFormatters: [
+              LengthLimitingTextInputFormatter(Reward.NAME_LENGTH),
+            ],
             controller: _nameController,
-            validator: (String v) => v.isNullOrEmpty ? 'Enter a reward name' : null,
-            decoration: new InputDecoration(
-                hintText: "What is your Reward ...?",
-                labelText: "Reward Name",
+            validator: (String? v) =>
+                v.isNullOrEmpty ? 'Enter a reward name' : null,
+            decoration: const InputDecoration(
+              hintText: "What is your Reward ...?",
+              labelText: "Reward Name",
             ),
             textInputAction: TextInputAction.next,
-            onFieldSubmitted: (v) => FocusScope.of(context).nextFocus()
+            onFieldSubmitted: (v) => FocusScope.of(context).nextFocus(),
           ),
           TextFormField(
-            inputFormatters: [WhitelistingTextInputFormatter.digitsOnly],
+            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
             controller: _costController,
-            validator: (String v) => v.isNullOrEmpty ? 'Enter a reward cost' : null,
+            validator: (String? v) =>
+                v.isNullOrEmpty ? 'Enter a reward cost' : null,
             textInputAction: TextInputAction.done,
-            decoration: new InputDecoration(
+            decoration: const InputDecoration(
               icon: MyStyle.COST_ICON,
               hintText: "What should the reward cost?",
               labelText: "Costs",
             ),
             keyboardType: TextInputType.number,
-            onFieldSubmitted: (v) => _save()
-          )
+            onFieldSubmitted: (v) => _save(),
+          ),
         ],
-      )
+      ),
     );
   }
 }

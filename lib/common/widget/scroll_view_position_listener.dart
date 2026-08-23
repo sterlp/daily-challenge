@@ -12,12 +12,14 @@ mixin ScrollViewPositionListener<T extends StatefulWidget> on State<T> {
     scrollController.addListener(calculateScrollStatus);
     super.initState();
   }
+
   @override
   @mustCallSuper
   void dispose() {
     scrollController.dispose();
     super.dispose();
   }
+
   void calculateScrollStatus() {
     bool newScrolledToBottom;
     bool newScrolledToTop;
@@ -25,7 +27,8 @@ mixin ScrollViewPositionListener<T extends StatefulWidget> on State<T> {
     if (scrollController.offset >= scrollController.position.maxScrollExtent) {
       newScrolledToBottom = true;
       newScrolledToTop = false;
-    } else if (scrollController.offset <= scrollController.position.minScrollExtent) {
+    } else if (scrollController.offset <=
+        scrollController.position.minScrollExtent) {
       newScrolledToBottom = false;
       newScrolledToTop = true;
     } else {
@@ -37,8 +40,8 @@ mixin ScrollViewPositionListener<T extends StatefulWidget> on State<T> {
 
   void onChangeScroll(bool newScrolledToBottom, bool newScrolledToTop) {
     if (!newScrolledToBottom) showFab.value = true;
-    if (scrolledToBottom.value != newScrolledToBottom
-        || scrolledToTop.value != newScrolledToTop) {
+    if (scrolledToBottom.value != newScrolledToBottom ||
+        scrolledToTop.value != newScrolledToTop) {
       scrolledToBottom.value = newScrolledToBottom;
       scrolledToTop.value = newScrolledToTop;
     }

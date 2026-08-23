@@ -6,7 +6,8 @@ class DbV2 extends DbUpdate {
 
   @override
   Future<void> update(Database db) async {
-    await db.execute('''CREATE TABLE IF NOT EXISTS REWARD (
+    await db.execute('''
+CREATE TABLE IF NOT EXISTS REWARD (
           id integer PRIMARY KEY AUTOINCREMENT,
           name varchar(50) NOT NULL,
           cost integer DEFAULT 0
@@ -15,7 +16,8 @@ class DbV2 extends DbUpdate {
         CREATE INDEX IF NOT EXISTS IDX_REWARD_COST ON REWARD(cost);
       ''');
 
-    return db.execute('''CREATE TABLE IF NOT EXISTS BOUGHT_REWARD (
+    return db.execute('''
+CREATE TABLE IF NOT EXISTS BOUGHT_REWARD (
           id integer PRIMARY KEY AUTOINCREMENT,
           name varchar(50) NOT NULL,
           cost integer DEFAULT 0,

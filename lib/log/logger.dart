@@ -6,6 +6,7 @@ class LoggerFactory {
   static Logger get<T>() {
     return getWithName(T.toString());
   }
+
   static Logger getWithName(String name) {
     return Logger(name);
   }
@@ -16,18 +17,23 @@ class Logger {
 
   Logger(this._name);
 
-  num _syncTime;
-  String _syncString;
+  num? _syncTime;
+  String? _syncString;
 
   void error(String message, dynamic e) {
+    // ignore: avoid_print
     print('[ERROR]  $_name: $message -> $e');
   }
+
   void warn(String message) {
+    // ignore: avoid_print
     print('[WARN]  $_name: $message');
   }
+
   void info(String message) {
     if (kDebugMode) print('[INFO]  $_name: $message');
   }
+
   void debug(String message) {
     if (kDebugMode) print('[DEBUG] $_name: $message');
   }
@@ -41,13 +47,13 @@ class Logger {
   }
 
   /// Finishes and logs the time, override the message with [message] if needed.
-  void finishSync([String message]) {
+  void finishSync([String? message]) {
     if (kDebugMode) {
       if (_syncString == null || _syncTime == null) {
         warn('finishSync without startSync!');
       } else {
         if (message != null) _syncString = message;
-        _syncTime = DateTime.now().millisecondsSinceEpoch - _syncTime;
+        _syncTime = DateTime.now().millisecondsSinceEpoch - _syncTime!;
         debug('$_syncString executed in ${_syncTime}ms.');
       }
       Timeline.finishSync();

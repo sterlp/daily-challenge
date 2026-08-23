@@ -4,11 +4,10 @@ import 'package:challengeapp/home/widget/app_menu.dart';
 import 'package:challengeapp/i18n/challenge_localization_delegate.dart';
 import 'package:challengeapp/reward/page/reward_shop_page.dart';
 import 'package:flutter/material.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:flutter_material_design_icons/flutter_material_design_icons.dart';
 
 class ChallengeHomePage extends StatefulWidget {
-
-  ChallengeHomePage({Key key}) : super(key: key);
+  const ChallengeHomePage({super.key});
 
   @override
   _ChallengeHomePageState createState() => _ChallengeHomePageState();
@@ -17,7 +16,10 @@ class ChallengeHomePage extends StatefulWidget {
 class _ChallengeHomePageState extends State<ChallengeHomePage> {
   @override
   Widget build(BuildContext context) {
-    final i18n = Localizations.of<ChallengeLocalizations>(context, ChallengeLocalizations);
+    final i18n = Localizations.of<ChallengeLocalizations>(
+      context,
+      ChallengeLocalizations,
+    )!;
     return DefaultTabController(
       length: 3,
       child: Scaffold(
@@ -25,7 +27,10 @@ class _ChallengeHomePageState extends State<ChallengeHomePage> {
         appBar: AppBar(
           bottom: TabBar(
             tabs: [
-              Tab(icon: const Icon(MdiIcons.calendarMultipleCheck), text: i18n.challengeTab),
+              Tab(
+                icon: const Icon(MdiIcons.calendarMultipleCheck),
+                text: i18n.challengeTab,
+              ),
               Tab(icon: const Icon(MdiIcons.trophy), text: i18n.rewardTab),
               Tab(icon: const Icon(Icons.access_time), text: i18n.historyTab),
             ],
@@ -35,10 +40,10 @@ class _ChallengeHomePageState extends State<ChallengeHomePage> {
         body: TabBarView(
           children: [
             ChallengeListPage(),
-            RewardShopPage(),
-            HistoryPage()
+            const RewardShopPage(),
+            HistoryPage(),
           ],
-        )
+        ),
       ),
     );
   }

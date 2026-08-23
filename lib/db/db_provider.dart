@@ -19,15 +19,19 @@ class DbProvider with Closeable {
     _init(database);
   }
 
-  Future<void> _init(Future<Database> _db) async {
+  Future<void> _init(Future<Database>? db) async {
     try {
       _log.startSync('init DB');
-      Database database;
-      if (_db == null) {
+      late Database database;
+      if (db == null) {
         // await deleteDatabase(join(await getDatabasesPath(), 'challenge.db'));
-        database = await openDatabase(join(await getDatabasesPath(), 'challenge.db'), version: 2, onUpgrade: _createDB);
+        database = await openDatabase(
+          join(await getDatabasesPath(), 'challenge.db'),
+          version: 2,
+          onUpgrade: _createDB,
+        );
       } else {
-        database = await _db;
+        database = await db;
         await _createDB(database, 0, 99);
       }
       _completer.complete(database);
@@ -41,9 +45,7 @@ class DbProvider with Closeable {
 
   Future<int> _createDB(Database db, int oldVersion, int newVersion) async {
     _log.info('_createDB with from version $oldVersion to $newVersion');
-    oldVersion = await DbV1().execute(oldVersion, db);
-    oldVersion = await DbV2().execute(oldVersion, db);
-    return oldVersion;
+    return await DbV2().execute(await DbV1().execute(oldVersion, db), db);
   }
 
   @override

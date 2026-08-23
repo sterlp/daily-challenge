@@ -1,5 +1,16 @@
+analyzer:
+  exclude:
+    - build/**
+    - android/**
+    - ios/**
+    - web/**
+    - windows/**
+    - macos/**
+    - linux/**
 include: package:lint/analysis_options.yaml
 
 linter:
   rules:
     sort_child_properties_last: false
+    constant_identifier_names: false
+    avoid_classes_with_only_static_members: false

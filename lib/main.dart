@@ -15,24 +15,18 @@ class MyApp extends StatelessWidget {
   final AppContainer _appContext;
 
   final ThemeData dark = ThemeData.dark().copyWith(
-    accentColor: Colors.blue,
-    indicatorColor: Colors.blue,
-    textSelectionHandleColor: Colors.blue,
-    textSelectionColor: Colors.blue,
-    toggleableActiveColor: Colors.blue,
+    colorScheme: ThemeData.dark().colorScheme.copyWith(secondary: Colors.blue),
     floatingActionButtonTheme: const FloatingActionButtonThemeData(
       backgroundColor: Colors.blue,
-    )
+    ),
+    tabBarTheme: const TabBarThemeData(indicatorColor: Colors.blue),
   );
   final ThemeData light = ThemeData.light().copyWith(
-    buttonTheme: const ButtonThemeData(
-      buttonColor: Colors.blue
-    )
+    buttonTheme: const ButtonThemeData(buttonColor: Colors.blue),
   );
 
-  MyApp({Key key, AppContainer container}) :
-        _appContext = container == null ? buildContext() : container,
-        super(key: key);
+  MyApp({super.key, AppContainer? container})
+    : _appContext = container ?? buildContext();
 
   @override
   Widget build(BuildContext context) {
@@ -44,21 +38,21 @@ class MyApp extends StatelessWidget {
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             return ValueListenableBuilder<bool>(
-                valueListenable: _appContext.get<ConfigService>().isDarkMode,
-                builder: (context, value, child) => MaterialApp(
-                  // https://flutter.dev/docs/development/accessibility-and-localization/internationalization
-                    localizationsDelegates: AppLocalizationsDelegate.delegates,
-                    supportedLocales: AppLocalizationsDelegate.locales,
-                    theme: value ? dark : light,
-                    home: child
-                ),
-                child: ChallengeHomePage()
+              valueListenable: _appContext.get<ConfigService>().isDarkMode,
+              builder: (context, value, child) => MaterialApp(
+                // https://flutter.dev/docs/development/accessibility-and-localization/internationalization
+                localizationsDelegates: AppLocalizationsDelegate.delegates,
+                supportedLocales: AppLocalizationsDelegate.locales,
+                theme: value ? dark : light,
+                home: child,
+              ),
+              child: const ChallengeHomePage(),
             );
           } else {
-            return const MaterialApp(home: const LoadingWidget());
+            return const MaterialApp(home: LoadingWidget());
           }
-        }
-      )
+        },
+      ),
     );
   }
 }

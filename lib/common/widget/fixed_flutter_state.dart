@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 
 /// because flutter sucks we have to do this here ...

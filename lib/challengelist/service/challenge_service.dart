@@ -21,12 +21,16 @@ class ChallengeService {
 
   AttachedEntity<Challenge> attach(Challenge challenge) {
     return AttachedEntity<Challenge>(
-      challenge.id, challenge, _challengeDao.reload,
-      save, delete, insert
+      challenge.id!,
+      challenge,
+      _challengeDao.reload,
+      save,
+      delete,
+      insert,
     );
   }
 
-  Future<Challenge> getById(int id) async {
+  Future<Challenge?> getById(int id) {
     return _challengeDao.getById(id);
   }
 
@@ -43,26 +47,36 @@ class ChallengeService {
   Future<Challenge> delete(Challenge c) async {
     final deleted = await _challengeDao.delete(c.id);
     log('Deleted ${c.name}');
-    if (deleted > 0 && c.status != ChallengeStatus.open) _creditService.calcTotal();
+    if (deleted > 0 && c.status != ChallengeStatus.open) {
+      _creditService.calcTotal();
+    }
     return c;
   }
-  
+
   Future<List<Challenge>> loadAll() {
     return _challengeDao.loadAll(orderBy: 'dueAt ASC, createdAt DESC');
   }
 
   Future<List<Challenge>> listCompleted() {
     return _challengeDao.loadAll(
-        where: 'status <> "open"',
-        orderBy: 'doneAt DESC');
+      where: "status <> 'open'",
+      orderBy: 'doneAt DESC',
+    );
   }
 
   /// Checks the given Challenges for any which are overdue, if found they will be failed.
-  Future<int> failOverDue(List<Challenge> values) async {
-    final now = DateTimeUtil.clearTime(DateTime.now());
-    final overDue = values.where((c) => c.status == ChallengeStatus.open && c.latestAt.isBefore(now));
-    if (overDue.length > 0) return _fail(overDue.toList());
-    else return _creditService.credit;
+  Future<int> failOverDue(List<Challenge> values) {
+    final now = DateTimeUtil.clearTime(DateTime.now())!;
+    final overDue = values.where(
+      (c) =>
+          c.status == ChallengeStatus.open &&
+          (c.latestAt?.isBefore(now) ?? false),
+    );
+    if (overDue.isNotEmpty) {
+      return _fail(overDue.toList());
+    } else {
+      return _creditService.credit;
+    }
   }
 
   Future<int> _fail(List<Challenge> values) async {
@@ -73,7 +87,7 @@ class ChallengeService {
 
   Future<int> complete(List<Challenge> values) async {
     final now = DateTime.now();
-    for(final challenge in values) {
+    for (final challenge in values) {
       if (challenge.status != ChallengeStatus.done) {
         challenge.status = ChallengeStatus.done;
         challenge.doneAt = now;
@@ -82,9 +96,10 @@ class ChallengeService {
     }
     return _creditService.calcTotal();
   }
+
   Future<int> incomplete(List<Challenge> values) async {
     final changed = <Challenge>[];
-    for(final challenge in values) {
+    for (final challenge in values) {
       if (challenge.status == ChallengeStatus.done) {
         challenge.status = ChallengeStatus.open;
         challenge.doneAt = null;
@@ -99,13 +114,18 @@ class ChallengeService {
     if (result.isNotEmpty) {
       final failedCount = await failOverDue(result);
       if (failedCount > 0) {
-        _log.debug('loadAndFailOverDue: Failed $failedCount challenges returning ${result.length}');
+        _log.debug(
+          'loadAndFailOverDue: Failed $failedCount challenges returning ${result.length}',
+        );
       }
     }
     return result;
   }
 
-  Future<List<Challenge>> loadByDate(DateTime dateTime, bool includeOverdue) async {
+  Future<List<Challenge>> loadByDate(
+    DateTime dateTime,
+    bool includeOverdue,
+  ) async {
     List<Challenge> result;
 
     if (includeOverdue) {

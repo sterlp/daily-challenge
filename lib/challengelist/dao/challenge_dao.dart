@@ -4,7 +4,6 @@ import 'package:challengeapp/log/logger.dart';
 import 'package:challengeapp/util/data.dart';
 import 'package:challengeapp/util/date.dart';
 import 'package:sqflite/sqflite.dart';
-import 'package:sqflite_common/sqlite_api.dart';
 
 class ChallengeDao extends AbstractDao<Challenge> {
   static final Logger _log = LoggerFactory.get<ChallengeDao>();
@@ -14,25 +13,34 @@ class ChallengeDao extends AbstractDao<Challenge> {
   Future<int> sumByStatus(ChallengeStatus status) async {
     final db = await dbExecutor;
 
-    final r = await db.rawQuery("SELECT SUM(reward) as rewardSum FROM $tableName WHERE status = ?", [ParserUtil.valueOfEnum(status)]);
-    if (r == null || r.isEmpty) return 0;
-    else return r[0]['rewardSum'] as int ?? 0;
+    final r = await db.rawQuery(
+      "SELECT SUM(reward) as rewardSum FROM $tableName WHERE status = ?",
+      [ParserUtil.valueOfEnum(status)],
+    );
+    if (r.isEmpty) {
+      return 0;
+    } else {
+      return (r[0]['rewardSum'] as int?) ?? 0;
+    }
   }
 
-
-  Future<Iterable<String>> loadNamesByPattern(String pattern, {int limit = 5}) async {
+  Future<Iterable<String>> loadNamesByPattern(
+    String pattern, {
+    int limit = 5,
+  }) async {
     final db = await dbExecutor;
     final list = await db.rawQuery(
-        'SELECT DISTINCT name FROM $tableName WHERE status <> "open" AND name <> ? AND name like ? ORDER BY NAME',
-        [pattern, '$pattern%']);
-    return list.map((e) => e['name'] as String);
+      "SELECT DISTINCT name FROM $tableName WHERE status <> 'open' AND name <> ? AND name like ? ORDER BY NAME",
+      [pattern, '$pattern%'],
+    );
+    return list.map((e) => e['name']! as String);
   }
 
   /// Sets the given challenges to fail and returns their total reward.
   Future<int> fail(List<Challenge> values) async {
     int result = 0;
-    final DateTime now = DateTimeUtil.midnight(DateTime.now());
-    for(final c in values) {
+    final DateTime now = DateTimeUtil.midnight(DateTime.now())!;
+    for (final c in values) {
       c.status = ChallengeStatus.failed;
       c.doneAt = now;
       result += c.reward;
@@ -42,11 +50,12 @@ class ChallengeDao extends AbstractDao<Challenge> {
   }
 
   Future<List<Challenge>> loadOverDue() async {
-    final now = DateTimeUtil.clearTime(DateTime.now());
+    final now = DateTimeUtil.clearTime(DateTime.now())!;
     final results = await loadAll(
-        where: "dueAt < ? AND status = 'open'",
-        whereArgs: [now.millisecondsSinceEpoch],
-        orderBy: 'latestAt ASC, dueAt ASC, createdAt DESC');
+      where: "dueAt < ? AND status = 'open'",
+      whereArgs: [now.millisecondsSinceEpoch],
+      orderBy: 'latestAt ASC, dueAt ASC, createdAt DESC',
+    );
 
     _log.debug('loadOverDue ${results.length}');
     return results;
@@ -54,12 +63,21 @@ class ChallengeDao extends AbstractDao<Challenge> {
 
   Future<List<Challenge>> loadOpenByDueAt(DateTime dateTime) async {
     final from = DateTime(dateTime.year, dateTime.month, dateTime.day);
-    final to = DateTime(dateTime.year, dateTime.month, dateTime.day, 23, 59, 59, 999);
+    final to = DateTime(
+      dateTime.year,
+      dateTime.month,
+      dateTime.day,
+      23,
+      59,
+      59,
+      999,
+    );
 
     final result = await loadAll(
-        where: "(dueAt >= ? AND dueAt <= ?) AND status = 'open'",
-        whereArgs: [from.millisecondsSinceEpoch, to.millisecondsSinceEpoch],
-        orderBy: 'dueAt ASC, latestAt ASC, createdAt DESC');
+      where: "(dueAt >= ? AND dueAt <= ?) AND status = 'open'",
+      whereArgs: [from.millisecondsSinceEpoch, to.millisecondsSinceEpoch],
+      orderBy: 'dueAt ASC, latestAt ASC, createdAt DESC',
+    );
 
     _log.debug('loadOpenByDueAt from $from to $to results ${result.length}');
 
@@ -67,12 +85,21 @@ class ChallengeDao extends AbstractDao<Challenge> {
   }
 
   Future<List<Challenge>> loadAllOpenUntil(DateTime dateTime) async {
-    final to = DateTime(dateTime.year, dateTime.month, dateTime.day, 23, 59, 59, 999);
+    final to = DateTime(
+      dateTime.year,
+      dateTime.month,
+      dateTime.day,
+      23,
+      59,
+      59,
+      999,
+    );
 
     final result = await loadAll(
-        where: "dueAt <= ? AND status = 'open'",
-        whereArgs: [to.millisecondsSinceEpoch],
-        orderBy: 'latestAt ASC, dueAt ASC, createdAt DESC');
+      where: "dueAt <= ? AND status = 'open'",
+      whereArgs: [to.millisecondsSinceEpoch],
+      orderBy: 'latestAt ASC, dueAt ASC, createdAt DESC',
+    );
 
     _log.debug('loadAllOpenUntil from $dateTime results ${result.length}');
 
@@ -81,14 +108,25 @@ class ChallengeDao extends AbstractDao<Challenge> {
 
   Future<List<Challenge>> loadNotOpenFinishedAt(DateTime dateTime) async {
     final from = DateTime(dateTime.year, dateTime.month, dateTime.day);
-    final to = DateTime(dateTime.year, dateTime.month, dateTime.day, 23, 59, 59, 999);
+    final to = DateTime(
+      dateTime.year,
+      dateTime.month,
+      dateTime.day,
+      23,
+      59,
+      59,
+      999,
+    );
 
     final result = await loadAll(
-        where: "(doneAt >= ? AND doneAt <= ?) AND status <> 'open'",
-        whereArgs: [from.millisecondsSinceEpoch, to.millisecondsSinceEpoch],
-        orderBy: 'doneAt DESC, latestAt ASC');
+      where: "(doneAt >= ? AND doneAt <= ?) AND status <> 'open'",
+      whereArgs: [from.millisecondsSinceEpoch, to.millisecondsSinceEpoch],
+      orderBy: 'doneAt DESC, latestAt ASC',
+    );
 
-    _log.debug('loadNotOpenFinishedAt from $from to $to results ${result.length}');
+    _log.debug(
+      'loadNotOpenFinishedAt from $from to $to results ${result.length}',
+    );
 
     return result;
   }
@@ -96,19 +134,27 @@ class ChallengeDao extends AbstractDao<Challenge> {
   Future<int> countFinished() async {
     final Database db = await dbExecutor as Database;
 
-    final r = await db.rawQuery("SELECT COUNT(*) as result FROM $tableName WHERE status <> 'open'");
+    final r = await db.rawQuery(
+      "SELECT COUNT(*) as result FROM $tableName WHERE status <> 'open'",
+    );
     return Sqflite.firstIntValue(r) ?? 0;
   }
 
   @override
   Challenge fromMap(Map<String, dynamic> values) {
     final result = Challenge();
-    result.id = values['id'] as int;
+    result.id = values['id'] as int?;
     result.name = values['name'] as String;
-    result.reward = values['reward'] as int;
-    result.status = ParserUtil.parseEnumStringWithDefault(
-        ChallengeStatus.values, values['status'] as String, ChallengeStatus.open);
-    result.createdAt = ParserUtil.parseDate(values['createdAt']);
+    result.reward = values['reward'] as int? ?? 0;
+    result.status =
+        ParserUtil.parseEnumStringWithDefault(
+          ChallengeStatus.values,
+          values['status'] as String,
+          ChallengeStatus.open,
+        ) ??
+        ChallengeStatus.open;
+    result.createdAt =
+        ParserUtil.parseDate(values["createdAt"]) ?? DateTime.now();
     result.doneAt = ParserUtil.parseDate(values['doneAt']);
     result.dueAt = ParserUtil.parseDate(values['dueAt']);
     result.latestAt = ParserUtil.parseDate(values['latestAt']);

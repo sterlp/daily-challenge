@@ -7,7 +7,11 @@ class RewardWidget extends StatelessWidget {
   final int reward;
   final ChallengeStatus status;
 
-  const RewardWidget({Key key, this.reward, this.status = ChallengeStatus.open}) : super(key: key);
+  const RewardWidget({
+    super.key,
+    required this.reward,
+    this.status = ChallengeStatus.open,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -16,14 +20,14 @@ class RewardWidget extends StatelessWidget {
     final theme = Theme.of(context);
     if (status == ChallengeStatus.failed) {
       icon = MyStyle.ICON_FAILED_CHALLENGE;
-      color = theme.errorColor;
+      color = theme.colorScheme.error;
     } else if (status == ChallengeStatus.done) {
       icon = MyStyle.ICON_DONE_CHALLENGE;
       color = MyStyle.POSITIVE_BUDGET_COLOR;
     }
 
     return SizedBox.fromSize(
-      size: Size(56, 56), // button width and height
+      size: const Size(56, 56), // button width and height
       child: ClipOval(
         child: Material(
           color: color, // button color

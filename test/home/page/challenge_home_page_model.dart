@@ -4,17 +4,18 @@ import 'package:flutter_test/flutter_test.dart';
 import '../../page_model/page_model.dart';
 
 class ChallengeHomePageModel extends AbstractPageModel {
-
-  ChallengeHomePageModel(WidgetTester tester) : super(tester);
+  ChallengeHomePageModel(super.tester);
 
   Future<void> goChallengeTab() async {
     await tester.tap(find.text(i18n.challengeTab));
     await tester.pumpAndSettle();
   }
+
   Future<void> goRewardTab() async {
     await tester.tap(find.text(i18n.rewardTab));
     await tester.pumpAndSettle();
   }
+
   Future<void> goNewChallenge() async {
     await tester.tap(find.text(challengeI18n.newChallengeButton));
     await tester.pumpAndSettle();
@@ -24,7 +25,7 @@ class ChallengeHomePageModel extends AbstractPageModel {
   }
 
   Future<void> selectDay(int day) async {
-    await tester.tap(find.byKey(ValueKey('home_day_select')));
+    await tester.tap(find.byKey(const ValueKey('home_day_select')));
     await tester.pumpAndSettle();
     await tester.tap(find.text(day.toString()));
     await tester.pumpAndSettle();

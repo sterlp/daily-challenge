@@ -6,18 +6,16 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 
 // Consider https://pub.dev/packages/i18n
 abstract class AppLocalizationsDelegate<T> extends LocalizationsDelegate<T> {
-  static const List<LocalizationsDelegate<dynamic>> delegates = <LocalizationsDelegate<dynamic>>[
-    GlobalCupertinoLocalizations.delegate,
-    GlobalMaterialLocalizations.delegate,
-    GlobalWidgetsLocalizations.delegate,
+  static const List<LocalizationsDelegate<dynamic>> delegates =
+      <LocalizationsDelegate<dynamic>>[
+        GlobalCupertinoLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
 
-    ChallengeLocalizations.delegate,
-    ChallengeListLocalizations.delegate,
-  ];
-  static const List<Locale> locales = [
-    Locale('en'),
-    Locale('de'),
-  ];
+        ChallengeLocalizations.delegate,
+        ChallengeListLocalizations.delegate,
+      ];
+  static const List<Locale> locales = [Locale('en'), Locale('de')];
   const AppLocalizationsDelegate();
 
   @override
@@ -27,9 +25,12 @@ abstract class AppLocalizationsDelegate<T> extends LocalizationsDelegate<T> {
 
   @override
   Future<T> load(Locale locale) {
-    T result;
-    if (locale.languageCode == 'de') result = deLocale(locale);
-    else result = defaultLocale(locale);
+    late T result;
+    if (locale.languageCode == 'de') {
+      result = deLocale(locale);
+    } else {
+      result = defaultLocale(locale);
+    }
     return SynchronousFuture(result);
   }
 

@@ -1,34 +1,44 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_test/flutter_test.dart';
 import 'package:challengeapp/challengelist/i18n/challengelist_localization.dart';
 import 'package:challengeapp/i18n/challenge_localization_delegate.dart';
 import 'package:challengeapp/main.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_test/flutter_test.dart';
+
+import 'package:mockito/mockito.dart';
+
 import 'mock_app_context.dart';
 
-void main() async {
-  AppContextMock appContextMock;
-  final ChallengeLocalizations i18n = ChallengeLocalizations(Locale('en'));
-  final ChallengeListLocalizations challengeI18n = ChallengeListLocalizations(Locale('en'));
+void main() {
+  late AppContextMock appContextMock;
+  final ChallengeLocalizations i18n = ChallengeLocalizations(
+    const Locale('en'),
+  );
+  final ChallengeListLocalizations challengeI18n = ChallengeListLocalizations(
+    const Locale('en'),
+  );
 
-  setUp(() async {
+  setUp(() {
     appContextMock = AppContextMock();
+    when(
+      appContextMock.challengeServiceMock.completeChallengesName(any),
+    ).thenAnswer((_) => Future.value(<String>[]));
   });
 
   testWidgets('Challenge App start test', (WidgetTester tester) async {
-      final myApp = MyApp(container: appContextMock.appContext);
-      await tester.pumpWidget(myApp);
-      await tester.pumpAndSettle(); // yeah we have now to wait for flutter to load i18n resources, this is of course not documented
+    final myApp = MyApp(container: appContextMock.appContext);
+    await tester.pumpWidget(myApp);
+    await tester.pumpAndSettle(); // yeah we have now to wait for flutter to load i18n resources, this is of course not documented
 
-      // the main page should be shown
-      expect(find.text(i18n.appName), findsOneWidget);
-      expect(find.byIcon(Icons.add), findsOneWidget);
+    // the main page should be shown
+    expect(find.text(i18n.appName), findsOneWidget);
+    expect(find.byIcon(Icons.add), findsOneWidget);
 
-      // if we click + we we want to see the challenge page
-      await tester.tap(find.text(challengeI18n.newChallengeButton));
-      await tester.pumpAndSettle();
+    // if we click + we we want to see the challenge page
+    await tester.tap(find.text(challengeI18n.newChallengeButton));
+    await tester.pumpAndSettle();
 
-      // we should be able to create a challenge
-      expect(find.text(challengeI18n.createChallengeHeader), findsOneWidget);
-      expect(find.text(i18n.buttonCreate), findsOneWidget);
+    // we should be able to create a challenge
+    expect(find.text(challengeI18n.createChallengeHeader), findsOneWidget);
+    expect(find.text(i18n.buttonCreate), findsOneWidget);
   });
 }

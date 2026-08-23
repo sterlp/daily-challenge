@@ -1,4 +1,3 @@
-
 import 'package:challengeapp/common/model/attached_entity.dart';
 import 'package:challengeapp/credit/service/credit_service.dart';
 import 'package:challengeapp/reward/dao/bought_reward_dao.dart';
@@ -11,7 +10,7 @@ class RewardService {
   final BoughtRewardDao _boughtRewardDao;
   final CreditService _creditService;
 
-  final Map<int, Future<BoughtReward>> _cache = new Map();
+  final Map<int, Future<BoughtReward?>> _cache = {};
 
   RewardService(this._rewardDao, this._boughtRewardDao, this._creditService);
 
@@ -36,17 +35,17 @@ class RewardService {
     return _rewardDao.delete(reward.id);
   }
 
-  Future<BoughtReward> buyReward(Reward reward) async {
-    var boughtReward = BoughtReward.fromReward(reward);
-    boughtReward.boughtAt = DateTime.now();
+  Future<BoughtReward?> buyReward(Reward reward) async {
+    BoughtReward? boughtReward = BoughtReward.fromReward(reward)
+      ..boughtAt = DateTime.now();
     boughtReward = await _boughtRewardDao.save(boughtReward);
     _creditService.spendCredits(boughtReward.cost);
-    _cache[reward.id] = Future.value(boughtReward);
+    _cache[reward.id!] = Future.value(boughtReward);
     return boughtReward;
   }
 
-  Future<BoughtReward> getLastBoughtRewardByRewardId(int rewardId) {
-    Future<BoughtReward> result = _cache[rewardId];
+  Future<BoughtReward?> getLastBoughtRewardByRewardId(int rewardId) {
+    Future<BoughtReward?>? result = _cache[rewardId];
     if (result == null) {
       result = _boughtRewardDao.getMostRecentByRewardId(rewardId);
       _cache[rewardId] = result;
@@ -55,6 +54,6 @@ class RewardService {
   }
 
   Future<int> countBoughtRewards() {
-    return this._boughtRewardDao.countAll();
+    return _boughtRewardDao.countAll();
   }
 }

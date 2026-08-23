@@ -1,14 +1,14 @@
-import 'package:dependency_container/dependency_container.dart';
-import 'package:flutter_test/flutter_test.dart';
 import 'package:challengeapp/db/db_provider.dart';
 import 'package:challengeapp/reward/dao/reward_dao.dart';
 import 'package:challengeapp/reward/model/reward_model.dart';
+import 'package:dependency_container/dependency_container.dart';
+import 'package:flutter_test/flutter_test.dart';
 
 import '../../test_helper.dart';
 
 void main() {
-  AppContainer context;
-  RewardDao subject;
+  late AppContainer context;
+  late RewardDao subject;
 
   setUp(() async {
     context = testContainer();
@@ -22,9 +22,11 @@ void main() {
 
   test('Test save and load', () async {
     for (int i = 0; i < 10; ++i) {
-      await subject.save(Reward()
-        ..name = 'Foo $i'
-        ..cost = i);
+      await subject.save(
+        Reward()
+          ..name = 'Foo $i'
+          ..cost = i,
+      );
     }
     expect(await subject.countAll(), 10);
 

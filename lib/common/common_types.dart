@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:flutter_material_design_icons/flutter_material_design_icons.dart';
 
 class MyStyle {
-  static const COST_ICON = const Icon(Icons.star, color: Colors.amber);
-  static const GOAL_ICON = const Icon(MdiIcons.trophy, color: Colors.amber);
+  static const COST_ICON = Icon(Icons.star, color: Colors.amber);
+  static const GOAL_ICON = Icon(MdiIcons.trophy, color: Colors.amber);
 
-  static const REWARD_ICON = const Icon(MdiIcons.trophy, color: Colors.amber);
+  static const REWARD_ICON = Icon(MdiIcons.trophy, color: Colors.amber);
 
   static const ICON_DONE_CHALLENGE = Icons.star;
   static const ICON_PENDING_CHALLENGE = Icons.star_border;
@@ -13,6 +13,6 @@ class MyStyle {
 
   static const POSITIVE_BUDGET_COLOR = Colors.green;
 
-  static const EdgeInsets LIST_PADDING = const EdgeInsets.all(4);
-  static const Divider LIST_DIVIDER = const Divider(height: 1, thickness: 1.5,);
+  static const EdgeInsets LIST_PADDING = EdgeInsets.all(4);
+  static const Divider LIST_DIVIDER = Divider(height: 1, thickness: 1.5);
 }

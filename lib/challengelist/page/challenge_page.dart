@@ -16,11 +16,12 @@ import 'package:flutter_typeahead/flutter_typeahead.dart';
 class ChallengePage extends StatefulWidget {
   final Challenge challenge;
 
-  const ChallengePage({Key key, @required this.challenge}) : super(key: key);
+  const ChallengePage({super.key, required this.challenge});
 
   @override
   State<StatefulWidget> createState() => ChallengePageState();
 }
+
 class ChallengePageState extends FixedState<ChallengePage> {
   static final Logger _log = LoggerFactory.get<ChallengePage>();
   final _formKey = GlobalKey<FormState>();
@@ -29,19 +30,25 @@ class ChallengePageState extends FixedState<ChallengePage> {
   final TextEditingController _rewardController = TextEditingController();
 
   final TextEditingController _dueAtController = TextEditingController();
-  DateTime _dueAt;
+  DateTime? _dueAt;
   final TextEditingController _latestAtController = TextEditingController();
 
-  DateTime _latestAt;
-  ChallengeService _challengeService;
+  DateTime? _latestAt;
+  late ChallengeService _challengeService;
 
-  ChallengeListLocalizations _i18n;
-  ChallengeLocalizations _commonI18n;
+  late ChallengeListLocalizations _i18n;
+  late ChallengeLocalizations _commonI18n;
 
   @override
   void didChangeDependencies() {
-    _i18n = Localizations.of<ChallengeListLocalizations>(context, ChallengeListLocalizations);
-    _commonI18n = Localizations.of<ChallengeLocalizations>(context, ChallengeLocalizations);
+    _i18n = Localizations.of<ChallengeListLocalizations>(
+      context,
+      ChallengeListLocalizations,
+    )!;
+    _commonI18n = Localizations.of<ChallengeLocalizations>(
+      context,
+      ChallengeLocalizations,
+    )!;
     super.didChangeDependencies();
   }
 
@@ -50,11 +57,11 @@ class ChallengePageState extends FixedState<ChallengePage> {
     _challengeService = AppStateWidget.of(context).get<ChallengeService>();
     final c = widget.challenge;
 
-    c.dueAt ??= c.dueAt = DateTimeUtil.clearTime(DateTime.now());
-    c.latestAt ??= c.dueAt.add(Challenge.defaultChallengeWaitTime);
+    c.dueAt ??= DateTimeUtil.clearTime(DateTime.now());
+    c.latestAt ??= c.dueAt!.add(Challenge.defaultChallengeWaitTime);
 
     _nameController.text = c.name;
-    _rewardController.text = c.reward == null ? null : c.reward.toString();
+    _rewardController.text = c.reward.toString();
 
     _dueAt = c.dueAt;
     _dueAtController.text = _commonI18n.formatDate(_dueAt);
@@ -62,21 +69,24 @@ class ChallengePageState extends FixedState<ChallengePage> {
     _latestAtController.text = _commonI18n.formatDate(_latestAt);
   }
 
-  _save() async {
-    if (_formKey.currentState.validate()) {
+  Future<void> _save() async {
+    if (_formKey.currentState!.validate()) {
       var c = widget.challenge;
       c.name = _nameController.text;
-      if (_rewardController.text != "") c.reward = int.parse(_rewardController.text);
+      if (_rewardController.text != "") {
+        c.reward = int.parse(_rewardController.text);
+      }
       c.dueAt = _dueAt;
       c.latestAt = _latestAt;
       c = await _challengeService.save(c);
+      if (!mounted) return;
       _log.debug('saved challenge: $c dueAt: $_dueAt latest $_latestAt');
       Navigator.pop(context, true);
     }
   }
 
   int _headTabCount = 0;
-  _headTap() {
+  void _headTap() {
     ++_headTabCount;
     if (_headTabCount >= 10) {
       _headTabCount = 0;
@@ -86,15 +96,27 @@ class ChallengePageState extends FixedState<ChallengePage> {
           return AlertDialog(
             content: const Text('Replace data with presentation data?'),
             actions: <Widget>[
-              FlatButton(child: const Text('CANCEL'), onPressed: () => Navigator.of(context).pop()),
-              FlatButton(child: const Text('REPLACE ALL DATA'), onPressed: () => Navigator.of(context).pop(true))
+              TextButton(
+                child: const Text('CANCEL'),
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+              TextButton(
+                child: const Text('REPLACE ALL DATA'),
+                onPressed: () => Navigator.of(context).pop(true),
+              ),
             ],
           );
-        }
+        },
       ).then((value) async {
-        if (value != null && value == true)  {
+        // ignore: use_build_context_synchronously
+        if (value != null && value == true) {
+          // ignore: use_build_context_synchronously
           await AppStateWidget.of(context).get<TestData>().deleteAll();
-          await AppStateWidget.of(context).get<TestData>().generatePresentationData();
+          // ignore: use_build_context_synchronously
+          await AppStateWidget.of(context)
+              .get<TestData>()
+              .generatePresentationData();
+          // ignore: use_build_context_synchronously
           Navigator.pop(context, true);
         }
       });
@@ -109,6 +131,7 @@ class ChallengePageState extends FixedState<ChallengePage> {
     _latestAtController.dispose();
     super.dispose();
   }
+
   @override
   Widget build(BuildContext context) {
     final c = widget.challenge;
@@ -121,41 +144,49 @@ class ChallengePageState extends FixedState<ChallengePage> {
           onTap: _headTap,
         ),
         actions: <Widget>[
-          FlatButton(child: Text(_commonI18n.buttonSave(newChallenge)), onPressed: _save)
-        ]
+          TextButton(
+            child: Text(_commonI18n.buttonSave(newChallenge)),
+            onPressed: _save,
+          ),
+        ],
       ),
       // https://medium.com/flutterpub/create-beautiful-forms-with-flutter-47075cfe712
       body: InputForm(
         formKey: _formKey,
         children: <Widget>[
-          TypeAheadFormField<String>(
+          TypeAheadField<String>(
             key: const ValueKey('challenge_name'),
-            textFieldConfiguration: TextFieldConfiguration (
-              autofocus: true,
-              inputFormatters: [LengthLimitingTextInputFormatter(Challenge.NAME_LENGTH)],
-              controller: _nameController,
-              decoration: _i18n.challengeName.decorator,
-              textInputAction: TextInputAction.next,
-              onSubmitted: (v) {
-                FocusScope.of(context).nextFocus();
-              },
-            ),
+            controller: _nameController,
             suggestionsCallback: (pattern) {
-              if (pattern != null && pattern.length > 1) {
-                return _challengeService.completeChallengesName(pattern);
+              if (pattern.length > 1) {
+                return _challengeService
+                    .completeChallengesName(pattern)
+                    .then((names) => names.toList());
               }
               return null;
             },
-            suggestionsBoxDecoration: SuggestionsBoxDecoration(
-              color: Theme.of(context).backgroundColor,
-            ),
-            noItemsFoundBuilder: (context) => null,
-            itemBuilder: (context, suggestion) => ListTile(title: Text(suggestion)),
-            onSuggestionSelected: (suggestion) {
-              this._nameController.text = suggestion;
+            hideOnEmpty: true,
+            itemBuilder: (context, suggestion) =>
+                ListTile(title: Text(suggestion)),
+            onSelected: (suggestion) {
+              _nameController.text = suggestion;
               FocusScope.of(context).nextFocus();
             },
-            validator: (String v) => v.isNullOrEmpty ? _i18n.challengeName.nullError : null,
+            builder: (context, controller, focusNode) => TextFormField(
+              autofocus: true,
+              controller: controller,
+              focusNode: focusNode,
+              inputFormatters: [
+                LengthLimitingTextInputFormatter(Challenge.NAME_LENGTH),
+              ],
+              decoration: _i18n.challengeName.decorator,
+              textInputAction: TextInputAction.next,
+              onFieldSubmitted: (v) {
+                FocusScope.of(context).nextFocus();
+              },
+              validator: (String? v) =>
+                  v.isNullOrEmpty ? _i18n.challengeName.nullError : null,
+            ),
           ),
           TextFormField(
             controller: _dueAtController,
@@ -182,27 +213,33 @@ class ChallengePageState extends FixedState<ChallengePage> {
           ),
 
           TextFormField(
+            key: const ValueKey('challenge_reward'),
             controller: _rewardController,
-            validator: (String v) => v.isNullOrEmpty ? _i18n.challengeReward.nullError : null,
-            inputFormatters: [WhitelistingTextInputFormatter.digitsOnly],
+            validator: (String? v) =>
+                v.isNullOrEmpty ? _i18n.challengeReward.nullError : null,
+            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
             keyboardType: TextInputType.number,
             decoration: _i18n.challengeReward.decorator,
             textInputAction: TextInputAction.done,
-            onFieldSubmitted: (v) => _save()
+            onFieldSubmitted: (v) => _save(),
           ),
         ],
-      )
+      ),
     );
   }
 
   void _pickLatestAt(Challenge c, BuildContext context) {
-    showDatePicker(context: context, initialDate: _latestAt, firstDate: _dueAt,
-        lastDate: DateTime.now().add(const Duration(days: 365)),
-        helpText:_i18n.challengeLatestAt.hint,
+    showDatePicker(
+      context: context,
+      initialDate: _latestAt,
+      firstDate: _dueAt!,
+      lastDate: DateTime.now().add(const Duration(days: 365)),
+      helpText: _i18n.challengeLatestAt.hint,
     ).then((date) {
       if (date != null) {
         _latestAt = date;
         _latestAtController.text = _commonI18n.formatDate(_latestAt);
+        // ignore: use_build_context_synchronously
         FocusScope.of(context).nextFocus();
       }
     });
@@ -210,20 +247,23 @@ class ChallengePageState extends FixedState<ChallengePage> {
 
   void _pickDueAt(Challenge c, BuildContext context) {
     final now = DateTime.now();
-    showDatePicker(context: context, initialDate: _dueAt,
-        firstDate: now.isAfter(_dueAt) ? _dueAt : now,
-        lastDate: now.add(const Duration(days: 365)),
-        helpText: _i18n.challengeDueAt.hint
-      ).then((date) {
-        if (date != null) {
-          _dueAt = date;
-          _dueAtController.text = _commonI18n.formatDate(_dueAt);
-          if (date.isAfter(_latestAt)) {
-            _latestAt = _dueAt;
-            _latestAtController.text = _commonI18n.formatDate(date);
-          }
-          FocusScope.of(context).nextFocus();
+    showDatePicker(
+      context: context,
+      initialDate: _dueAt,
+      firstDate: now.isAfter(_dueAt!) ? _dueAt! : now,
+      lastDate: now.add(const Duration(days: 365)),
+      helpText: _i18n.challengeDueAt.hint,
+    ).then((date) {
+      if (date != null) {
+        _dueAt = date;
+        _dueAtController.text = _commonI18n.formatDate(_dueAt);
+        if (_latestAt != null && date.isAfter(_latestAt!)) {
+          _latestAt = _dueAt;
+          _latestAtController.text = _commonI18n.formatDate(date);
         }
+        // ignore: use_build_context_synchronously
+        FocusScope.of(context).nextFocus();
+      }
     });
   }
 }

@@ -1,4 +1,4 @@
-extension TextUtilsStringExtension on String {
+extension TextUtilsStringExtension on String? {
   /// Returns true if string is:
   /// - null
   /// - empty
@@ -6,5 +6,5 @@ extension TextUtilsStringExtension on String {
   ///
   /// Characters considered "whitespace" are listed [here](https://stackoverflow.com/a/59826129/10830091).
   bool get isNullOrEmpty =>
-      this == null || this.isEmpty || this.trim().isEmpty;
+      this == null || this!.isEmpty || this!.trim().isEmpty;
 }

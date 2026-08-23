@@ -13,15 +13,14 @@ class CreditService {
   static final Logger _log = LoggerFactory.get<CreditService>();
   final ChallengeDao _challengeDao;
   final BoughtRewardDao _boughtRewardDao;
-  final _credit = ValueNotifier<int>(null);
+  final _credit = ValueNotifier<int>(0);
 
   CreditService(this._challengeDao, this._boughtRewardDao);
 
   ValueNotifier<int> get creditNotifier => _credit;
 
   Future<int> get credit {
-    if (_credit.value == null) return calcTotal();
-    else return Future.value(_credit.value);
+    return Future.value(_credit.value);
   }
 
   Future<int> calcTotal() {
@@ -31,16 +30,23 @@ class CreditService {
     final failed = _challengeDao.sumByStatus(ChallengeStatus.failed);
     final spend = _boughtRewardDao.sum();
 
-    Future.wait([done, failed, spend]).then((values) {
-      final int done = values[0];
-      final int failed = values[1];
-      final int spend = values[2];
-      final int result = done - failed - spend;
-      _log.finishSync('calcTotal -> done($done) - failed($failed) - spend($spend) = $result');
+    Future.wait([done, failed, spend]).then(
+      (values) {
+        final int done = values[0];
+        final int failed = values[1];
+        final int spend = values[2];
+        final int result = done - failed - spend;
+        _log.finishSync(
+          'calcTotal -> done($done) - failed($failed) - spend($spend) = $result',
+        );
 
-      if (_credit.value != result) _credit.value = result;
-      completer.complete(result);
-    }).catchError((e) => completer.completeError(e));
+        if (_credit.value != result) _credit.value = result;
+        completer.complete(result);
+      },
+      onError: (Object e) {
+        completer.completeError(e);
+      },
+    );
     return completer.future;
   }
 

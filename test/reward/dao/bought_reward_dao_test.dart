@@ -1,13 +1,13 @@
-import 'package:dependency_container/dependency_container.dart';
-import 'package:flutter_test/flutter_test.dart';
 import 'package:challengeapp/reward/dao/bought_reward_dao.dart';
 import 'package:challengeapp/reward/model/bought_reward_model.dart';
+import 'package:dependency_container/dependency_container.dart';
+import 'package:flutter_test/flutter_test.dart';
 
 import '../../test_helper.dart';
 
 void main() {
-  AppContainer context;
-  BoughtRewardDao subject;
+  late AppContainer context;
+  late BoughtRewardDao subject;
 
   setUp(() {
     context = testContainer();
@@ -20,11 +20,13 @@ void main() {
 
   test('Test save and load', () async {
     for (int i = 0; i < 10; ++i) {
-      await subject.save(BoughtReward()
-        ..name = 'Foo $i'
-        ..cost = i
-        ..rewardId = 1
-        ..boughtAt = DateTime.now().add(Duration(days: i)));
+      await subject.save(
+        BoughtReward()
+          ..name = 'Foo $i'
+          ..cost = i
+          ..rewardId = 1
+          ..boughtAt = DateTime.now().add(Duration(days: i)),
+      );
     }
     expect(await subject.countAll(), 10);
 
@@ -41,19 +43,23 @@ void main() {
   });
 
   test('Test getMostRecentByRewardId', () async {
-      await subject.save(BoughtReward()
+    await subject.save(
+      BoughtReward()
         ..name = 'Old Foo'
         ..rewardId = 1
-        ..boughtAt = DateTime.now().add(Duration(days: -1)));
-      await subject.save(BoughtReward()
+        ..boughtAt = DateTime.now().add(const Duration(days: -1)),
+    );
+    await subject.save(
+      BoughtReward()
         ..name = 'New Foo'
         ..rewardId = 1
-        ..boughtAt = DateTime.now());
+        ..boughtAt = DateTime.now(),
+    );
 
-      var reward = await subject.getMostRecentByRewardId(1);
-      expect(reward.name, 'New Foo');
+    var reward = await subject.getMostRecentByRewardId(1);
+    expect(reward!.name, 'New Foo');
 
-      reward = await subject.getMostRecentByRewardId(2);
-      expect(reward, isNull);
+    reward = await subject.getMostRecentByRewardId(2);
+    expect(reward, isNull);
   });
 }

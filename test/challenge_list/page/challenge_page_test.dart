@@ -1,11 +1,10 @@
 import 'package:challengeapp/challengelist/i18n/challengelist_localization.dart';
+import 'package:challengeapp/challengelist/model/challenge_model.dart';
+import 'package:challengeapp/i18n/challenge_localization_delegate.dart';
+import 'package:challengeapp/main.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:challengeapp/challengelist/model/challenge_model.dart';
-import 'package:challengeapp/challengelist/service/challenge_service.dart';
-import 'package:challengeapp/i18n/challenge_localization_delegate.dart';
-import 'package:challengeapp/main.dart';
 import 'package:mockito/mockito.dart';
 
 import '../../home/page/challenge_home_page_model.dart';
@@ -13,19 +12,27 @@ import '../../mock_app_context.dart';
 import 'challenge_page_model.dart';
 
 void main() {
-  AppContextMock appContextMock;
+  late AppContextMock appContextMock;
   final commonI18n = ChallengeLocalizations(const Locale('en'));
   final challengeI18n = ChallengeListLocalizations(const Locale('en'));
 
-  setUp(() async {
+  setUp(() {
     appContextMock = AppContextMock();
+    when(
+      appContextMock.challengeServiceMock.completeChallengesName(any),
+    ).thenAnswer((_) => Future.value(<String>[]));
+    when(appContextMock.challengeServiceMock.save(any)).thenAnswer(
+      (invocation) => Future.value(
+        invocation.positionalArguments[0] as Challenge,
+      ),
+    );
   });
 
   testWidgets('Create challenge test', (WidgetTester tester) async {
     final homeModel = ChallengeHomePageModel(tester);
     final challengePageModel = ChallengePageModel(tester);
 
-    final challengeService = appContextMock.appContext.get<ChallengeService>();
+    final challengeService = appContextMock.challengeServiceMock;
     final DateTime now = DateTime.now();
 
     final startChallenge = DateTime(now.year, now.month, 10);
@@ -56,7 +63,8 @@ void main() {
     // enter reward
     await challengePageModel.enterReward(6);
 
-    final c = verify(challengeService.save(captureAny)).captured.single as Challenge;
+    final c =
+        verify(challengeService.save(captureAny)).captured.single as Challenge;
     expect(c.name, 'Test Challenge');
     expect(c.reward, 6);
     expect(c.createdAt, isNotNull);
@@ -65,17 +73,20 @@ void main() {
     expect(c.latestAt, dateLatest);
   });
 
-  testWidgets('Shows info if only today left to finish challenge', (WidgetTester tester) async {
+  testWidgets('Shows info if only today left to finish challenge', (
+    WidgetTester tester,
+  ) async {
     final now = DateTime.now();
-    appContextMock.challenges.add(Challenge.of('First')
+    appContextMock.challenges.add(
+      Challenge.of('First')
         ..dueAt = now
-        ..latestAt = now
+        ..latestAt = now,
     );
-    appContextMock.challenges.add(Challenge.of('Second')
-      ..dueAt = now.add(const Duration(days: -1))
-      ..latestAt = now
+    appContextMock.challenges.add(
+      Challenge.of('Second')
+        ..dueAt = now.add(const Duration(days: -1))
+        ..latestAt = now,
     );
-
 
     final myApp = MyApp(container: appContextMock.appContext);
     await tester.pumpWidget(myApp);
@@ -84,8 +95,9 @@ void main() {
     expect(find.text('First'), findsOneWidget);
     expect(find.text('Second'), findsOneWidget);
 
-    expect(find.text(challengeI18n.challengeWillFail(const Duration())), findsNWidgets(2));
-
+    expect(
+      find.text(challengeI18n.challengeWillFail(Duration.zero)),
+      findsNWidgets(2),
+    );
   });
-
 }

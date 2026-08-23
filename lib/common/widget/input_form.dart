@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 // https://gist.github.com/rubensdemelo/6d441b0ce685581044a255842be25d0b
 // https://chromium.googlesource.com/external/github.com/flutter/flutter/+/refs/heads/dev/packages/flutter/lib/src/material/text_form_field.dart
 class InputForm extends StatelessWidget {
-  final GlobalKey<FormState> formKey;
+  final GlobalKey<FormState>? formKey;
   final List<Widget> children;
 
   /// ```dart
@@ -39,7 +39,7 @@ class InputForm extends StatelessWidget {
   ///      ],
   //      )
   // ```
-  const InputForm({Key key, this.formKey, this.children}) : super(key: key);
+  const InputForm({super.key, this.formKey, required this.children});
 
   @override
   Widget build(BuildContext context) {
@@ -47,19 +47,20 @@ class InputForm extends StatelessWidget {
       child: FocusTraversalGroup(
         child: Form(
           key: formKey,
-          autovalidate: true,
+          autovalidateMode: AutovalidateMode.always,
           onChanged: () {
-            var form = Form.of(primaryFocus.context);
-            if (form == null) form = formKey.currentState;
-            if (form != null) form.save();
-            // print('Save form $form ${formKey.currentState}');
+            final focusContext = primaryFocus?.context;
+            final form = focusContext == null
+                ? null
+                : Form.maybeOf(focusContext);
+            (form ?? formKey?.currentState)?.save();
           },
           child: ListView(
-            padding: EdgeInsets.symmetric(horizontal: 16.0),
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
             children: children,
-          )
-        )
-      )
+          ),
+        ),
+      ),
     );
   }
 }

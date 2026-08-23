@@ -6,7 +6,8 @@ class DbV1 extends DbUpdate {
 
   @override
   Future<void> update(Database db) {
-    return db.execute('''CREATE TABLE IF NOT EXISTS CHALLENGE (
+    return db.execute('''
+CREATE TABLE IF NOT EXISTS CHALLENGE (
           id integer PRIMARY KEY AUTOINCREMENT,
           name text NOT NULL,
           status varchar(10) DEFAULT 'open',

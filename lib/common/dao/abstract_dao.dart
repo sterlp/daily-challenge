@@ -12,45 +12,66 @@ abstract class AbstractDao<T extends AbstractEntity> {
   Future<DatabaseExecutor> get dbExecutor => _db;
 
   AttachedEntity<T> attach(T entity) {
-    return AttachedEntity<T>(entity.id, entity,
-        reload, save, deleteEntity, insert
+    return AttachedEntity<T>(
+      entity.id!,
+      entity,
+      reload,
+      save,
+      deleteEntity,
+      insert,
     );
   }
 
   Future<AttachedEntity<T>> getAttached(int id) async {
-    return AttachedEntity<T>(id, await getById(id),
-        reload, save, deleteEntity, insert);
+    return AttachedEntity<T>(
+      id,
+      (await getById(id))!,
+      reload,
+      save,
+      deleteEntity,
+      insert,
+    );
   }
 
-  Future<T> reload(T e) async {
-    return getById(e.id);
+  Future<T?> reload(T e) {
+    return getById(e.id!);
   }
 
-  Future<T> getById(int id) async {
-    assert(id != null);
-
+  Future<T?> getById(int id) async {
     final db = await dbExecutor;
     final List<Map<String, dynamic>> results = await db.query(
-        tableName,
-        where: "id = ?",
-        whereArgs: [id]);
-    assert(results.length <= 1, 'Get by ID should return only one element but returned ${results.length} elements.');
-    return results.length == 0 ? null : fromMap(results[0]);
+      tableName,
+      where: "id = ?",
+      whereArgs: [id],
+    );
+    assert(
+      results.length <= 1,
+      'Get by ID should return only one element but returned ${results.length} elements.',
+    );
+    return results.isEmpty ? null : fromMap(results[0]);
   }
 
-  Future<List<T>> loadAll({bool distinct,
-      String where,
-      List<dynamic> whereArgs,
-      String groupBy,
-      String having,
-      String orderBy,
-      int limit,
-      int offset}) async {
-
+  Future<List<T>> loadAll({
+    bool? distinct,
+    String? where,
+    List<Object?>? whereArgs,
+    String? groupBy,
+    String? having,
+    String? orderBy,
+    int? limit,
+    int? offset,
+  }) async {
     final db = await dbExecutor;
-    final List<Map<String, dynamic>> results = await db.query(tableName,
-        where: where, whereArgs: whereArgs, groupBy: groupBy, having: having,
-        orderBy: orderBy, limit: limit, offset: offset);
+    final List<Map<String, dynamic>> results = await db.query(
+      tableName,
+      where: where,
+      whereArgs: whereArgs,
+      groupBy: groupBy,
+      having: having,
+      orderBy: orderBy,
+      limit: limit,
+      offset: offset,
+    );
 
     return results.map((e) => fromMap(e)).toList();
   }
@@ -60,7 +81,7 @@ abstract class AbstractDao<T extends AbstractEntity> {
     return db.delete(tableName);
   }
 
-  Future<int> delete(int id) async {
+  Future<int> delete(int? id) async {
     if (id == null) return 0;
 
     final db = await dbExecutor;
@@ -68,25 +89,25 @@ abstract class AbstractDao<T extends AbstractEntity> {
   }
 
   Future<T> deleteEntity(T e) async {
-    if (e == null || e.id == null) return SynchronousFuture(e);
+    if (e.id == null) return SynchronousFuture(e);
 
     await delete(e.id);
     return e;
   }
 
   Future<List<T>> saveAll(List<T> entities) async {
-    assert(entities != null);
-
-    for(T e in entities) await save(e);
+    for (final T e in entities) {
+      await save(e);
+    }
 
     return entities;
   }
+
   ///
   /// Checks if the id is set of the entity and either calls insert or update
   ///
   Future<T> save(T entity) async {
-    assert(entity != null);
-    T result;
+    late T result;
     if (entity.id == null) {
       result = await insert(entity);
     } else {
@@ -94,19 +115,23 @@ abstract class AbstractDao<T extends AbstractEntity> {
     }
     return result;
   }
-  Future<T> insert(T entity) async {
-    assert(entity != null);
 
+  Future<T> insert(T entity) async {
     final db = await dbExecutor;
     entity.id = await db.insert(tableName, toMap(entity));
     return entity;
   }
+
   Future<T> update(T entity) async {
-    assert(entity != null);
     assert(entity.id != null);
 
     final db = await dbExecutor;
-    await db.update(tableName, toMap(entity), where: "id = ?", whereArgs: [entity.id]);
+    await db.update(
+      tableName,
+      toMap(entity),
+      where: "id = ?",
+      whereArgs: [entity.id],
+    );
     // if (count == 0) _log.warn('Record not found anymore to update $entity');
     return entity;
   }

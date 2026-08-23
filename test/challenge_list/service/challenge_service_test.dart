@@ -1,17 +1,17 @@
-import 'package:challengeapp/util/date.dart';
-import 'package:dependency_container/dependency_container.dart';
-import 'package:flutter_test/flutter_test.dart';
 import 'package:challengeapp/challengelist/dao/challenge_dao.dart';
 import 'package:challengeapp/challengelist/model/challenge_model.dart';
 import 'package:challengeapp/challengelist/service/challenge_service.dart';
 import 'package:challengeapp/db/test_data.dart';
+import 'package:challengeapp/util/date.dart';
+import 'package:dependency_container/dependency_container.dart';
+import 'package:flutter_test/flutter_test.dart';
 
 import '../../test_helper.dart';
 
 void main() {
-  AppContainer appContext;
-  ChallengeDao challengeDao;
-  ChallengeService challengeService;
+  late AppContainer appContext;
+  late ChallengeDao challengeDao;
+  late ChallengeService challengeService;
 
   setUp(() async {
     appContext = testContainer();
@@ -20,9 +20,8 @@ void main() {
     challengeService = appContext.get<ChallengeService>();
   });
 
-  tearDown(() async {
+  tearDown(() {
     appContext.close();
-    appContext = null;
   });
 
   test("Test generateTestData", () async {
@@ -31,55 +30,65 @@ void main() {
   });
 
   test("Test complete", () async {
-
-    final c = await challengeService.save(Challenge.of("Test 1")
-      ..reward = 20);
+    final c = await challengeService.save(Challenge.of("Test 1")..reward = 20);
 
     final result = await challengeService.complete([c]);
     expect(result, 20);
 
-    expect( (await challengeDao.getById(c.id)).status, ChallengeStatus.done);
+    expect((await challengeDao.getById(c.id!))!.status, ChallengeStatus.done);
   });
 
   test("Test fail calculation of points", () async {
-    await challengeService.save(Challenge.of("Test 1")
-      ..status = ChallengeStatus.done
-      ..reward = 9);
-    final c = await challengeService.save(Challenge.of("Test 1")
-      ..latestAt = DateTime.now().add(const Duration(days: -1))
-      ..reward = 15);
+    await challengeService.save(
+      Challenge.of("Test 1")
+        ..status = ChallengeStatus.done
+        ..reward = 9,
+    );
+    final c = await challengeService.save(
+      Challenge.of("Test 1")
+        ..latestAt = DateTime.now().add(const Duration(days: -1))
+        ..reward = 15,
+    );
 
     final result = await challengeService.failOverDue([c]);
     expect(result, -6);
-    expect(ChallengeStatus.failed, (await challengeService.getById(c.id)).status);
+    expect(
+      ChallengeStatus.failed,
+      (await challengeService.getById(c.id!))!.status,
+    );
   });
 
   test("Test fail date", () async {
-    final c = await challengeService.save(Challenge.of("Test 1")
-      ..latestAt = DateTime.now().add(const Duration(days: -2))
-      ..reward = 15);
+    final c = await challengeService.save(
+      Challenge.of("Test 1")
+        ..latestAt = DateTime.now().add(const Duration(days: -2))
+        ..reward = 15,
+    );
 
     await challengeService.failOverDue([c]);
-    expect( DateTimeUtil.midnight(DateTime.now()), (await challengeService.getById(c.id)).doneAt);
+    expect(
+      DateTimeUtil.midnight(DateTime.now()),
+      (await challengeService.getById(c.id!))!.doneAt,
+    );
   });
 
   test("Do not fail challenge same day today", () async {
-    final c = await challengeService.save(Challenge.of("Test 1")
-      ..latestAt = DateTime.now().add(const Duration(minutes: -1))
-      ..reward = 15);
+    final c = await challengeService.save(
+      Challenge.of("Test 1")
+        ..latestAt = DateTime.now().add(const Duration(minutes: -1))
+        ..reward = 15,
+    );
 
     var result = await challengeService.failOverDue([c]);
     expect(result, 0);
 
-    c.latestAt = c.latestAt.add(const Duration(days: -1));
+    c.latestAt = c.latestAt!.add(const Duration(days: -1));
     result = await challengeService.failOverDue([c]);
     expect(result, -15);
   });
 
   test("Test incomplete", () async {
-
-    final c = await challengeService.save(Challenge.of("Test 1")
-      ..reward = 20);
+    final c = await challengeService.save(Challenge.of("Test 1")..reward = 20);
 
     var result = await challengeService.complete([c]);
     expect(result, 20);
@@ -92,7 +101,6 @@ void main() {
   });
 
   test("Test count complete", () async {
-
     await challengeService.save(Challenge.of("Foo"));
     await challengeService.save(Challenge.of("Bar"));
 
@@ -108,15 +116,21 @@ void main() {
   test("Will fail overdue challenges", () async {
     final now = DateTime.now();
 
-    await challengeService.save(Challenge.of("Day before yesterday")
-      ..dueAt = now.add(const Duration(days: -2))
-      ..latestAt = now.add(const Duration(days: -1)));
-    await challengeService.save(Challenge.of("Yesterday")
-      ..dueAt = now.add(const Duration(days: -1))
-      ..latestAt = now.add(const Duration(days: -1)));
-    await challengeService.save(Challenge.of("Today")
-      ..dueAt = now
-      ..latestAt = now);
+    await challengeService.save(
+      Challenge.of("Day before yesterday")
+        ..dueAt = now.add(const Duration(days: -2))
+        ..latestAt = now.add(const Duration(days: -1)),
+    );
+    await challengeService.save(
+      Challenge.of("Yesterday")
+        ..dueAt = now.add(const Duration(days: -1))
+        ..latestAt = now.add(const Duration(days: -1)),
+    );
+    await challengeService.save(
+      Challenge.of("Today")
+        ..dueAt = now
+        ..latestAt = now,
+    );
 
     // load only today
     var result = await challengeService.loadByDate(now, false);
@@ -133,29 +147,35 @@ void main() {
     expect(result[2].status, ChallengeStatus.failed);
   });
 
-  test("Sort overdue and current by latestAt Date, failed in the ned", () async {
-    final now = DateTime.now();
+  test(
+    "Sort overdue and current by latestAt Date, failed in the ned",
+    () async {
+      final now = DateTime.now();
 
-    await challengeService.save(Challenge.of("Failed")
-      ..dueAt = now.add(const Duration(days: -2))
-      ..latestAt = now.add(const Duration(days: -1)));
+      await challengeService.save(
+        Challenge.of("Failed")
+          ..dueAt = now.add(const Duration(days: -2))
+          ..latestAt = now.add(const Duration(days: -1)),
+      );
 
-    await challengeService.save(Challenge.of("Overdue")
-      ..dueAt = now.add(const Duration(days: -2))
-      ..latestAt = now);
+      await challengeService.save(
+        Challenge.of("Overdue")
+          ..dueAt = now.add(const Duration(days: -2))
+          ..latestAt = now,
+      );
 
-    await challengeService.save(Challenge.of("New")
-      ..dueAt = now);
+      await challengeService.save(Challenge.of("New")..dueAt = now);
 
-    await challengeService.save(Challenge.of("Tomorrow")
-      ..dueAt = now.add(const Duration(days: 1)));
+      await challengeService.save(
+        Challenge.of("Tomorrow")..dueAt = now.add(const Duration(days: 1)),
+      );
 
-    final result = await challengeService.loadByDate(now, true);
-    expect(result.length, 3);
+      final result = await challengeService.loadByDate(now, true);
+      expect(result.length, 3);
 
-    expect(result[0].name, 'New');
-    expect(result[1].name, 'Overdue');
-    expect(result[2].name, 'Failed');
-
-  });
+      expect(result[0].name, 'New');
+      expect(result[1].name, 'Overdue');
+      expect(result[2].name, 'Failed');
+    },
+  );
 }

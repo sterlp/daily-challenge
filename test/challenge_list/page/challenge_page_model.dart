@@ -3,10 +3,10 @@ import 'package:flutter_test/flutter_test.dart';
 
 import '../../page_model/page_model.dart';
 
-class ChallengePageModel extends AbstractPageModel  {
-  ChallengePageModel(WidgetTester tester) : super(tester);
+class ChallengePageModel extends AbstractPageModel {
+  ChallengePageModel(super.tester);
 
-  Finder get nameInput => find.byKey(ValueKey('challenge_name'));
+  Finder get nameInput => find.byKey(const ValueKey('challenge_name'));
 
   Future<void> enterName(String value) async {
     await tester.enterText(nameInput, value);
@@ -32,8 +32,10 @@ class ChallengePageModel extends AbstractPageModel  {
   }
 
   Future<void> enterReward(int reward) async {
-    await tester.tap(find.text(challengeI18n.challengeReward.label));
-    await tester.enterText(find.byType(TextFormField).at(2), reward.toString());
+    await tester.enterText(
+      find.byKey(const ValueKey('challenge_reward')),
+      reward.toString(),
+    );
     await tester.tap(find.text(i18n.buttonCreate));
     await tester.pumpAndSettle();
   }

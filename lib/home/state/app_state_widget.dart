@@ -11,13 +11,13 @@ class AppStateWidget extends StatefulWidget {
   final AppContainer context;
   final Widget child;
 
-  AppStateWidget({Key key, @required this.context, @required this.child}) : super(key: key) {
-    assert(context != null);
-    assert(child != null);
-  }
+  @Deprecated('Using the Flutter AppState is harmful.')
+  const AppStateWidget({super.key, required this.context, required this.child});
 
   static AppContainer of(BuildContext context) {
-    return context.dependOnInheritedWidgetOfExactType<_InheritedDiContainer>().context;
+    return context
+        .dependOnInheritedWidgetOfExactType<_InheritedDiContainer>()!
+        .context;
   }
 
   @override
@@ -29,9 +29,10 @@ class _AppStateWidgetState extends State<AppStateWidget> {
   Widget build(BuildContext context) {
     return _InheritedDiContainer(widget.context, child: widget.child);
   }
+
   @override
   void dispose() {
-    widget.context?.close();
+    widget.context.close();
     super.dispose();
   }
 }
@@ -40,14 +41,13 @@ class _InheritedDiContainer extends InheritedWidget {
   static final Logger _log = LoggerFactory.get<AppStateWidget>();
   final AppContainer context;
 
-  const _InheritedDiContainer(this.context, {Key key, @required Widget child})
-      : super(key: key, child: child);
+  const _InheritedDiContainer(this.context, {required super.child});
 
   @override
   bool updateShouldNotify(InheritedWidget oldWidget) {
     bool result;
     if (oldWidget is _InheritedDiContainer) {
-      result = oldWidget.context != this.context;
+      result = oldWidget.context != context;
     } else {
       result = this != oldWidget;
     }

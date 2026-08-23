@@ -14,31 +14,32 @@ import 'package:dependency_container/dependency_container.dart';
 import 'package:flutter/material.dart';
 
 class RewardShopPage extends StatefulWidget {
-  final AppContainer appContext;
-  
-  RewardShopPage({Key key, this.appContext}) : super(key: key);
+  final AppContainer? appContext;
+
+  const RewardShopPage({super.key, this.appContext});
 
   @override
   _RewardShopPageState createState() => _RewardShopPageState();
 }
 
-class _RewardShopPageState extends FixedState<RewardShopPage> with ScrollViewPositionListener<RewardShopPage> {
+class _RewardShopPageState extends FixedState<RewardShopPage>
+    with ScrollViewPositionListener<RewardShopPage> {
   static final Logger _log = LoggerFactory.get<RewardShopPage>();
 
-  AppContainer _appContext;
-  RewardService _rewardService;
-  CreditService _creditService;
-  List<Reward> _rewards;
-  ValueNotifier<int> _totalCredit;
+  late AppContainer _appContext;
+  late RewardService _rewardService;
+  late CreditService _creditService;
+  List<Reward>? _rewards;
+  late ValueNotifier<int> _totalCredit;
 
-  void _reload() async {
+  Future<void> _reload() async {
     if (mounted) {
       try {
         _log.startSync('Reload ...');
         await _creditService.credit;
         _rewards = await _rewardService.listRewards(999, 0);
         if (mounted) setState(() {});
-      } catch(e) {
+      } catch (e) {
         _log.error('Reload failed.', e);
       } finally {
         _log.finishSync();
@@ -48,16 +49,22 @@ class _RewardShopPageState extends FixedState<RewardShopPage> with ScrollViewPos
 
   void _deleteReward(Reward r) {
     _log.debug('delete reward $r');
-    setState(() => _rewards.remove(r));
+    setState(() => _rewards!.remove(r));
   }
+
   void _undoDeleteReward(Reward r) {
     _log.debug('undo delete reward $r');
     _reload();
   }
 
-  void _createReward() async {
-    var result = await Navigator.push(context, MaterialPageRoute<Reward>(builder: (BuildContext context) =>
-        RewardPage(reward: Reward()), fullscreenDialog: true));
+  Future<void> _createReward() async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute<Reward>(
+        builder: (BuildContext context) => RewardPage(reward: Reward()),
+        fullscreenDialog: true,
+      ),
+    );
     _log.debug('RewardPage returned with $result');
     if (result != null) _reload();
   }
@@ -66,11 +73,11 @@ class _RewardShopPageState extends FixedState<RewardShopPage> with ScrollViewPos
     _log.debug('_buildBody has data ${_rewards != null} ...');
     Widget result;
     if (_rewards == null) {
-      result = LoadingWidget();
-    } else if (_rewards.isEmpty) {
+      result = const LoadingWidget();
+    } else if (_rewards!.isEmpty) {
       result = _buildEmptyStore(context);
     } else {
-      result = _buildResult(context, _rewards);
+      result = _buildResult(context, _rewards!);
     }
     return result;
   }
@@ -83,7 +90,7 @@ class _RewardShopPageState extends FixedState<RewardShopPage> with ScrollViewPos
 
   @override
   void didChangeDependencies() {
-    _appContext = widget.appContext == null ? AppStateWidget.of(context) : widget.appContext;
+    _appContext = widget.appContext ?? AppStateWidget.of(context);
     _rewardService = _appContext.get<RewardService>();
     _creditService = _appContext.get<CreditService>();
     _totalCredit = _creditService.creditNotifier;
@@ -92,7 +99,6 @@ class _RewardShopPageState extends FixedState<RewardShopPage> with ScrollViewPos
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       body: _buildBody(context),
       floatingActionButton: ValueListenableBuilder<bool>(
@@ -125,12 +131,12 @@ class _RewardShopPageState extends FixedState<RewardShopPage> with ScrollViewPos
           children: <Widget>[
             const Spacer(),
             Padding(
-              padding: EdgeInsets.fromLTRB(16, 8, 16, 8),
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
               child: TotalPointsWidget(_totalCredit),
-            )
+            ),
           ],
-        )
-      )
+        ),
+      ),
     );
   }
 
@@ -141,15 +147,23 @@ class _RewardShopPageState extends FixedState<RewardShopPage> with ScrollViewPos
       controller: scrollController,
       itemBuilder: (BuildContext context, int index) {
         final reward = rewards[index];
-        return RewardCardWidget(reward, _totalCredit,
-            _deleteReward, _undoDeleteReward,
-            key: ObjectKey(reward)
+        return RewardCardWidget(
+          reward,
+          _totalCredit,
+          _deleteReward,
+          _undoDeleteReward,
+          key: ObjectKey(reward),
         );
-      }
+      },
     );
   }
 
   Widget _buildEmptyStore(BuildContext context) {
-    return Center(child: Text('No rewards created yet', style: Theme.of(context).textTheme.headline5));
+    return Center(
+      child: Text(
+        'No rewards created yet',
+        style: Theme.of(context).textTheme.headlineSmall,
+      ),
+    );
   }
 }

@@ -13,53 +13,64 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 class ChallengeWidget extends StatefulWidget {
   final AppContainer appContainer;
   final Challenge challenge;
-  final ValueChanged<Challenge> deleteCallback;
-  final ValueChanged<Challenge> undoDeleteCallback;
+  final ValueChanged<Challenge>? deleteCallback;
+  final ValueChanged<Challenge>? undoDeleteCallback;
 
-  const ChallengeWidget(this.appContainer, this.challenge,
-      {Key key, this.deleteCallback, this.undoDeleteCallback}) : super(key: key);
+  const ChallengeWidget(
+    this.appContainer,
+    this.challenge, {
+    super.key,
+    this.deleteCallback,
+    this.undoDeleteCallback,
+  });
 
   @override
   _ChallengeWidgetState createState() => _ChallengeWidgetState();
 }
 
 class _ChallengeWidgetState extends State<ChallengeWidget> {
-  static const _notOpenTextStyle = TextStyle(decoration: TextDecoration.lineThrough);
+  static const _notOpenTextStyle = TextStyle(
+    decoration: TextDecoration.lineThrough,
+  );
   static const _edge = EdgeInsets.all(4.0);
 
-  AttachedEntity<Challenge> _attached;
-  TextStyle _overDueStyle;
+  AttachedEntity<Challenge>? _attached;
+  late TextStyle _overDueStyle;
 
-  ChallengeListLocalizations _i18n;
-  ChallengeLocalizations _commonI18n;
+  late ChallengeListLocalizations _i18n;
+  late ChallengeLocalizations _commonI18n;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _i18n = Localizations.of<ChallengeListLocalizations>(context, ChallengeListLocalizations);
-    _commonI18n = Localizations.of<ChallengeLocalizations>(context, ChallengeLocalizations);
-    _overDueStyle = TextStyle(color: Theme.of(context).errorColor);
-    if (_attached != null) {
-      _attached.close();
-      _attached = null;
-    }
+    _i18n = Localizations.of<ChallengeListLocalizations>(
+      context,
+      ChallengeListLocalizations,
+    )!;
+    _commonI18n = Localizations.of<ChallengeLocalizations>(
+      context,
+      ChallengeLocalizations,
+    )!;
+    _overDueStyle = TextStyle(color: Theme.of(context).colorScheme.error);
+    _attached?.close();
+    _attached = null;
   }
+
   @override
   void dispose() {
-    if (_attached != null) {
-      _attached.close();
-      _attached = null;
-    }
+    _attached?.close();
+    _attached = null;
     super.dispose();
   }
 
   Future<void> _onEditChallenge() async {
     final result = await Navigator.push(
-        context,
-        MaterialPageRoute<dynamic>(
-          builder: (BuildContext context) => ChallengePage(challenge: widget.challenge),
-          fullscreenDialog: true
-        )
+      context,
+      MaterialPageRoute<dynamic>(
+        builder: (BuildContext context) =>
+            ChallengePage(challenge: widget.challenge),
+        fullscreenDialog: true,
+      ),
     );
     if (result != null) setState(() {});
   }
@@ -67,18 +78,20 @@ class _ChallengeWidgetState extends State<ChallengeWidget> {
   Future<void> _onChallengeChecked(bool value, BuildContext context) async {
     if (widget.challenge.isFailed) {
       ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            behavior: SnackBarBehavior.floating,
-            content: Text('Challenge ${widget.challenge.name} already failed.')));
+        SnackBar(
+          behavior: SnackBarBehavior.floating,
+          content: Text('Challenge ${widget.challenge.name} already failed.'),
+        ),
+      );
     } else {
-      final _challengeService = widget.appContainer.get<ChallengeService>();
+      final challengeService = widget.appContainer.get<ChallengeService>();
       if (value) {
-        await _challengeService.complete([widget.challenge]);
+        await challengeService.complete([widget.challenge]);
       } else {
-        await _challengeService.incomplete([widget.challenge]);
+        await challengeService.incomplete([widget.challenge]);
       }
       // update view
-      setState(() { });
+      setState(() {});
     }
     return;
   }
@@ -94,14 +107,26 @@ class _ChallengeWidgetState extends State<ChallengeWidget> {
     if (done) {
       result = Text(_i18n.doneAt(_commonI18n.formatDate(challenge.doneAt)));
     } else if (failed) {
-      result = Text(_i18n.failedSince(_commonI18n.formatDate(challenge.latestAt)), style: _overDueStyle);
+      result = Text(
+        _i18n.failedSince(_commonI18n.formatDate(challenge.latestAt)),
+        style: _overDueStyle,
+      );
     } else if (daysLeft.inDays == 0) {
-      result = Text(_i18n.challengeWillFail(challenge.latestDiff(DateTime.now())), style: _overDueStyle);
+      result = Text(
+        _i18n.challengeWillFail(challenge.latestDiff(DateTime.now())),
+        style: _overDueStyle,
+      );
     } else if (challenge.isOverdue) {
       if (challenge.latestAt == null) {
-        return Text('Was due ' + _commonI18n.formatDate(challenge.dueAt), style: _overDueStyle);
+        return Text(
+          'Was due ${_commonI18n.formatDate(challenge.dueAt)}',
+          style: _overDueStyle,
+        );
       } else {
-        result = Text(_i18n.challengeWillFail(challenge.latestDiff(DateTime.now())), style: _overDueStyle);
+        result = Text(
+          _i18n.challengeWillFail(challenge.latestDiff(DateTime.now())),
+          style: _overDueStyle,
+        );
       }
     } else {
       return Text(_i18n.dueUntil(_commonI18n.formatDate(challenge.dueAt)));
@@ -112,13 +137,13 @@ class _ChallengeWidgetState extends State<ChallengeWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final _challengeService = widget.appContainer.get<ChallengeService>();
+    final challengeService = widget.appContainer.get<ChallengeService>();
 
     final challenge = widget.challenge;
     final done = challenge.isDone;
     final failed = challenge.isFailed;
     final theme = Theme.of(context);
-    _attached ??= _challengeService.attach(challenge);
+    _attached ??= challengeService.attach(challenge);
     assert(_attached != null);
 
     final actions = <Widget>[];
@@ -127,11 +152,12 @@ class _ChallengeWidgetState extends State<ChallengeWidget> {
         Padding(
           padding: _edge,
           child: DeleteListAction(
-            _attached, "Challenge deleted.",
+            _attached!,
+            "Challenge deleted.",
             deleteCallback: widget.deleteCallback,
             undoDeleteCallback: widget.undoDeleteCallback,
           ),
-        )
+        ),
       );
     }
     // allow edit only for non completed challenges
@@ -139,19 +165,22 @@ class _ChallengeWidgetState extends State<ChallengeWidget> {
       actions.add(
         Padding(
           padding: _edge,
-          child: IconSlideAction(
-            caption: 'Edit',
-            color: theme.primaryColor,
+          child: SlidableAction(
+            label: 'Edit',
+            backgroundColor: theme.primaryColor,
             icon: Icons.edit,
-            onTap: _onEditChallenge
+            onPressed: (_) => _onEditChallenge(),
           ),
-        )
+        ),
       );
     }
 
     return Slidable(
-      actionPane: const SlidableDrawerActionPane(),
-      actionExtentRatio: 0.25,
+      endActionPane: ActionPane(
+        motion: const DrawerMotion(),
+        extentRatio: 0.25,
+        children: actions,
+      ),
       child: Card(
         child: ListTile(
           leading: AnimatedSwitcher(
@@ -160,29 +189,35 @@ class _ChallengeWidgetState extends State<ChallengeWidget> {
             child: RewardWidget(
               reward: widget.challenge.reward,
               status: widget.challenge.status,
-              key: ValueKey('${widget.challenge.id}_${widget.challenge.status}'),
-            )
+              key: ValueKey(
+                '${widget.challenge.id}_${widget.challenge.status}',
+              ),
+            ),
           ),
-          title: Text(challenge.name, style: done || failed ? _notOpenTextStyle : null),
+          title: Text(
+            challenge.name,
+            style: done || failed ? _notOpenTextStyle : null,
+          ),
           subtitle: _dueText(),
           isThreeLine: true,
-          onLongPress: challenge.status == ChallengeStatus.open ? _onEditChallenge : null,
+          onLongPress: challenge.status == ChallengeStatus.open
+              ? _onEditChallenge
+              : null,
           trailing: _buildCheckbox(),
         ),
       ),
-      secondaryActions: actions
     );
   }
 
-  Widget _buildCheckbox() {
+  Widget? _buildCheckbox() {
     if (widget.challenge.status == ChallengeStatus.failed) {
       return null;
     } else {
-      return  SizedBox(
+      return SizedBox(
         height: 64,
         child: Checkbox(
           value: widget.challenge.isDone,
-          onChanged: (v) => _onChallengeChecked(v, context),
+          onChanged: (v) => _onChallengeChecked(v ?? false, context),
         ),
       );
     }

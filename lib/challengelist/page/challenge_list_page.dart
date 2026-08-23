@@ -19,24 +19,31 @@ class ChallengeListPage extends StatefulWidget {
   State<StatefulWidget> createState() => ChallengeListPageState();
 }
 
-class ChallengeListPageState extends State<ChallengeListPage> with ScrollViewPositionListener<ChallengeListPage> {
+class ChallengeListPageState extends State<ChallengeListPage>
+    with ScrollViewPositionListener<ChallengeListPage> {
   static final Logger _log = LoggerFactory.get<ChallengeListPageState>();
 
-  CreditService _creditService;
-  ChallengeService _challengeService;
-  ValueNotifier<int> _credit;
+  late CreditService _creditService;
+  late ChallengeService _challengeService;
+  late ValueNotifier<int> _credit;
   DateTime _selectedDay = DateTime.now();
 
-  final ValueNotifier<List<Challenge>> _data = ValueNotifier(null);
+  final ValueNotifier<List<Challenge>?> _data = ValueNotifier(null);
 
-  ChallengeListLocalizations i18n;
-  ChallengeLocalizations commonI18n;
+  late ChallengeListLocalizations i18n;
+  late ChallengeLocalizations commonI18n;
 
   @override
   void didChangeDependencies() {
     final ctx = AppStateWidget.of(context);
-    i18n = Localizations.of<ChallengeListLocalizations>(context, ChallengeListLocalizations);
-    commonI18n = Localizations.of<ChallengeLocalizations>(context, ChallengeLocalizations);
+    i18n = Localizations.of<ChallengeListLocalizations>(
+      context,
+      ChallengeListLocalizations,
+    )!;
+    commonI18n = Localizations.of<ChallengeLocalizations>(
+      context,
+      ChallengeLocalizations,
+    )!;
     _challengeService = ctx.get<ChallengeService>();
     _creditService = ctx.get<CreditService>();
     _credit = _creditService.creditNotifier;
@@ -46,15 +53,17 @@ class ChallengeListPageState extends State<ChallengeListPage> with ScrollViewPos
   Future<void> _doReload() async {
     var result = <Challenge>[];
     try {
-      final isToday = DateTimeUtil.clearTime(_selectedDay).millisecondsSinceEpoch
-          == DateTimeUtil.clearTime(DateTime.now()).millisecondsSinceEpoch;
+      final isToday =
+          DateTimeUtil.clearTime(_selectedDay)!.millisecondsSinceEpoch ==
+          DateTimeUtil.clearTime(DateTime.now())!.millisecondsSinceEpoch;
 
-      _log.startSync('ChallengeListPage._doReload, ${isToday ? "today" : "not today"}.');
+      _log.startSync(
+        'ChallengeListPage._doReload, ${isToday ? "today" : "not today"}.',
+      );
 
       result = await _challengeService.loadByDate(_selectedDay, isToday);
 
       await _creditService.credit;
-
     } catch (e) {
       _log.error('_doReload failed!', e);
       rethrow;
@@ -66,45 +75,56 @@ class ChallengeListPageState extends State<ChallengeListPage> with ScrollViewPos
 
   Future<void> _createChallenge() async {
     final result = await Navigator.push(
-        context,
-        MaterialPageRoute<dynamic>(builder: (BuildContext context) =>
-            ChallengePage(challenge: Challenge()..dueAt = _selectedDay), fullscreenDialog: true)
+      context,
+      MaterialPageRoute<dynamic>(
+        builder: (BuildContext context) =>
+            ChallengePage(challenge: Challenge()..dueAt = _selectedDay),
+        fullscreenDialog: true,
+      ),
     );
     if (result != null) return _doReload();
     return;
   }
 
-  Widget _buildChallenges(List<Challenge> _challenges) {
-    if (_challenges.isEmpty) {
+  Widget _buildChallenges(List<Challenge> challenges) {
+    if (challenges.isEmpty) {
       return Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            Text('No challenges today!', style: Theme.of(context).textTheme.headline5),
+            Text(
+              'No challenges today!',
+              style: Theme.of(context).textTheme.headlineSmall,
+            ),
             const SizedBox(height: 8),
-            Text(commonI18n.formatDate(_selectedDay), style: Theme.of(context).textTheme.headline6)
-          ]
-        )
+            Text(
+              commonI18n.formatDate(_selectedDay),
+              style: Theme.of(context).textTheme.titleLarge,
+            ),
+          ],
+        ),
       );
     } else {
       return ListView.builder(
         padding: MyStyle.LIST_PADDING,
         controller: scrollController,
-        itemCount: _challenges.length,
+        itemCount: challenges.length,
         itemBuilder: (context, index) {
-          final e = _challenges[index];
-          return ChallengeWidget(AppStateWidget.of(context), e,
+          final e = challenges[index];
+          return ChallengeWidget(
+            AppStateWidget.of(context),
+            e,
             deleteCallback: _onDeleteChallenge,
             undoDeleteCallback: (e) => _doReload(),
             key: ObjectKey(e),
           );
-        }
+        },
       );
     }
   }
 
   void _onDeleteChallenge(Challenge c) {
-    final newData = List<Challenge>.from(_data.value);
+    final newData = List<Challenge>.from(_data.value!);
     if (newData.remove(c)) {
       _data.value = newData;
     }
@@ -120,27 +140,34 @@ class ChallengeListPageState extends State<ChallengeListPage> with ScrollViewPos
         clipBehavior: Clip.antiAlias,
         child: Row(
           children: <Widget>[
-            FlatButton.icon(
+            TextButton.icon(
               key: const ValueKey('home_day_select'),
               onPressed: () async {
-                final newDate = await showDatePicker(context: context, initialDate: _selectedDay,
-                    firstDate: _selectedDay.add(const Duration(days: -60)),
-                    lastDate: _selectedDay.add(const Duration(days: 60)));
-                if (newDate != null && newDate.millisecondsSinceEpoch != _selectedDay.millisecondsSinceEpoch) {
+                final newDate = await showDatePicker(
+                  context: context,
+                  initialDate: _selectedDay,
+                  firstDate: _selectedDay.add(const Duration(days: -60)),
+                  lastDate: _selectedDay.add(const Duration(days: 60)),
+                );
+                if (newDate != null &&
+                    newDate.millisecondsSinceEpoch !=
+                        _selectedDay.millisecondsSinceEpoch) {
                   _log.debug('date $newDate selected.');
                   _selectedDay = newDate;
                   _doReload();
                 }
               },
               icon: const Icon(Icons.arrow_drop_down),
-              label: Text(commonI18n.formatDate(_selectedDay),
-                  style: const TextStyle(fontWeight: FontWeight.w600))
+              label: Text(
+                commonI18n.formatDate(_selectedDay),
+                style: const TextStyle(fontWeight: FontWeight.w600),
+              ),
             ),
             const Spacer(),
             Padding(
-              padding: EdgeInsets.fromLTRB(16, 8, 16, 8),
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
               child: TotalPointsWidget(_credit),
-            )
+            ),
           ],
         ),
       ),
@@ -151,15 +178,13 @@ class ChallengeListPageState extends State<ChallengeListPage> with ScrollViewPos
           duration: const Duration(milliseconds: 600),
           child: ValueListenableBuilder<bool>(
             valueListenable: showFab,
-              child: FloatingActionButton.extended(
-                onPressed: _createChallenge,
-                icon: const Icon(Icons.add),
-                label: Text(i18n.newChallengeButton),
-              ),
-            builder: (context, value, child) => Visibility(
-              visible: value,
-              child: child
+            child: FloatingActionButton.extended(
+              onPressed: _createChallenge,
+              icon: const Icon(Icons.add),
+              label: Text(i18n.newChallengeButton),
             ),
+            builder: (context, value, child) =>
+                Visibility(visible: value, child: child!),
           ),
           onEnd: () {
             if (value && showFab.value) showFab.value = false;
@@ -167,14 +192,17 @@ class ChallengeListPageState extends State<ChallengeListPage> with ScrollViewPos
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      body: ValueListenableBuilder<List<Challenge>>(
+      body: ValueListenableBuilder<List<Challenge>?>(
         valueListenable: _data,
         builder: (context, value, child) {
           _log.debug('build has data ${value != null}...');
-          if (value != null) return _buildChallenges(value);
-          else return LoadingWidget();
+          if (value != null) {
+            return _buildChallenges(value);
+          } else {
+            return const LoadingWidget();
+          }
         },
-      )
+      ),
     );
   }
 }
